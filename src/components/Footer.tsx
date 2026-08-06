@@ -27,13 +27,18 @@ export default function Footer() {
       <div className="max-w-6xl mx-auto px-4">
         <div className="grid md:grid-cols-3 gap-10 mb-10">
           <div>
-            <Link to="/" className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-amber-400 to-yellow-600 rounded-xl flex items-center justify-center">
-                <Crown className="w-5 h-5 text-gray-900" />
+            <Link to="/" className="flex items-center gap-3.5 group">
+              <div className="w-12 h-12 rounded-2xl bg-white/95 p-1.5 flex items-center justify-center shadow-lg shadow-amber-500/10 group-hover:scale-105 transition-transform shrink-0">
+                <img
+                  src="/images/seedwel-logo.svg"
+                  alt="Seedwel Investment Limited Logo"
+                  className="w-full h-full object-contain"
+                />
               </div>
               <div>
-                <span className="text-white font-bold text-lg">Billionaire Blueprint</span>
-                <p className="text-gray-500 text-xs">Your guide to extraordinary wealth</p>
+                <span className="text-white font-bold text-lg block">Billionaire Blueprint</span>
+                <span className="text-amber-400 font-bold text-xs uppercase tracking-wider block mt-0.5">Seedwel Investment Limited</span>
+                <span className="text-gray-500 text-[11px] block mt-0.5">Registered 2025 • Open for Investors</span>
               </div>
             </Link>
             <p className="text-gray-600 text-sm mt-4 leading-relaxed">

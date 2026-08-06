@@ -154,9 +154,13 @@ export default function AdminPage() {
           <div className="bg-gray-900/80 border border-gray-800 rounded-3xl p-8 shadow-2xl relative overflow-hidden">
             <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/10 rounded-full blur-2xl -mr-16 -mt-16 pointer-events-none" />
 
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-400 to-yellow-600 flex items-center justify-center text-gray-950 shadow-lg shadow-amber-500/20">
-                <ShieldCheck className="w-7 h-7" />
+            <div className="flex items-center gap-3.5 mb-6">
+              <div className="w-14 h-14 rounded-2xl bg-white/95 p-1.5 flex items-center justify-center shadow-lg shadow-amber-500/20 shrink-0 border border-amber-500/30">
+                <img
+                  src="/images/seedwel-logo.svg"
+                  alt="Seedwel Investment Limited Logo"
+                  className="w-full h-full object-contain"
+                />
               </div>
               <div>
                 <h1 className="text-xl font-black text-white">Seedwel Admin Portal</h1>
@@ -241,8 +245,12 @@ export default function AdminPage() {
         <div className="max-w-6xl mx-auto px-4">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-400 to-yellow-600 flex items-center justify-center text-gray-950 shadow-md">
-                <ShieldCheck className="w-6 h-6" />
+              <div className="w-14 h-14 rounded-2xl bg-white/95 p-1.5 flex items-center justify-center shadow-lg shadow-amber-500/15 shrink-0 border border-amber-500/30">
+                <img
+                  src="/images/seedwel-logo.svg"
+                  alt="Seedwel Investment Limited Logo"
+                  className="w-full h-full object-contain"
+                />
               </div>
               <div>
                 <div className="flex items-center gap-2">

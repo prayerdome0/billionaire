@@ -194,18 +194,27 @@ function InvestorInquirySection() {
   return (
     <div id="invest" className="mt-24 rounded-3xl bg-gradient-to-br from-amber-500/10 via-gray-900/80 to-gray-950 border border-amber-500/30 p-8 md:p-12 shadow-2xl">
       <div className="flex flex-wrap items-center justify-between gap-4 border-b border-gray-800 pb-8 mb-8">
-        <div>
-          <div className="inline-flex items-center gap-2 rounded-full bg-amber-500/20 border border-amber-500/40 px-3.5 py-1 text-xs font-bold text-amber-300 uppercase tracking-wider mb-3">
-            <Calendar className="w-3.5 h-3.5" />
-            Registered Last Year (2025) • Open For Investors
+        <div className="flex items-start gap-4">
+          <div className="w-16 h-16 rounded-2xl bg-white/95 p-2 flex items-center justify-center shadow-lg shadow-amber-500/20 shrink-0 border border-amber-500/40">
+            <img
+              src="/images/seedwel-logo.svg"
+              alt="Seedwel Investment Limited Logo"
+              className="w-full h-full object-contain"
+            />
           </div>
-          <h2 className="text-3xl md:text-4xl font-black text-white">
-            Invest With <span className="bg-gradient-to-r from-amber-300 to-yellow-500 bg-clip-text text-transparent">Seedwel Investment Limited</span>
-          </h2>
-          <p className="text-gray-400 text-sm mt-2 max-w-2xl">
-            Under the visionary leadership of <span className="text-white font-semibold">Mr. Seedwell Khayalethu Masuku</span> (Founder & CEO) and{" "}
-            <span className="text-white font-semibold">Zacheus Simbaya</span> (Country Director, Zambia), Seedwel Investment Limited invites strategic capital into high-impact infrastructure and cutting-edge artificial intelligence.
-          </p>
+          <div>
+            <div className="inline-flex items-center gap-2 rounded-full bg-amber-500/20 border border-amber-500/40 px-3.5 py-1 text-xs font-bold text-amber-300 uppercase tracking-wider mb-3">
+              <Calendar className="w-3.5 h-3.5" />
+              Registered Last Year (2025) • Open For Investors
+            </div>
+            <h2 className="text-3xl md:text-4xl font-black text-white">
+              Invest With <span className="bg-gradient-to-r from-amber-300 to-yellow-500 bg-clip-text text-transparent">Seedwel Investment Limited</span>
+            </h2>
+            <p className="text-gray-400 text-sm mt-2 max-w-2xl">
+              Under the visionary leadership of <span className="text-white font-semibold">Mr. Seedwell Khayalethu Masuku</span> (Founder & CEO) and{" "}
+              <span className="text-white font-semibold">Zacheus Simbaya</span> (Country Director, Zambia), Seedwel Investment Limited invites strategic capital into high-impact infrastructure and cutting-edge artificial intelligence.
+            </p>
+          </div>
         </div>
         <div className="flex flex-col gap-2 text-right">
           <Link

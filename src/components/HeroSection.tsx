@@ -46,11 +46,20 @@ export default function HeroSection() {
       </div>
 
       <div className="relative z-10 text-center px-4 max-w-5xl mx-auto">
-        <div className="inline-flex items-center gap-2 bg-amber-500/10 border border-amber-500/30 rounded-full px-5 py-2 mb-8">
-          <Sparkles className="w-4 h-4 text-amber-400" />
-          <span className="text-amber-300 text-xs md:text-sm font-bold tracking-wider uppercase">
-            SEEDWEL INVESTMENT LIMITED • REGISTERED 2025 • OPEN FOR INVESTORS
-          </span>
+        <div className="flex flex-col items-center justify-center mb-6">
+          <div className="w-24 h-24 md:w-28 md:h-28 rounded-3xl bg-white/95 p-3.5 shadow-2xl shadow-amber-500/20 mb-6 border-2 border-amber-500/40 transform hover:scale-105 transition-all">
+            <img
+              src="/images/seedwel-logo.svg"
+              alt="Seedwel Investment Limited Logo"
+              className="w-full h-full object-contain"
+            />
+          </div>
+          <div className="inline-flex items-center gap-2 bg-amber-500/10 border border-amber-500/30 rounded-full px-5 py-2">
+            <Sparkles className="w-4 h-4 text-amber-400" />
+            <span className="text-amber-300 text-xs md:text-sm font-bold tracking-wider uppercase">
+              SEEDWEL INVESTMENT LIMITED • REGISTERED 2025 • OPEN FOR INVESTORS
+            </span>
+          </div>
         </div>
 
         <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-white mb-6 leading-tight tracking-tight">

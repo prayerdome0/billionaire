@@ -50,15 +50,19 @@ export default function Navbar() {
       }`}
     >
       <div className="max-w-6xl mx-auto px-4 flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-3">
-          <div className="w-9 h-9 bg-gradient-to-br from-amber-400 to-yellow-600 rounded-lg flex items-center justify-center shadow-lg shadow-amber-500/20">
-            <Crown className="w-5 h-5 text-gray-900" />
+        <Link to="/" className="flex items-center gap-3.5 group">
+          <div className="w-10 h-10 rounded-xl bg-white/95 p-1 flex items-center justify-center shadow-lg shadow-amber-500/15 group-hover:scale-105 transition-transform shrink-0">
+            <img
+              src="/images/seedwel-logo.svg"
+              alt="Seedwel Investment Limited Logo"
+              className="w-full h-full object-contain"
+            />
           </div>
           <div className="flex flex-col">
-            <span className="text-white font-bold text-lg hidden sm:block leading-none">
+            <span className="text-white font-black text-base sm:text-lg hidden sm:block leading-none tracking-tight">
               Billionaire Blueprint
             </span>
-            <span className="text-amber-400 text-xs font-semibold tracking-wide hidden sm:block mt-0.5">
+            <span className="text-amber-400 text-[11px] sm:text-xs font-bold tracking-widest uppercase hidden sm:block mt-1">
               Seedwel Investment Ltd
             </span>
           </div>
