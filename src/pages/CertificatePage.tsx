@@ -4,13 +4,17 @@ import { Award, Download, Loader2, Lock, Medal, TrendingUp } from "lucide-react"
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import PageHeader from "../components/PageHeader";
-import { fetchLessons, fetchProgress, getClientId } from "../lib/api";
+import { useAuth } from "../lib/auth";
+import { fetchLessons, fetchProgress } from "../lib/api";
 import { generateCertificate } from "../utils/generateCertificate";
 
 export default function CertificatePage() {
+  const { user, profile } = useAuth();
   const [completed, setCompleted] = useState<string[]>([]);
   const [total, setTotal] = useState(28);
-  const [name, setName] = useState(() => localStorage.getItem("bb_cert_name") || "");
+  const [name, setName] = useState(
+    () => localStorage.getItem("bb_cert_name") || profile?.name || user?.displayName || ""
+  );
   const [generating, setGenerating] = useState(false);
   const [error, setError] = useState("");
 
@@ -18,21 +22,22 @@ export default function CertificatePage() {
     let mounted = true;
     (async () => {
       try {
-        const [prog, lessons] = await Promise.all([
-          fetchProgress(getClientId()),
-          fetchLessons(),
-        ]);
+        const [prog, lessons] = await Promise.all([fetchProgress(), fetchLessons()]);
         if (!mounted) return;
         setCompleted(prog);
         setTotal(lessons.length);
-      } finally {
-        if (!mounted) return;
+      } catch {
+        /* progress requires the account session — RequireAuth guarantees it */
       }
     })();
     return () => {
       mounted = false;
     };
   }, []);
+
+  useEffect(() => {
+    setName((cur) => cur.trim() ? cur : profile?.name || user?.displayName || "");
+  }, [profile, user]);
 
   const pct = total ? Math.round((completed.length / total) * 100) : 0;
   const eligible = completed.length >= total;

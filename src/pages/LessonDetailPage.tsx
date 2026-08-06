@@ -20,12 +20,12 @@ import {
 } from "lucide-react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import { useAuth } from "../lib/auth";
 import {
   fetchComments,
   fetchLesson,
   fetchLessons,
   fetchProgress,
-  getClientId,
   markLessonComplete,
   postComment,
   type Comment,
@@ -41,8 +41,9 @@ const difficultyColor: Record<string, string> = {
 };
 
 function Comments({ lessonId }: { lessonId: string }) {
+  const { user, profile } = useAuth();
+  const displayName = profile?.name || user?.displayName || (user?.email || "Student").split("@")[0];
   const [comments, setComments] = useState<Comment[]>([]);
-  const [name, setName] = useState(() => localStorage.getItem("bb_comment_name") || "");
   const [text, setText] = useState("");
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [error, setError] = useState("");
@@ -57,12 +58,11 @@ function Comments({ lessonId }: { lessonId: string }) {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!text.trim() || !name.trim()) return;
+    if (!text.trim()) return;
     setStatus("sending");
     setError("");
     try {
-      const created = await postComment({ lessonId, clientId: getClientId(), name: name.trim(), text: text.trim() });
-      localStorage.setItem("bb_comment_name", name.trim());
+      const created = await postComment({ lessonId, name: displayName, text: text.trim() });
       setComments((prev) => [created, ...prev]);
       setText("");
       setStatus("sent");
@@ -80,23 +80,15 @@ function Comments({ lessonId }: { lessonId: string }) {
         <h3 className="text-xl font-bold text-white">Discussion ({comments.length})</h3>
       </div>
       <p className="text-gray-500 text-sm mb-6">
-        Ask questions, share takeaways, and learn from other students. Comments are stored in the database via{" "}
-        <code className="text-amber-500/80">POST /api/comments</code>.
+        Ask questions, share takeaways, and learn from other registered students. You are posting as{" "}
+        <span className="text-amber-400 font-semibold">{displayName}</span>.
       </p>
 
       <form onSubmit={submit} className="mb-8">
-        <input
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          placeholder="Your name"
-          required
-          maxLength={80}
-          className="w-full bg-gray-950/70 border border-gray-800 rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-amber-500/50 transition-colors mb-3"
-        />
         <textarea
           value={text}
           onChange={(e) => setText(e.target.value)}
-          placeholder="Share your takeaway or question..."
+          placeholder={`Share your takeaway or question as ${displayName}...`}
           required
           rows={3}
           maxLength={2000}
@@ -105,7 +97,7 @@ function Comments({ lessonId }: { lessonId: string }) {
         {status === "error" && <p className="text-rose-400 text-sm mt-2">{error}</p>}
         <button
           type="submit"
-          disabled={status === "sending" || !text.trim() || !name.trim()}
+          disabled={status === "sending" || !text.trim()}
           className="mt-3 inline-flex items-center gap-2 bg-gradient-to-r from-amber-500 to-yellow-500 text-gray-900 font-bold px-6 py-3 rounded-xl hover:from-amber-400 hover:to-yellow-400 transition-all disabled:opacity-40"
         >
           {status === "sending" ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
@@ -281,11 +273,8 @@ export default function LessonDetailPage() {
     setNotFound(false);
     (async () => {
       try {
-        const [l, all, prog] = await Promise.all([
-          fetchLesson(id!),
-          fetchLessons(),
-          fetchProgress(getClientId()),
-        ]);
+        const prog = await fetchProgress().catch(() => [] as string[]);
+        const [l, all] = await Promise.all([fetchLesson(id!), fetchLessons()]);
         if (!mounted) return;
         setLesson(l);
         setAllLessons(all);
@@ -322,7 +311,7 @@ export default function LessonDetailPage() {
     else next.add(lesson.id);
     setCompleted(next);
     try {
-      await markLessonComplete(getClientId(), lesson.id, next.has(lesson.id));
+      await markLessonComplete(lesson.id, next.has(lesson.id));
     } catch {
       // API offline — keep local state; it will resync next visit
     }
@@ -475,7 +464,7 @@ export default function LessonDetailPage() {
               onPass={() => {
                 if (!completed.has(lesson.id)) {
                   setCompleted((prev) => new Set(prev).add(lesson.id));
-                  markLessonComplete(getClientId(), lesson.id, true).catch(() => {});
+                  markLessonComplete(lesson.id, true).catch(() => {});
                 }
               }}
             />

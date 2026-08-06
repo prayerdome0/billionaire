@@ -16,7 +16,6 @@ import {
   Cpu,
   TrendingUp,
   Briefcase,
-  MapPin,
   Calendar,
   ShieldCheck,
 } from "lucide-react";

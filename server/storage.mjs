@@ -154,6 +154,11 @@ class SqliteStore {
         id INTEGER PRIMARY KEY AUTOINCREMENT, client_id TEXT NOT NULL, lesson_id TEXT NOT NULL,
         completed_at TEXT NOT NULL, UNIQUE(client_id, lesson_id)
       );
+      CREATE TABLE IF NOT EXISTS users (
+        uid TEXT PRIMARY KEY, email TEXT, name TEXT, photo_url TEXT,
+        role TEXT NOT NULL DEFAULT 'student', created_at TEXT, last_seen TEXT
+      );
+      CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
       CREATE INDEX IF NOT EXISTS idx_comments_lesson ON comments(lesson_id);
       CREATE INDEX IF NOT EXISTS idx_progress_client ON lesson_progress(client_id);
       CREATE INDEX IF NOT EXISTS idx_inquiries_email ON investor_inquiries(email);
@@ -208,7 +213,7 @@ class SqliteStore {
   }
 
   _tableCounts() {
-    const tables = ["founders", "modules", "lessons", "videos", "niches", "posts", "testimonials", "contact_messages", "comments", "subscribers", "investor_inquiries", "lesson_progress"];
+    const tables = ["founders", "modules", "lessons", "videos", "niches", "posts", "testimonials", "contact_messages", "comments", "subscribers", "investor_inquiries", "lesson_progress", "users"];
     const out = {};
     for (const t of tables) out[t] = this._count(t);
     return out;
@@ -536,6 +541,8 @@ class PgStore {
       CREATE TABLE IF NOT EXISTS subscribers (id SERIAL PRIMARY KEY, email TEXT NOT NULL UNIQUE, created_at TEXT NOT NULL);
       CREATE TABLE IF NOT EXISTS investor_inquiries (id SERIAL PRIMARY KEY, name TEXT NOT NULL, email TEXT NOT NULL, phone TEXT, interest_area TEXT NOT NULL, amount_range TEXT, message TEXT, created_at TEXT NOT NULL);
       CREATE TABLE IF NOT EXISTS lesson_progress (id SERIAL PRIMARY KEY, client_id TEXT NOT NULL, lesson_id TEXT NOT NULL, completed_at TEXT NOT NULL, UNIQUE(client_id, lesson_id));
+      CREATE TABLE IF NOT EXISTS users (uid TEXT PRIMARY KEY, email TEXT, name TEXT, photo_url TEXT, role TEXT NOT NULL DEFAULT 'student', created_at TEXT, last_seen TEXT);
+      CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
       CREATE INDEX IF NOT EXISTS idx_comments_lesson ON comments(lesson_id);
       CREATE INDEX IF NOT EXISTS idx_progress_client ON lesson_progress(client_id);
     `);
@@ -731,21 +738,23 @@ class PgStore {
 
   /* ---- meta ---- */
   async stats() {
-    const [f, mo, l, v, n, p, t, cm, co, su, inv, pr] = await Promise.all([
+    const [f, mo, l, v, n, p, t, cm, co, su, inv, pr, us] = await Promise.all([
       this._count("founders"), this._count("modules"), this._count("lessons"), this._count("videos"),
       this._count("niches"), this._count("posts"), this._count("testimonials"), this._count("contact_messages"),
       this._count("comments"), this._count("subscribers"), this._count("investor_inquiries"), this._count("lesson_progress"),
+      this._count("users"),
     ]);
     return {
       founders: f, modules: mo, lessons: l, videos: v, niches: n, posts: p, testimonials: t,
       contactMessages: cm, comments: co, subscribers: su, investorInquiries: inv, completedLessons: pr,
+      users: us,
       totalProgress: l ? Math.round((pr / l) * 100) : 0,
-      database: { founders: f, modules: mo, lessons: l, videos: v, niches: n, posts: p, testimonials: t, contact_messages: cm, comments: co, subscribers: su, investor_inquiries: inv, lesson_progress: pr },
+      database: { founders: f, modules: mo, lessons: l, videos: v, niches: n, posts: p, testimonials: t, contact_messages: cm, comments: co, subscribers: su, investor_inquiries: inv, lesson_progress: pr, users: us },
     };
   }
   async databaseInfo() {
     const counts = {};
-    for (const t of ["founders", "modules", "lessons", "videos", "niches", "posts", "testimonials", "contact_messages", "comments", "subscribers", "investor_inquiries", "lesson_progress"]) counts[t] = await this._count(t);
+    for (const t of ["founders", "modules", "lessons", "videos", "niches", "posts", "testimonials", "contact_messages", "comments", "subscribers", "investor_inquiries", "lesson_progress", "users"]) counts[t] = await this._count(t);
     const [messages, comments, subscribers, inquiries, progress] = await Promise.all([
       this._q("SELECT id, name, email, subject, created_at FROM contact_messages ORDER BY id DESC LIMIT 10"),
       this._q("SELECT id, lesson_id, name, text, created_at FROM comments ORDER BY id DESC LIMIT 10"),
@@ -860,6 +869,616 @@ class MemoryStore {
   }
 }
 
+/* ===================================================================== */
+/* ============ Admin capabilities (all engines, uniform API) ========== */
+/* ===================================================================== */
+
+/** Tables the admin console may browse / delete rows from (key = table, value = primary key column for SQL engines). */
+const ADMIN_TABLE_KEYS = {
+  founders: "id",
+  modules: "id",
+  lessons: "id",
+  videos: "id",
+  niches: "id",
+  posts: "slug",
+  testimonials: "id",
+  contact_messages: "id",
+  comments: "id",
+  subscribers: "id",
+  investor_inquiries: "id",
+  lesson_progress: "id",
+  users: "uid",
+};
+const ADMIN_TABLES = Object.keys(ADMIN_TABLE_KEYS);
+
+function userRow(row) {
+  return (
+    row && {
+      uid: row.uid,
+      email: row.email,
+      name: row.name,
+      photoUrl: row.photo_url,
+      role: row.role || "student",
+      created_at: row.created_at,
+      last_seen: row.last_seen,
+    }
+  );
+}
+
+function lessonInsertRow(l) {
+  return [
+    l.id, l.moduleId, l.number ?? 0, l.title ?? "", l.subtitle ?? "", l.summary ?? "",
+    l.duration ?? "", l.difficulty ?? "", JSON.stringify(l.content ?? []),
+    JSON.stringify(l.takeaways ?? []), JSON.stringify(l.actionSteps ?? []), JSON.stringify(l.quiz ?? []),
+  ];
+}
+function founderInsertRow(f) {
+  return [f.id, f.name ?? "", f.role ?? "", f.photo ?? "", f.bio ?? "", f.quote ?? "", JSON.stringify(f.focus ?? []), f.funFact ?? "", f.email ?? "", JSON.stringify(f.socials ?? {})];
+}
+function videoInsertRow(v) {
+  return [v.id, v.moduleId ?? "", v.title ?? "", v.channel ?? "", v.description ?? "", v.youtubeId ?? "", v.duration ?? "", v.level ?? "", JSON.stringify(v.tags ?? [])];
+}
+function moduleInsertRow(m) {
+  return [m.id, m.number ?? 0, m.title ?? "", m.tagline ?? "", m.description ?? "", m.icon ?? "", m.gradient ?? ""];
+}
+function postInsertRow(p) {
+  return [p.slug, p.title ?? "", p.excerpt ?? "", p.authorId ?? "", p.date ?? nowIso().slice(0, 10), p.readTime ?? "", JSON.stringify(p.tags ?? []), JSON.stringify(p.content ?? [])];
+}
+
+/* ------------------------------ SQLite admin ------------------------------ */
+Object.assign(SqliteStore.prototype, {
+  async upsertUser(u) {
+    const now = nowIso();
+    this.db.prepare(
+      `INSERT INTO users (uid, email, name, photo_url, role, created_at, last_seen)
+       VALUES (?, ?, ?, ?, ?, ?, ?)
+       ON CONFLICT(uid) DO UPDATE SET email=excluded.email, name=excluded.name, photo_url=excluded.photo_url, last_seen=excluded.last_seen`
+    ).run(u.uid, u.email || "", u.name || "", u.photoUrl || "", u.role || "student", u.createdAt || now, now);
+    return userRow(this.db.prepare("SELECT * FROM users WHERE uid = ?").get(u.uid));
+  },
+  async getUser(uid) {
+    return userRow(this.db.prepare("SELECT * FROM users WHERE uid = ?").get(uid));
+  },
+  async listUsers() {
+    return this.db.prepare("SELECT * FROM users ORDER BY last_seen DESC LIMIT 500").all().map(userRow);
+  },
+  async setUserRole(uid, role) {
+    const r = role === "admin" ? "admin" : "student";
+    this.db.prepare("INSERT INTO users (uid, email, name, role, created_at, last_seen) VALUES (?, '', '', ?, ?, ?) ON CONFLICT(uid) DO UPDATE SET role=excluded.role")
+      .run(uid, r, nowIso(), nowIso());
+    this.db.prepare("UPDATE users SET role = ? WHERE uid = ?").run(r, uid);
+    return userRow(this.db.prepare("SELECT * FROM users WHERE uid = ?").get(uid));
+  },
+  async deleteUser(uid) {
+    this.db.prepare("DELETE FROM users WHERE uid = ?").run(uid);
+  },
+  async dumpTable(table) {
+    if (!ADMIN_TABLES.includes(table)) throw new Error(`Unknown table: ${table}`);
+    return this.db.prepare(`SELECT * FROM ${table} ORDER BY rowid DESC LIMIT 300`).all();
+  },
+  async deleteRecord(table, key) {
+    const col = ADMIN_TABLE_KEYS[table];
+    if (!col) throw new Error(`Unknown table: ${table}`);
+    const info = this.db.prepare(`DELETE FROM ${table} WHERE ${col} = ?`).run(String(key));
+    return Number(info.changes) > 0;
+  },
+  async adminTables() {
+    return ADMIN_TABLES.map((name) => ({ name, count: this._count(name) }));
+  },
+  async upsertLesson(l) {
+    this.db.prepare(`INSERT OR REPLACE INTO lessons (id, module_id, number, title, subtitle, summary, duration, difficulty, content, takeaways, action_steps, quiz) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`).run(...lessonInsertRow(l));
+    return this.getLesson(l.id);
+  },
+  async deleteLesson(id) { this.db.prepare("DELETE FROM lessons WHERE id = ?").run(id); },
+  async upsertVideo(v) {
+    this.db.prepare(`INSERT OR REPLACE INTO videos (id, module_id, title, channel, description, youtube_id, duration, level, tags) VALUES (?,?,?,?,?,?,?,?,?)`).run(...videoInsertRow(v));
+    return this.getVideo(v.id);
+  },
+  async deleteVideo(id) { this.db.prepare("DELETE FROM videos WHERE id = ?").run(id); },
+  async getVideo(id) { return videoRow(this.db.prepare("SELECT * FROM videos WHERE id = ?").get(id)); },
+  async upsertNiche(n) {
+    this.db.prepare("INSERT OR REPLACE INTO niches (id, data) VALUES (?, ?)").run(n.id, JSON.stringify(n));
+    return this.getNiche(n.id);
+  },
+  async deleteNiche(id) { this.db.prepare("DELETE FROM niches WHERE id = ?").run(id); },
+  async upsertFounder(f) {
+    this.db.prepare(`INSERT OR REPLACE INTO founders (id, name, role, photo, bio, quote, focus, fun_fact, email, socials) VALUES (?,?,?,?,?,?,?,?,?,?)`).run(...founderInsertRow(f));
+    return this.getFounder(f.id);
+  },
+  async deleteFounder(id) { this.db.prepare("DELETE FROM founders WHERE id = ?").run(id); },
+  async upsertPost(p) {
+    this.db.prepare(`INSERT OR REPLACE INTO posts (slug, title, excerpt, author_id, date, read_time, tags, content) VALUES (?,?,?,?,?,?,?,?)`).run(...postInsertRow(p));
+    return this.getPost(p.slug);
+  },
+  async deletePost(slug) { this.db.prepare("DELETE FROM posts WHERE slug = ?").run(slug); },
+  async upsertModule(m) {
+    this.db.prepare(`INSERT OR REPLACE INTO modules (id, number, title, tagline, description, icon, gradient) VALUES (?,?,?,?,?,?,?)`).run(...moduleInsertRow(m));
+    return this.db.prepare("SELECT * FROM modules WHERE id = ?").get(m.id);
+  },
+  async getModule(id) {
+    const r = this.db.prepare("SELECT * FROM modules WHERE id = ?").get(id);
+    return r ? moduleRow(r) : undefined;
+  },
+  async deleteModule(id) { this.db.prepare("DELETE FROM modules WHERE id = ?").run(id); },
+  async reseed() {
+    for (const t of ["founders", "modules", "lessons", "videos", "niches", "posts", "testimonials"])
+      this.db.prepare(`DELETE FROM ${t}`).run();
+    this._seed();
+    return this._tableCounts();
+  },
+  async leaderboard() {
+    const rows = this.db.prepare(
+      `SELECT p.client_id AS cid, COUNT(*) AS c, u.name AS uname
+       FROM lesson_progress p LEFT JOIN users u ON u.uid = p.client_id
+       GROUP BY p.client_id ORDER BY c DESC LIMIT 20`
+    ).all();
+    return rows.map((r, i) => ({
+      rank: i + 1,
+      clientId: maskClient(r.cid),
+      name: r.uname || `Student ${maskClient(r.cid)}`,
+      completed: r.c,
+    }));
+  },
+});
+
+/* ------------------------------ Postgres admin ------------------------------ */
+Object.assign(PgStore.prototype, {
+  async upsertUser(u) {
+    const now = nowIso();
+    await this._q(
+      `INSERT INTO users (uid, email, name, photo_url, role, created_at, last_seen) VALUES ($1,$2,$3,$4,$5,$6,$7)
+       ON CONFLICT (uid) DO UPDATE SET email=EXCLUDED.email, name=EXCLUDED.name, photo_url=EXCLUDED.photo_url, last_seen=EXCLUDED.last_seen`,
+      [u.uid, u.email || "", u.name || "", u.photoUrl || "", u.role || "student", u.createdAt || now, now]
+    );
+    return this.getUser(u.uid);
+  },
+  async getUser(uid) {
+    const r = await this._q("SELECT * FROM users WHERE uid = $1", [uid]);
+    return userRow(r.rows[0]);
+  },
+  async listUsers() {
+    const r = await this._q("SELECT * FROM users ORDER BY last_seen DESC LIMIT 500");
+    return r.rows.map(userRow);
+  },
+  async setUserRole(uid, role) {
+    const r = role === "admin" ? "admin" : "student";
+    const now = nowIso();
+    await this._q(
+      `INSERT INTO users (uid, email, name, role, created_at, last_seen) VALUES ($1,'','',$2,$3,$4)
+       ON CONFLICT (uid) DO UPDATE SET role=EXCLUDED.role`,
+      [uid, r, now, now]
+    );
+    return this.getUser(uid);
+  },
+  async deleteUser(uid) { await this._q("DELETE FROM users WHERE uid = $1", [uid]); },
+  async dumpTable(table) {
+    if (!ADMIN_TABLES.includes(table)) throw new Error(`Unknown table: ${table}`);
+    const r = await this._q(`SELECT * FROM ${table} ORDER BY 1 DESC LIMIT 300`);
+    return r.rows;
+  },
+  async deleteRecord(table, key) {
+    const col = ADMIN_TABLE_KEYS[table];
+    if (!col) throw new Error(`Unknown table: ${table}`);
+    const r = await this._q(`DELETE FROM ${table} WHERE ${col} = $1`, [String(key)]);
+    return (r.rowCount || 0) > 0;
+  },
+  async adminTables() {
+    const out = [];
+    for (const name of ADMIN_TABLES) out.push({ name, count: await this._count(name) });
+    return out;
+  },
+  async upsertLesson(l) {
+    await this._q(
+      `INSERT INTO lessons (id, module_id, number, title, subtitle, summary, duration, difficulty, content, takeaways, action_steps, quiz)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)
+       ON CONFLICT (id) DO UPDATE SET module_id=EXCLUDED.module_id, number=EXCLUDED.number, title=EXCLUDED.title, subtitle=EXCLUDED.subtitle,
+         summary=EXCLUDED.summary, duration=EXCLUDED.duration, difficulty=EXCLUDED.difficulty, content=EXCLUDED.content,
+         takeaways=EXCLUDED.takeaways, action_steps=EXCLUDED.action_steps, quiz=EXCLUDED.quiz`,
+      lessonInsertRow(l)
+    );
+    return this.getLesson(l.id);
+  },
+  async deleteLesson(id) { await this._q("DELETE FROM lessons WHERE id = $1", [id]); },
+  async upsertVideo(v) {
+    await this._q(
+      `INSERT INTO videos (id, module_id, title, channel, description, youtube_id, duration, level, tags) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
+       ON CONFLICT (id) DO UPDATE SET module_id=EXCLUDED.module_id, title=EXCLUDED.title, channel=EXCLUDED.channel, description=EXCLUDED.description,
+         youtube_id=EXCLUDED.youtube_id, duration=EXCLUDED.duration, level=EXCLUDED.level, tags=EXCLUDED.tags`,
+      videoInsertRow(v)
+    );
+    return this.getVideo(v.id);
+  },
+  async getVideo(id) {
+    const r = await this._q("SELECT * FROM videos WHERE id = $1", [id]);
+    return r.rows[0] ? videoRow(r.rows[0]) : undefined;
+  },
+  async deleteVideo(id) { await this._q("DELETE FROM videos WHERE id = $1", [id]); },
+  async upsertNiche(n) {
+    await this._q("INSERT INTO niches (id, data) VALUES ($1,$2) ON CONFLICT (id) DO UPDATE SET data=EXCLUDED.data", [n.id, JSON.stringify(n)]);
+    return this.getNiche(n.id);
+  },
+  async deleteNiche(id) { await this._q("DELETE FROM niches WHERE id = $1", [id]); },
+  async upsertFounder(f) {
+    await this._q(
+      `INSERT INTO founders (id, name, role, photo, bio, quote, focus, fun_fact, email, socials) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)
+       ON CONFLICT (id) DO UPDATE SET name=EXCLUDED.name, role=EXCLUDED.role, photo=EXCLUDED.photo, bio=EXCLUDED.bio, quote=EXCLUDED.quote,
+         focus=EXCLUDED.focus, fun_fact=EXCLUDED.fun_fact, email=EXCLUDED.email, socials=EXCLUDED.socials`,
+      founderInsertRow(f)
+    );
+    return this.getFounder(f.id);
+  },
+  async deleteFounder(id) { await this._q("DELETE FROM founders WHERE id = $1", [id]); },
+  async upsertPost(p) {
+    await this._q(
+      `INSERT INTO posts (slug, title, excerpt, author_id, date, read_time, tags, content) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
+       ON CONFLICT (slug) DO UPDATE SET title=EXCLUDED.title, excerpt=EXCLUDED.excerpt, author_id=EXCLUDED.author_id, date=EXCLUDED.date,
+         read_time=EXCLUDED.read_time, tags=EXCLUDED.tags, content=EXCLUDED.content`,
+      postInsertRow(p)
+    );
+    return this.getPost(p.slug);
+  },
+  async deletePost(slug) { await this._q("DELETE FROM posts WHERE slug = $1", [slug]); },
+  async upsertModule(m) {
+    await this._q(
+      `INSERT INTO modules (id, number, title, tagline, description, icon, gradient) VALUES ($1,$2,$3,$4,$5,$6,$7)
+       ON CONFLICT (id) DO UPDATE SET number=EXCLUDED.number, title=EXCLUDED.title, tagline=EXCLUDED.tagline, description=EXCLUDED.description, icon=EXCLUDED.icon, gradient=EXCLUDED.gradient`,
+      moduleInsertRow(m)
+    );
+    return this.getModule(m.id);
+  },
+  async getModule(id) {
+    const r = await this._q("SELECT * FROM modules WHERE id = $1", [id]);
+    if (!r.rows[0]) return undefined;
+    const m = r.rows[0];
+    return { id: m.id, number: m.number, title: m.title, tagline: m.tagline, description: m.description, icon: m.icon, gradient: m.gradient };
+  },
+  async deleteModule(id) { await this._q("DELETE FROM modules WHERE id = $1", [id]); },
+  async reseed() {
+    for (const t of ["founders", "modules", "lessons", "videos", "niches", "posts", "testimonials"])
+      await this._q(`DELETE FROM ${t}`);
+    await this._seed();
+    return this.databaseInfo();
+  },
+  async leaderboard() {
+    const r = await this._q(
+      `SELECT p.client_id AS cid, COUNT(*) AS c, u.name AS uname
+       FROM lesson_progress p LEFT JOIN users u ON u.uid = p.client_id
+       GROUP BY p.client_id, u.name ORDER BY c DESC LIMIT 20`
+    );
+    return r.rows.map((x, i) => ({
+      rank: i + 1,
+      clientId: maskClient(x.cid),
+      name: x.uname || `Student ${maskClient(x.cid)}`,
+      completed: Number(x.c),
+    }));
+  },
+});
+
+/* ---------------------- map-backed stores (KV + Memory) ---------------------- */
+/** For KV and Memory engines content lives in one JSON map per entity,
+ *  hydrated from the bundled seed on first access — so admin CRUD works
+ *  identically on every engine and the DB is the source of truth at runtime. */
+const CONTENT_MAP_DEFS = {
+  lessons: { seedKey: "lessons", idOf: (x) => x.id, sort: (a, b) => (a.number ?? 0) - (b.number ?? 0) },
+  videos: { seedKey: "videos", idOf: (x) => x.id, sort: (a, b) => String(a.id).localeCompare(String(b.id)) },
+  niches: { seedKey: "niches", idOf: (x) => x.id, sort: (a, b) => String(a.id).localeCompare(String(b.id)) },
+  founders: { seedKey: "founders", idOf: (x) => x.id, sort: (a, b) => String(a.id).localeCompare(String(b.id)) },
+  posts: { seedKey: "posts", idOf: (x) => x.slug, sort: (a, b) => String(b.date).localeCompare(String(a.date)) },
+  modules: { seedKey: "modules", idOf: (x) => x.id, sort: (a, b) => (a.number ?? 0) - (b.number ?? 0) },
+  testimonials: { seedKey: "testimonials", idOf: (_x, i) => String(i + 1), sort: () => 0 },
+  users: { seedKey: null, idOf: (x) => x.uid, sort: (a, b) => String(b.last_seen || "").localeCompare(String(a.last_seen || "")) },
+};
+
+/**
+ * Build the full uniform admin method set for a map-backed engine.
+ * readMap/writeMap persist a JSON object per entity; dyn adapters expose the
+ * engine's dynamic lists (messages / subscribers / investors / comments / progress).
+ */
+function mapBackedMethods(readMap, writeMap, dyn) {
+  async function seedMapFor(entity) {
+    const def = CONTENT_MAP_DEFS[entity];
+    const map = {};
+    if (def?.seedKey) seed[def.seedKey].forEach((item, i) => { map[def.idOf(item, i)] = item; });
+    return map;
+  }
+  const read = async (store, entity) => {
+    let map = await readMap.call(store, entity);
+    if (!map) {
+      map = await seedMapFor(entity);
+      await writeMap.call(store, entity, map);
+    }
+    return map;
+  };
+  const list = async (store, entity) => {
+    const def = CONTENT_MAP_DEFS[entity];
+    const arr = Object.values(await read(store, entity));
+    return def ? arr.sort(def.sort) : arr;
+  };
+  const upsert = (entity, idField) =>
+    async function (obj) {
+      const id = obj?.[idField];
+      if (!id) throw new Error(`${entity} requires "${idField}"`);
+      const map = await read(this, entity);
+      map[id] = obj;
+      await writeMap.call(this, entity, map);
+      return obj;
+    };
+  const del = (entity) =>
+    async function (id) {
+      const map = await read(this, entity);
+      const existed = id in map;
+      delete map[id];
+      await writeMap.call(this, entity, map);
+      return existed;
+    };
+
+  const m = {
+    /* content readers */
+    async listLessons() { return list(this, "lessons"); },
+    async getLesson(id) { return (await read(this, "lessons"))[id]; },
+    async listVideos() { return list(this, "videos"); },
+    async getVideo(id) { return (await read(this, "videos"))[id]; },
+    async listNiches() { return list(this, "niches"); },
+    async getNiche(id) { return (await read(this, "niches"))[id]; },
+    async listFounders() { return list(this, "founders"); },
+    async getFounder(id) { return (await read(this, "founders"))[id]; },
+    async listPosts() { return list(this, "posts"); },
+    async getPost(slug) { return (await read(this, "posts"))[slug]; },
+    async listModules() {
+      const lessons = await read(this, "lessons");
+      return (await list(this, "modules")).map((mod) => ({
+        ...mod,
+        lessonCount: Object.values(lessons).filter((l) => l.moduleId === mod.id).length,
+      }));
+    },
+    async getModule(id) { return (await read(this, "modules"))[id]; },
+    async search(q) {
+      const needle = String(q).toLowerCase();
+      const hit = (s) => String(s || "").toLowerCase().includes(needle);
+      return {
+        lessons: (await m.listLessons.call(this)).filter((l) => hit(l.title) || hit(l.subtitle) || hit(l.summary)),
+        videos: (await m.listVideos.call(this)).filter((v) => hit(v.title) || hit(v.description) || hit(v.channel)),
+        niches: (await m.listNiches.call(this)).filter((n) => hit(n.title) || hit(n.description)),
+        founders: (await m.listFounders.call(this)).filter((f) => hit(f.name) || hit(f.bio) || hit(f.role)),
+        posts: (await m.listPosts.call(this)).filter((p) => hit(p.title) || hit(p.excerpt) || (p.tags || []).some(hit)),
+      };
+    },
+    /* content CRUD */
+    upsertLesson: upsert("lessons", "id"),
+    deleteLesson: del("lessons"),
+    upsertVideo: upsert("videos", "id"),
+    deleteVideo: del("videos"),
+    upsertNiche: upsert("niches", "id"),
+    deleteNiche: del("niches"),
+    upsertFounder: upsert("founders", "id"),
+    deleteFounder: del("founders"),
+    upsertPost: upsert("posts", "slug"),
+    deletePost: del("posts"),
+    upsertModule: upsert("modules", "id"),
+    deleteModule: del("modules"),
+    /* users */
+    async upsertUser(u) {
+      const users = await read(this, "users");
+      const now = nowIso();
+      const prev = users[u.uid] || {};
+      users[u.uid] = {
+        uid: u.uid,
+        email: u.email ?? prev.email ?? "",
+        name: u.name ?? prev.name ?? "",
+        photoUrl: u.photoUrl ?? prev.photoUrl ?? "",
+        role: u.role || prev.role || "student",
+        created_at: prev.created_at || now,
+        last_seen: now,
+      };
+      await writeMap.call(this, "users", users);
+      return users[u.uid];
+    },
+    async getUser(uid) { return (await read(this, "users"))[uid]; },
+    async listUsers() {
+      return Object.values(await read(this, "users")).sort(CONTENT_MAP_DEFS.users.sort);
+    },
+    async setUserRole(uid, role) {
+      const users = await read(this, "users");
+      const prev = users[uid] || { uid, email: "", name: "", photoUrl: "", created_at: nowIso() };
+      users[uid] = { ...prev, role: role === "admin" ? "admin" : "student", last_seen: prev.last_seen || nowIso() };
+      await writeMap.call(this, "users", users);
+      return users[uid];
+    },
+    async deleteUser(uid) {
+      const users = await read(this, "users");
+      delete users[uid];
+      await writeMap.call(this, "users", users);
+    },
+    /* restore bundled content */
+    async reseed() {
+      for (const entity of Object.keys(CONTENT_MAP_DEFS)) {
+        if (entity === "users") continue;
+        await writeMap.call(this, entity, await seedMapFor(entity));
+      }
+      return true;
+    },
+    /* named leaderboard */
+    async leaderboard() {
+      const progress = await dyn.progressGet.call(this);
+      const users = await read(this, "users");
+      return Object.entries(progress)
+        .map(([cid, ids]) => ({
+          clientId: maskClient(cid),
+          name: users[cid]?.name || `Student ${maskClient(cid)}`,
+          completed: (ids || []).length,
+        }))
+        .sort((a, b) => b.completed - a.completed)
+        .slice(0, 20)
+        .map((e, i) => ({ rank: i + 1, ...e }));
+    },
+    /* generic admin table browsing */
+    async dumpTable(table) {
+      switch (table) {
+        case "contact_messages": return (await dyn.listGet.call(this, "messages")).slice(-300).reverse();
+        case "subscribers": return (await dyn.listGet.call(this, "subscribers")).slice(-300).reverse();
+        case "investor_inquiries": return (await dyn.listGet.call(this, "investors")).slice(-300).reverse();
+        case "comments": return (await dyn.commentsAll.call(this)).slice(0, 300);
+        case "lesson_progress": {
+          const map = await dyn.progressGet.call(this);
+          const rows = [];
+          for (const [cid, ids] of Object.entries(map))
+            for (const lid of ids || []) rows.push({ id: `${cid}:${lid}`, client_id: cid, lesson_id: lid, completed_at: "-" });
+          return rows.slice(-300).reverse();
+        }
+        case "users": return m.listUsers.call(this);
+        case "founders": return m.listFounders.call(this);
+        case "lessons": return m.listLessons.call(this);
+        case "videos": return m.listVideos.call(this);
+        case "niches": return m.listNiches.call(this);
+        case "posts": return m.listPosts.call(this);
+        case "modules": return m.listModules.call(this);
+        case "testimonials": return Object.values(await read(this, "testimonials"));
+        default: throw new Error(`Unknown table: ${table}`);
+      }
+    },
+    async deleteRecord(table, key) {
+      switch (table) {
+        case "contact_messages": return dyn.listDelete.call(this, "messages", key);
+        case "subscribers": return dyn.listDelete.call(this, "subscribers", key);
+        case "investor_inquiries": return dyn.listDelete.call(this, "investors", key);
+        case "comments": return dyn.commentDelete.call(this, key);
+        case "lesson_progress": {
+          const [cid, lid] = String(key).split(":");
+          const map = await dyn.progressGet.call(this);
+          if (!map[cid]) return false;
+          map[cid] = (map[cid] || []).filter((x) => x !== lid);
+          await dyn.progressSet.call(this, map);
+          return true;
+        }
+        case "users": await m.deleteUser.call(this, key); return true;
+        case "founders": return m.deleteFounder.call(this, key);
+        case "lessons": return m.deleteLesson.call(this, key);
+        case "videos": return m.deleteVideo.call(this, key);
+        case "niches": return m.deleteNiche.call(this, key);
+        case "posts": return m.deletePost.call(this, key);
+        case "modules": return m.deleteModule.call(this, key);
+        case "testimonials": {
+          const map = await read(this, "testimonials");
+          const existed = String(key) in map;
+          delete map[String(key)];
+          await writeMap.call(this, "testimonials", map);
+          return existed;
+        }
+        default: throw new Error(`Unknown table: ${table}`);
+      }
+    },
+    async adminTables() {
+      const rows = [];
+      for (const name of ADMIN_TABLES) {
+        try {
+          rows.push({ name, count: (await m.dumpTable.call(this, name)).length });
+        } catch {
+          rows.push({ name, count: 0 });
+        }
+      }
+      return rows;
+    },
+  };
+  return m;
+}
+
+/* ------------------------------ KV maps ------------------------------ */
+const KV_CONTENT_PREFIX = "bb:content:";
+Object.assign(
+  KvStore.prototype,
+  mapBackedMethods(
+    async function (entity) {
+      return JSON.parse((await this._get(`${KV_CONTENT_PREFIX}${entity}`)) || "null");
+    },
+    async function (entity, map) {
+      await this._set(`${KV_CONTENT_PREFIX}${entity}`, map);
+    },
+    {
+      listGet: async function (name) {
+        const key = name === "messages" ? "bb:messages" : name === "subscribers" ? "bb:subscribers" : "bb:investors";
+        return JSON.parse((await this._get(key)) || "[]");
+      },
+      listDelete: async function (name, key) {
+        const kvKey = name === "messages" ? "bb:messages" : name === "subscribers" ? "bb:subscribers" : "bb:investors";
+        const listR = JSON.parse((await this._get(kvKey)) || "[]");
+        const next = listR.filter((x) => String(x.id) !== String(key));
+        await this._set(kvKey, next);
+        return next.length !== listR.length;
+      },
+      progressGet: async function () {
+        return JSON.parse((await this._get("bb:progress")) || "{}");
+      },
+      progressSet: async function (map) {
+        await this._set("bb:progress", map);
+      },
+      commentsAll: async function () {
+        const lessons = await this.listLessons();
+        const all = [];
+        for (const l of lessons) {
+          const listR = JSON.parse((await this._get(`bb:comments:${l.id}`)) || "[]");
+          for (const c of listR) all.push(c);
+        }
+        return all.sort((a, b) => (b.id || 0) - (a.id || 0));
+      },
+      commentDelete: async function (key) {
+        const lessons = await this.listLessons();
+        for (const l of lessons) {
+          const listR = JSON.parse((await this._get(`bb:comments:${l.id}`)) || "[]");
+          const next = listR.filter((c) => String(c.id) !== String(key));
+          if (next.length !== listR.length) {
+            await this._set(`bb:comments:${l.id}`, next);
+            return true;
+          }
+        }
+        return false;
+      },
+    }
+  )
+);
+
+/* ------------------------------ Memory maps ------------------------------ */
+Object.assign(
+  MemoryStore.prototype,
+  mapBackedMethods(
+    async function (entity) {
+      if (!this._maps) this._maps = {};
+      return this._maps[entity] || null;
+    },
+    async function (entity, map) {
+      if (!this._maps) this._maps = {};
+      this._maps[entity] = map;
+    },
+    {
+      listGet: async function (name) {
+        return name === "messages" ? this.messages : name === "subscribers" ? this.subscribers : this.investorInquiries;
+      },
+      listDelete: async function (name, key) {
+        const arr = name === "messages" ? this.messages : name === "subscribers" ? this.subscribers : this.investorInquiries;
+        const next = arr.filter((x) => String(x.id) !== String(key));
+        if (name === "messages") this.messages = next;
+        else if (name === "subscribers") this.subscribers = next;
+        else this.investorInquiries = next;
+        return next.length !== arr.length;
+      },
+      progressGet: async function () {
+        return this.progress;
+      },
+      progressSet: async function (map) {
+        this.progress = map;
+      },
+      commentsAll: async function () {
+        return [...this.comments].sort((a, b) => (b.id || 0) - (a.id || 0));
+      },
+      commentDelete: async function (key) {
+        const next = this.comments.filter((c) => String(c.id) !== String(key));
+        const removed = next.length !== this.comments.length;
+        this.comments = next;
+        return removed;
+      },
+    }
+  )
+);
+
 /* ============================== selection ============================== */
 
 let store;
@@ -887,9 +1506,14 @@ export async function getStore() {
 }
 
 export const storageMethods = [
-  "listFounders", "getFounder", "listModules", "listLessons", "getLesson", "listVideos",
+  "listFounders", "getFounder", "listModules", "getModule", "listLessons", "getLesson", "listVideos", "getVideo",
   "listNiches", "getNiche", "listPosts", "getPost", "search",
   "addMessage", "listMessages", "addComment", "listComments", "leaderboard",
   "addSubscriber", "listSubscribers", "addInvestorInquiry", "listInvestorInquiries", "getProgress", "setProgress", "clearProgress",
   "stats", "databaseInfo",
+  // admin / user management
+  "upsertUser", "getUser", "listUsers", "setUserRole", "deleteUser",
+  "dumpTable", "deleteRecord", "adminTables", "reseed",
+  "upsertLesson", "deleteLesson", "upsertVideo", "deleteVideo", "upsertNiche", "deleteNiche",
+  "upsertFounder", "deleteFounder", "upsertPost", "deletePost", "upsertModule", "deleteModule",
 ];

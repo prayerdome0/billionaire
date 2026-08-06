@@ -11,7 +11,11 @@ import BlogPage from "./pages/BlogPage";
 import BlogPostPage from "./pages/BlogPostPage";
 import CertificatePage from "./pages/CertificatePage";
 import AdminPage from "./pages/AdminPage";
+import AuthPage from "./pages/AuthPage";
+import AccountPage from "./pages/AccountPage";
+import InvestPage from "./pages/InvestPage";
 import NotFoundPage from "./pages/NotFoundPage";
+import { RequireAuth, RequireAdmin } from "./components/RequireAuth";
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -26,18 +30,55 @@ export default function App() {
     <>
       <ScrollToTop />
       <Routes>
+        {/* Public */}
         <Route path="/" element={<HomePage />} />
         <Route path="/lessons" element={<LessonsPage />} />
-        <Route path="/lessons/:id" element={<LessonDetailPage />} />
         <Route path="/videos" element={<VideosPage />} />
         <Route path="/founders" element={<FoundersPage />} />
+        <Route path="/invest" element={<InvestPage />} />
         <Route path="/blog" element={<BlogPage />} />
         <Route path="/blog/:slug" element={<BlogPostPage />} />
-        <Route path="/certificate" element={<CertificatePage />} />
         <Route path="/search" element={<SearchPage />} />
-        <Route path="/api-docs" element={<ApiDocsPage />} />
+        <Route path="/auth" element={<AuthPage />} />
+
+        {/* Registered students only — the course itself */}
+        <Route
+          path="/lessons/:id"
+          element={
+            <RequireAuth>
+              <LessonDetailPage />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/certificate"
+          element={
+            <RequireAuth>
+              <CertificatePage />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/account"
+          element={
+            <RequireAuth>
+              <AccountPage />
+            </RequireAuth>
+          }
+        />
+
+        {/* Management only */}
         <Route path="/admin" element={<AdminPage />} />
         <Route path="/admin/login" element={<AdminPage />} />
+        <Route
+          path="/api-docs"
+          element={
+            <RequireAdmin>
+              <ApiDocsPage />
+            </RequireAdmin>
+          }
+        />
+
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </>

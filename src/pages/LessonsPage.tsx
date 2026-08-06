@@ -10,18 +10,20 @@ import {
   Crown,
   GraduationCap,
   Loader2,
+  Lock,
   PlayCircle,
   Trophy,
+  UserPlus,
 } from "lucide-react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import PageHeader from "../components/PageHeader";
+import { useAuth } from "../lib/auth";
 import {
   fetchLeaderboard,
   fetchLessons,
   fetchModules,
   fetchProgress,
-  getClientId,
   type LeaderboardEntry,
   type Lesson,
   type Module,
@@ -36,6 +38,9 @@ const difficultyColor: Record<string, string> = {
 };
 
 export default function LessonsPage() {
+  const { user, sessionKind, loading: authLoading } = useAuth();
+  const signedIn = !!user || sessionKind === "dev";
+
   const [lessons, setLessons] = useState<Lesson[]>([]);
   const [modules, setModules] = useState<Module[]>([]);
   const [completed, setCompleted] = useState<Set<string>>(new Set());
@@ -43,15 +48,19 @@ export default function LessonsPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (authLoading) return;
     let mounted = true;
     (async () => {
       try {
-        const [l, m, prog, board] = await Promise.all([
-          fetchLessons(),
-          fetchModules(),
-          fetchProgress(getClientId()),
-          fetchLeaderboard(),
-        ]);
+        const [l, m, board] = await Promise.all([fetchLessons(), fetchModules(), fetchLeaderboard()]);
+        let prog: string[] = [];
+        if (signedIn) {
+          try {
+            prog = await fetchProgress();
+          } catch {
+            prog = [];
+          }
+        }
         if (!mounted) return;
         setLessons(l);
         setModules(m);
@@ -64,7 +73,7 @@ export default function LessonsPage() {
     return () => {
       mounted = false;
     };
-  }, []);
+  }, [authLoading, signedIn]);
 
   const grouped = useMemo(
     () =>
@@ -88,14 +97,14 @@ export default function LessonsPage() {
         eyebrow="Curriculum"
         title="The Complete"
         highlight="Billionaire Curriculum"
-        description="28 in-depth lessons across 6 modules. Each lesson includes full written content, key takeaways, action steps, and a quiz — with your progress saved to the database."
+        description="28 in-depth lessons across 6 modules. Each lesson includes full written content, key takeaways, action steps, and a quiz — reserved for registered students, with progress saved to your account."
       >
         <div className="mt-10 max-w-xl mx-auto">
-          {loading ? (
+          {loading || authLoading ? (
             <div className="flex items-center justify-center gap-2 text-gray-500 text-sm py-6">
-              <Loader2 className="w-4 h-4 animate-spin" /> Loading curriculum from the API...
+              <Loader2 className="w-4 h-4 animate-spin" /> Loading curriculum…
             </div>
-          ) : (
+          ) : signedIn ? (
             <div className="bg-gray-900/80 border border-gray-800 rounded-2xl p-6 text-left">
               <div className="flex items-center justify-between mb-3">
                 <span className="flex items-center gap-2 text-gray-300 text-sm font-semibold">
@@ -112,8 +121,30 @@ export default function LessonsPage() {
                 />
               </div>
               <p className="text-gray-500 text-xs mt-3">
-                Progress is stored per-device in the SQLite database via <code className="text-amber-500/80">POST /api/progress</code>.
+                Progress is stored on your account (<code className="text-amber-500/80">/api/progress</code>) and
+                follows you on every device.
               </p>
+            </div>
+          ) : (
+            <div className="bg-gradient-to-br from-amber-500/10 to-gray-900/80 border border-amber-500/30 rounded-2xl p-6 text-left">
+              <div className="flex items-start gap-4">
+                <span className="w-11 h-11 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center shrink-0">
+                  <Lock className="w-5 h-5 text-amber-400" />
+                </span>
+                <div className="flex-1">
+                  <h3 className="font-bold text-white">Registration required for the course</h3>
+                  <p className="text-gray-400 text-sm mt-1">
+                    Create a free Seedwel student account to open lessons, take quizzes, track progress
+                    and earn the certificate.
+                  </p>
+                  <Link
+                    to="/auth?next=/lessons"
+                    className="mt-4 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-500 text-gray-950 font-bold px-5 py-2.5 text-xs hover:from-amber-400 hover:to-yellow-400 transition-all"
+                  >
+                    <UserPlus className="w-4 h-4" /> Create Free Account / Sign In
+                  </Link>
+                </div>
+              </div>
             </div>
           )}
         </div>
@@ -145,9 +176,11 @@ export default function LessonsPage() {
                       <div className="flex-1">
                         <div className="flex items-center gap-3 flex-wrap">
                           <h2 className="text-2xl md:text-3xl font-black text-white">{mod.title}</h2>
-                          <span className="text-xs text-gray-500 font-mono">
-                            {modDone}/{items.length} complete
-                          </span>
+                          {signedIn && (
+                            <span className="text-xs text-gray-500 font-mono">
+                              {modDone}/{items.length} complete
+                            </span>
+                          )}
                         </div>
                         <p className="text-gray-500 text-sm">{mod.tagline}</p>
                       </div>
@@ -159,17 +192,21 @@ export default function LessonsPage() {
                         return (
                           <Link
                             key={lesson.id}
-                            to={`/lessons/${lesson.id}`}
+                            to={signedIn ? `/lessons/${lesson.id}` : `/auth?next=${encodeURIComponent(`/lessons/${lesson.id}`)}`}
                             className={cn(
                               "group flex items-center gap-5 bg-gray-900/60 border rounded-2xl p-5 transition-all duration-300 hover:border-amber-500/40 hover:bg-gray-900/90",
                               isDone ? "border-emerald-500/30" : "border-gray-800"
                             )}
                           >
                             <div className="shrink-0">
-                              {isDone ? (
-                                <CheckCircle className="w-8 h-8 text-emerald-400" />
+                              {signedIn ? (
+                                isDone ? (
+                                  <CheckCircle className="w-8 h-8 text-emerald-400" />
+                                ) : (
+                                  <Circle className="w-8 h-8 text-gray-700 group-hover:text-amber-400/60 transition-colors" />
+                                )
                               ) : (
-                                <Circle className="w-8 h-8 text-gray-700 group-hover:text-amber-400/60 transition-colors" />
+                                <Lock className="w-7 h-7 text-gray-700 group-hover:text-amber-400/60 transition-colors" />
                               )}
                             </div>
                             <div className="flex-1 min-w-0">
@@ -223,18 +260,18 @@ export default function LessonsPage() {
             <div className="bg-gradient-to-br from-gray-900 to-gray-900/60 border border-amber-500/20 rounded-3xl p-8 md:p-10 text-center">
               <Award className="w-12 h-12 text-amber-400 mx-auto mb-4" />
               <h2 className="text-2xl md:text-3xl font-black text-white mb-3">
-                {done === total ? "You've finished the course!" : "Earn your certificate"}
+                {done === total && total > 0 ? "You've finished the course!" : "Earn your certificate"}
               </h2>
               <p className="text-gray-400 max-w-md mx-auto mb-6">
-                {done === total
+                {done === total && total > 0
                   ? "Complete all 28 lessons. Congratulations — claim your official certificate now."
-                  : `Complete all ${total} lessons (${total - done} remaining) to unlock your official certificate of completion.`}
+                  : `Complete all ${total} lessons${signedIn ? ` (${total - done} remaining)` : ""} to unlock your official certificate of completion.`}
               </p>
               <Link
                 to="/certificate"
                 className="inline-flex items-center gap-3 bg-gradient-to-r from-amber-500 to-yellow-500 text-gray-900 font-bold px-8 py-4 rounded-xl hover:from-amber-400 hover:to-yellow-400 transition-all hover:scale-105"
               >
-                <Award className="w-5 h-5" /> {done === total ? "Get Your Certificate" : "View Progress"}
+                <Award className="w-5 h-5" /> {done === total && total > 0 ? "Get Your Certificate" : "View Progress"}
               </Link>
             </div>
           </div>
@@ -246,8 +283,7 @@ export default function LessonsPage() {
               <h2 className="text-2xl font-black text-white">Student Leaderboard</h2>
             </div>
             <p className="text-gray-500 text-sm mb-6">
-              Top students by completed lessons — powered by <code className="text-amber-500/80">GET /api/leaderboard</code>.
-              Complete lessons to climb the ranks.
+              Top registered students by completed lessons. Complete lessons to climb the ranks.
             </p>
             {leaderboard.length === 0 ? (
               <p className="text-gray-600 text-sm text-center py-6">
@@ -266,14 +302,14 @@ export default function LessonsPage() {
                         entry.rank === 1
                           ? "bg-gradient-to-br from-amber-400 to-yellow-600 text-gray-950"
                           : entry.rank <= 3
-                          ? "bg-gray-700 text-amber-300"
-                          : "bg-gray-800 text-gray-400"
+                            ? "bg-gray-700 text-amber-300"
+                            : "bg-gray-800 text-gray-400"
                       )}
                     >
                       {entry.rank}
                     </span>
-                    <span className="text-white font-mono text-sm">{entry.clientId}</span>
-                    <span className="ml-auto text-sm text-gray-400">
+                    <span className="text-white font-semibold text-sm truncate">{entry.name || entry.clientId}</span>
+                    <span className="ml-auto text-sm text-gray-400 shrink-0">
                       <span className="text-amber-400 font-bold">{entry.completed}</span> lessons
                     </span>
                   </div>
