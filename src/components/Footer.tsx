@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { CheckCircle, Crown, Loader2, Mail, Newspaper, Send, Users, TerminalSquare, ShieldCheck, Briefcase } from "lucide-react";
+import { CheckCircle, Loader2, Mail, Newspaper, Send, Users, TerminalSquare, ShieldCheck, Briefcase } from "lucide-react";
 import { subscribeNewsletter } from "../lib/api";
 
 export default function Footer() {
@@ -28,13 +28,12 @@ export default function Footer() {
         <div className="grid md:grid-cols-3 gap-10 mb-10">
           <div>
             <Link to="/" className="flex items-center gap-3.5 group">
-              <div className="w-12 h-12 rounded-2xl bg-white/95 p-1.5 flex items-center justify-center shadow-lg shadow-amber-500/10 group-hover:scale-105 transition-transform shrink-0">
-                <img
-                  src="/images/seedwel-logo.svg"
-                  alt="Seedwel Investment Limited Logo"
-                  className="w-full h-full object-contain"
-                />
-              </div>
+              {/* Company logo — transparent, no background box */}
+              <img
+                src="/images/seedwel-logo.svg"
+                alt="Seedwel Investment Limited Logo"
+                className="w-12 h-12 object-contain group-hover:scale-105 transition-transform shrink-0"
+              />
               <div>
                 <span className="text-white font-bold text-lg block">Billionaire Blueprint</span>
                 <span className="text-amber-400 font-bold text-xs uppercase tracking-wider block mt-0.5">Seedwel Investment Limited</span>
@@ -42,8 +41,8 @@ export default function Footer() {
               </div>
             </Link>
             <p className="text-gray-600 text-sm mt-4 leading-relaxed">
-              28 lessons, 7 video masterclasses, founder mentorship, and a live SQLite-backed API —
-              all in one platform.
+              28 lessons, 7 video masterclasses, registered student accounts (Firebase Authentication),
+              and a full management console — all in one platform.
             </p>
           </div>
 
@@ -55,8 +54,11 @@ export default function Footer() {
             <Link to="/founders" className="hover:text-amber-400 transition-colors flex items-center gap-1.5">
               <Users className="w-3.5 h-3.5" /> Founders & Leadership
             </Link>
-            <Link to="/founders#invest" className="hover:text-amber-400 transition-colors flex items-center gap-1.5 text-emerald-400">
+            <Link to="/invest" className="hover:text-amber-400 transition-colors flex items-center gap-1.5 text-emerald-400">
               <Briefcase className="w-3.5 h-3.5" /> Invest With Us
+            </Link>
+            <Link to="/account" className="hover:text-amber-400 transition-colors flex items-center gap-1.5">
+              <Users className="w-3.5 h-3.5" /> My Dashboard
             </Link>
             <Link to="/api-docs" className="hover:text-amber-400 transition-colors flex items-center gap-1.5">
               <TerminalSquare className="w-3.5 h-3.5" /> API & Database

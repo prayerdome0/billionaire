@@ -15,6 +15,7 @@ import {
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import PageHeader from "../components/PageHeader";
+import { useAuth } from "../lib/auth";
 import {
   API_ENDPOINTS,
   getApiStats,
@@ -25,7 +26,15 @@ import { cn } from "../utils/cn";
 const methodColor: Record<string, string> = {
   GET: "text-emerald-400 bg-emerald-500/10 border-emerald-500/30",
   POST: "text-amber-400 bg-amber-500/10 border-amber-500/30",
+  PUT: "text-sky-400 bg-sky-500/10 border-sky-500/30",
+  PATCH: "text-purple-400 bg-purple-500/10 border-purple-500/30",
   DELETE: "text-rose-400 bg-rose-500/10 border-rose-500/30",
+};
+
+const accessColor: Record<string, string> = {
+  public: "text-emerald-300 bg-emerald-500/10 border-emerald-500/25",
+  student: "text-sky-300 bg-sky-500/10 border-sky-500/25",
+  admin: "text-amber-300 bg-amber-500/10 border-amber-500/25",
 };
 
 interface DbSnapshot {
@@ -54,16 +63,29 @@ function StatCard({ label, value, icon: Icon }: { label: string; value: string |
 }
 
 export default function ApiDocsPage() {
+  const { getIdToken } = useAuth();
   const [stats, setStats] = useState<ApiStats | null>(null);
   const [db, setDb] = useState<DbSnapshot | null>(null);
   const [selected, setSelected] = useState(API_ENDPOINTS[0]);
   const [response, setResponse] = useState<{ ok: boolean; status: number; body: string } | null>(null);
   const [trying, setTrying] = useState(false);
 
+  const authedFetch = async (path: string, init?: RequestInit) => {
+    const token = await getIdToken();
+    return fetch(path, {
+      ...init,
+      headers: {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        ...(init?.headers || {}),
+      },
+    });
+  };
+
   const load = async () => {
     const [s, d] = await Promise.all([
       getApiStats(),
-      fetch("/api/database").then((r) => r.json()).catch(() => null),
+      authedFetch("/api/database").then((r) => (r.ok ? r.json() : null)).catch(() => null),
     ]);
     setStats(s);
     setDb(d);
@@ -71,17 +93,16 @@ export default function ApiDocsPage() {
 
   useEffect(() => {
     load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const tryEndpoint = async (path: string, method: string) => {
     setTrying(true);
     setResponse(null);
-    const now = Date.now();
     try {
-      const init: RequestInit = { method, headers: { "Content-Type": "application/json" } };
-      if (method === "POST" || method === "DELETE") {
+      const init: RequestInit = { method };
+      if (method !== "GET") {
         init.body = JSON.stringify({
-          clientId: `api-explorer-${now}`,
           lessonId: "l01-psychology-of-wealth",
           name: "API Explorer",
           email: "explorer@example.com",
@@ -89,7 +110,7 @@ export default function ApiDocsPage() {
           message: "Hello! This message was created by the API explorer.",
         });
       }
-      const res = await fetch(path, init);
+      const res = await authedFetch(path, init);
       const text = await res.text();
       let pretty = text;
       try {
@@ -109,15 +130,22 @@ export default function ApiDocsPage() {
     <div className="min-h-screen bg-gray-950 text-white">
       <Navbar />
       <PageHeader
-        eyebrow="Developer Portal"
+        eyebrow="Admin Developer Portal"
         title="Live REST API +"
-        highlight="SQLite Database"
-        description="The entire site runs on this API. Every lesson, video, founder, and niche is served from a SQLite database — and your progress and messages are written back into it. Explore it live below."
+        highlight="Database Explorer"
+        description="Management-only view of the entire Seedwel API. Endpoints are grouped by access tier — public content, registered-student actions, and admin-only management. Your Firebase ID token is attached automatically to every try-it call."
       >
-        <div className="mt-8 inline-flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/25 rounded-full px-5 py-2">
-          <Activity className="w-4 h-4 text-emerald-400" />
-          <span className="text-emerald-300 text-sm font-mono">
-            {stats ? `API ONLINE · ${stats.lessons} lessons · ${stats.videos} videos · ${stats.database?.contact_messages ?? 0} messages in DB` : "connecting to API..."}
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+          <span className="inline-flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/25 rounded-full px-5 py-2">
+            <Activity className="w-4 h-4 text-emerald-400" />
+            <span className="text-emerald-300 text-sm font-mono">
+              {stats ? `API ONLINE · ${stats.lessons} lessons · ${stats.videos} videos · ${stats.users ?? 0} users` : "connecting to API..."}
+            </span>
+          </span>
+          <span className="inline-flex items-center gap-3 rounded-full bg-gray-900/80 border border-gray-800 px-5 py-2 text-xs font-mono">
+            <span className="text-emerald-300">public</span>
+            <span className="text-sky-300">student</span>
+            <span className="text-amber-300">admin</span>
           </span>
         </div>
       </PageHeader>
@@ -169,8 +197,13 @@ export default function ApiDocsPage() {
                   <span className={cn("text-[10px] font-bold px-2 py-1 rounded border shrink-0 mt-0.5", methodColor[ep.method])}>
                     {ep.method}
                   </span>
-                  <span className="min-w-0">
-                    <span className="block text-white text-xs font-mono truncate">{ep.path}</span>
+                  <span className="min-w-0 flex-1">
+                    <span className="flex items-center gap-2">
+                      <span className="block text-white text-xs font-mono truncate">{ep.path}</span>
+                      <span className={cn("text-[9px] font-black uppercase px-1.5 py-0.5 rounded border shrink-0", accessColor[ep.access])}>
+                        {ep.access}
+                      </span>
+                    </span>
                     <span className="block text-gray-500 text-xs mt-0.5">{ep.description}</span>
                   </span>
                 </button>
