@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { NavLink, Link, useLocation } from "react-router-dom";
-import { Crown, Download, Menu, X, BookOpen, PlayCircle, Users, TerminalSquare, Newspaper, Search, Award } from "lucide-react";
+import { Crown, Download, Menu, X, BookOpen, PlayCircle, Users, TerminalSquare, Newspaper, Search, Award, ShieldCheck, TrendingUp } from "lucide-react";
 import { generateBillionairePdf } from "../utils/generatePdf";
 import { cn } from "../utils/cn";
 
@@ -12,6 +12,7 @@ const navItems = [
   { to: "/blog", label: "Blog", icon: Newspaper },
   { to: "/certificate", label: "Certificate", icon: Award },
   { to: "/api-docs", label: "API", icon: TerminalSquare },
+  { to: "/admin", label: "Admin", icon: ShieldCheck },
 ];
 
 export default function Navbar() {
@@ -49,13 +50,22 @@ export default function Navbar() {
       }`}
     >
       <div className="max-w-6xl mx-auto px-4 flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-3">
-          <div className="w-9 h-9 bg-gradient-to-br from-amber-400 to-yellow-600 rounded-lg flex items-center justify-center">
-            <Crown className="w-5 h-5 text-gray-900" />
+        <Link to="/" className="flex items-center gap-3.5 group">
+          <div className="w-10 h-10 rounded-xl bg-white/95 p-1 flex items-center justify-center shadow-lg shadow-amber-500/15 group-hover:scale-105 transition-transform shrink-0">
+            <img
+              src="/images/seedwel-logo.svg"
+              alt="Seedwel Investment Limited Logo"
+              className="w-full h-full object-contain"
+            />
           </div>
-          <span className="text-white font-bold text-lg hidden sm:block">
-            Billionaire Blueprint
-          </span>
+          <div className="flex flex-col">
+            <span className="text-white font-black text-base sm:text-lg hidden sm:block leading-none tracking-tight">
+              Billionaire Blueprint
+            </span>
+            <span className="text-amber-400 text-[11px] sm:text-xs font-bold tracking-widest uppercase hidden sm:block mt-1">
+              Seedwel Investment Ltd
+            </span>
+          </div>
         </Link>
 
         {/* Desktop nav */}
@@ -75,6 +85,13 @@ export default function Navbar() {
               {item.label}
             </NavLink>
           ))}
+          <Link
+            to="/founders#invest"
+            className="hidden lg:flex items-center gap-1.5 border border-amber-500/40 bg-amber-500/10 text-amber-300 hover:bg-amber-500/20 px-3.5 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all"
+          >
+            <TrendingUp className="w-3.5 h-3.5 text-amber-400" />
+            Invest With Us
+          </Link>
           <button
             onClick={handleDownload}
             disabled={downloading}

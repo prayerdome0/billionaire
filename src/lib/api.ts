@@ -62,6 +62,45 @@ export interface Subscriber {
   created_at: string;
 }
 
+export interface InvestorInquiry {
+  id: number;
+  name: string;
+  email: string;
+  phone?: string;
+  interest_area: string;
+  amount_range?: string;
+  message?: string;
+  created_at: string;
+}
+
+export interface AdminOverview {
+  company: {
+    name: string;
+    registeredYear: number;
+    status: string;
+    founder: string;
+    countryDirectorZambia: string;
+    adminEmail: string;
+    pillars: string[];
+  };
+  stats: Record<string, number>;
+  database: Record<string, any>;
+  messages: ContactMessage[];
+  subscribers: Subscriber[];
+  investorInquiries: InvestorInquiry[];
+}
+
+export interface UpgradeRecommendation {
+  id: string;
+  category: string;
+  title: string;
+  priority: "High" | "Medium" | "Strategic";
+  actionType: "Upgrade" | "Add";
+  description: string;
+  impact: string;
+  status: string;
+}
+
 const API_BASE = "/api";
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
@@ -205,6 +244,51 @@ export async function fetchLeaderboard(): Promise<LeaderboardEntry[]> {
 
 export async function subscribeNewsletter(email: string): Promise<Subscriber> {
   return request<Subscriber>("/newsletter", { method: "POST", body: JSON.stringify({ email }) });
+}
+
+export async function adminLogin(email: string, password: string): Promise<{
+  success: boolean;
+  token: string;
+  admin: { name: string; role: string; email: string };
+}> {
+  return request("/admin/login", {
+    method: "POST",
+    body: JSON.stringify({ email, password }),
+  });
+}
+
+export async function fetchAdminOverview(): Promise<AdminOverview> {
+  return request<AdminOverview>("/admin/overview");
+}
+
+export async function fetchAdminRecommendations(): Promise<{
+  summary: string;
+  company: string;
+  recommendations: UpgradeRecommendation[];
+}> {
+  return request("/admin/recommendations");
+}
+
+export async function postInvestorInquiry(input: {
+  name: string;
+  email: string;
+  phone?: string;
+  interestArea: string;
+  amountRange?: string;
+  message?: string;
+}): Promise<{ success: boolean; inquiry: InvestorInquiry }> {
+  return request("/investors", {
+    method: "POST",
+    body: JSON.stringify(input),
+  });
+}
+
+export async function fetchInvestorInquiries(): Promise<InvestorInquiry[]> {
+  try {
+    return await request<InvestorInquiry[]>("/investors");
+  } catch {
+    return [];
+  }
 }
 
 export function getClientId(): string {
@@ -363,6 +447,36 @@ export const API_ENDPOINTS: {
     method: "GET",
     path: "/api/database",
     description: "Inspect the database: tables and row counts.",
-    example: '{"tables":{"founders":4,"lessons":28,"contact_messages":2},...}',
+    example: '{"tables":{"founders":6,"lessons":28,"contact_messages":2},...}',
+  },
+  {
+    method: "POST",
+    path: "/api/admin/login",
+    description: "Admin authentication for Mr. Seedwell Khayalethu Masuku & management.",
+    example: 'POST body {"email":"seed@admin","password":"122023"}',
+  },
+  {
+    method: "GET",
+    path: "/api/admin/overview",
+    description: "Full management overview, company registration status, and deal flow.",
+    example: '{"company":{"name":"Seedwel Investment Limited",...},"stats":{...}}',
+  },
+  {
+    method: "GET",
+    path: "/api/admin/recommendations",
+    description: "AI management advisory: what to upgrade or add across all company pillars.",
+    example: '{"recommendations":[{"id":"rec-school-escrow","title":"...",...}]}',
+  },
+  {
+    method: "POST",
+    path: "/api/investors",
+    description: "Submit an investor inquiry for School Building or AI Business (database write).",
+    example: 'POST body {"name":"Investor","email":"i@fund.org","interestArea":"School Building"}',
+  },
+  {
+    method: "GET",
+    path: "/api/investors",
+    description: "List all submitted investor inquiries for Seedwel Investment Limited.",
+    example: '[{"id":1,"name":"Investor","email":"i@fund.org",...}]',
   },
 ];

@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <linearGradient id="leafGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#76C01D" />
+      <stop offset="50%" stop-color="#2D9A1E" />
+      <stop offset="100%" stop-color="#0F681C" />
+    </linearGradient>
+    <linearGradient id="bookGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#4CB824" />
+      <stop offset="50%" stop-color="#197F20" />
+      <stop offset="100%" stop-color="#044D29" />
+    </linearGradient>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#E2BA44" />
+      <stop offset="50%" stop-color="#B8860B" />
+      <stop offset="100%" stop-color="#8B6508" />
+    </linearGradient>
+    <linearGradient id="crescentGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#8B6508" />
+      <stop offset="40%" stop-color="#B8860B" />
+      <stop offset="100%" stop-color="#E5C158" />
+    </linearGradient>
+    <style>
+      .serif-text {
+        font-family: 'Georgia', 'Times New Roman', serif;
+        font-weight: 800;
+        letter-spacing: 2px;
+      }
+      .sans-text {
+        font-family: 'Helvetica Neue', 'Arial', sans-serif;
+        font-weight: 600;
+        letter-spacing: 5px;
+      }
+    </style>
+  </defs>
+
+  <!-- Golden Crescent Arc Cradling the Book -->
+  <path d="M 120 280 C 120 340, 180 390, 270 390 C 370 390, 420 310, 400 200 C 425 280, 400 420, 260 420 C 140 420, 85 340, 120 280 Z" fill="url(#crescentGrad)" />
+  <path d="M 110 260 C 90 320, 130 380, 240 390 C 140 375, 95 320, 110 260 Z" fill="#044D29" opacity="0.8" />
+
+  <!-- Open Book (Green Leaves/Pages) -->
+  <g transform="translate(0, 20)">
+    <!-- Left pages -->
+    <path d="M 140 280 Q 200 290 256 315 Q 195 280 135 260 Z" fill="#88D42A" />
+    <path d="M 145 300 Q 205 310 256 325 Q 200 295 140 280 Z" fill="#3AA620" />
+    <path d="M 150 320 Q 210 330 256 345 Q 205 315 145 300 Z" fill="#0B6B22" />
+    <!-- Right pages -->
+    <path d="M 372 280 Q 312 290 256 315 Q 317 280 377 260 Z" fill="#88D42A" />
+    <path d="M 367 300 Q 307 310 256 325 Q 312 295 372 280 Z" fill="#3AA620" />
+    <path d="M 362 320 Q 302 330 256 345 Q 307 315 367 300 Z" fill="#0B6B22" />
+    <!-- Book base shadow / cover -->
+    <path d="M 150 325 Q 256 360 362 325 Q 256 385 150 325 Z" fill="#044D29" />
+  </g>
+
+  <!-- Growing Sprout with Three Leaves -->
+  <!-- Central Stem -->
+  <path d="M 256 340 Q 252 230 270 145" fill="none" stroke="url(#leafGrad)" stroke-width="8" stroke-linecap="round" />
+  
+  <!-- Top Center Leaf -->
+  <path d="M 270 145 C 240 100, 255 60, 275 55 C 295 60, 290 105, 270 145 Z" fill="url(#leafGrad)" />
+  <!-- Right Leaf -->
+  <path d="M 265 175 C 310 145, 360 140, 365 160 C 355 185, 300 205, 265 175 Z" fill="url(#leafGrad)" />
+  <!-- Left Leaf -->
+  <path d="M 260 215 C 220 180, 175 185, 180 205 C 195 230, 235 240, 260 215 Z" fill="url(#leafGrad)" />
+
+  <!-- Sparkles Top Right -->
+  <g fill="url(#goldGrad)">
+    <!-- Large Sparkle -->
+    <path d="M 345 80 L 350 65 L 355 80 L 370 85 L 355 90 L 350 105 L 345 90 L 330 85 Z" />
+    <!-- Small Sparkle -->
+    <path d="M 375 100 L 378 92 L 381 100 L 389 103 L 381 106 L 378 114 L 375 106 L 367 103 Z" />
+  </g>
+
+  <!-- Typography: SEEDWEL INVESTMENT LIMITED -->
+  <text x="256" y="455" text-anchor="middle" class="serif-text" font-size="52" fill="#044D29">SEEDWEL</text>
+  <text x="256" y="490" text-anchor="middle" class="sans-text" font-size="19" fill="#B8860B">INVESTMENT LIMITED</text>
+</svg>

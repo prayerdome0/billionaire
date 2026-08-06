@@ -107,8 +107,15 @@ export default function CertificatePage() {
               <div className="relative bg-[#111827] border-4 border-[#d1ab52] rounded-lg p-6 md:p-10 mb-8 shadow-2xl shadow-amber-500/10">
                 <div className="absolute inset-2 border border-[#d1ab52]/60 rounded" />
                 <div className="relative text-center">
-                  <div className="text-[#d1ab52] font-bold tracking-[0.3em] text-xs md:text-sm mb-4">
-                    BILLIONAIRE BLUEPRINT
+                  <div className="flex justify-center mb-3">
+                    <img
+                      src="/images/seedwel-logo.svg"
+                      alt="Seedwel Investment Limited"
+                      className="h-16 w-auto object-contain"
+                    />
+                  </div>
+                  <div className="text-[#d1ab52] font-bold tracking-[0.3em] text-xs md:text-sm mb-2">
+                    SEEDWEL INVESTMENT LIMITED • BILLIONAIRE BLUEPRINT
                   </div>
                   <h2 className="text-2xl md:text-4xl font-black text-white mb-2">
                     Certificate of Completion

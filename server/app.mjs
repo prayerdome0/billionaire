@@ -145,6 +145,149 @@ app.delete("/api/progress", async (req, res) => {
   json(res, 200, { ok: true, lessonId, completed: false });
 });
 
+/* ----------------------------- admin auth & overview ----------------------------- */
+app.post("/api/admin/login", async (req, res) => {
+  const { email = "", password = "" } = req.body || {};
+  const cleanEmail = String(email).trim().toLowerCase();
+  const validEmails = ["seed@admin", "seed@admin.com", "seedwell@seedwel.com", "zacheus@seedwelinvestment.com"];
+  if (!validEmails.includes(cleanEmail) || String(password).trim() !== "122023") {
+    return json(res, 401, { error: "Invalid email or password. Use seed@admin and password 122023." });
+  }
+  const isZacheus = cleanEmail.includes("zacheus");
+  json(res, 200, {
+    success: true,
+    token: `seed-admin-token-${Date.now()}`,
+    admin: {
+      name: isZacheus ? "Zacheus Simbaya" : "Mr. Seedwell Khayalethu Masuku",
+      role: isZacheus ? "Country Director — Zambia" : "Founder & CEO, Seedwel Investment Limited",
+      email: cleanEmail,
+    },
+  });
+});
+
+app.get("/api/admin/overview", async (_req, res) => {
+  const s = await store();
+  const [stats, dbInfo, messages, subscribers, inquiries] = await Promise.all([
+    s.stats(),
+    s.databaseInfo(),
+    s.listMessages(),
+    s.listSubscribers(),
+    s.listInvestorInquiries(),
+  ]);
+  json(res, 200, {
+    company: {
+      name: "Seedwel Investment Limited",
+      registeredYear: 2025,
+      status: "Active & Open for Investor Partnerships",
+      founder: "Mr. Seedwell Khayalethu Masuku",
+      countryDirectorZambia: "Zacheus Simbaya",
+      adminEmail: "seed@admin",
+      pillars: [
+        "School Building & Educational Infrastructure",
+        "AI Business & Software Developer Ecosystem",
+        "Strategic Real Estate & Wealth Education",
+      ],
+    },
+    stats,
+    database: dbInfo,
+    messages,
+    subscribers,
+    investorInquiries: inquiries,
+  });
+});
+
+app.get("/api/admin/recommendations", async (_req, res) => {
+  json(res, 200, {
+    summary: "System Growth & Strategic Upgrade Roadmap for Seedwel Investment Limited",
+    company: "Seedwel Investment Limited — Registered 2025",
+    recommendations: [
+      {
+        id: "rec-school-escrow",
+        category: "School Building & Educational Infrastructure",
+        title: "Zambia School Construction Escrow & Milestone Tracking",
+        priority: "High",
+        actionType: "Upgrade",
+        description: "Upgrade the investor dashboard to provide real-time architectural milestones, drone inspection videos, and escrow verification for the 15 STEM & AI schools currently planned in Lusaka and the Copperbelt.",
+        impact: "Increases investor trust and accelerates ticket sizes from regional family offices.",
+        status: "Recommended",
+      },
+      {
+        id: "rec-ai-incubator",
+        category: "AI Business & Developer Ecosystem",
+        title: "Pan-African Tech Developer Talent Showcase & Incubator Portal",
+        priority: "High",
+        actionType: "Add",
+        description: "Add a dedicated Developer Incubator portal where investors can browse AI software startups, view developer code commits, and co-invest in early-stage African tech teams.",
+        impact: "Monetizes the AI developer pipeline and creates high-margin recurring software revenue.",
+        status: "Recommended",
+      },
+      {
+        id: "rec-investor-prospectus",
+        category: "Investor Deal Flow & Capital Readiness",
+        title: "Downloadable Term Sheets & Interactive ROI Simulator",
+        priority: "Strategic",
+        actionType: "Add",
+        description: "Add an interactive return-on-investment (ROI) simulator and automated PDF Term Sheet downloader for institutional investors looking at school building and real estate funds.",
+        impact: "Shortens the investor due diligence cycle from weeks to minutes.",
+        status: "Recommended",
+      },
+      {
+        id: "rec-kyc-aml",
+        category: "Investor Compliance & Security",
+        title: "Accredited Investor KYC / AML Verification Workflow",
+        priority: "Medium",
+        actionType: "Upgrade",
+        description: "Upgrade the Investor Inquiry flow with an optional KYC (Know Your Customer) identity verification step for investments exceeding $50,000.",
+        impact: "Ensures full compliance with international financial and securities regulations.",
+        status: "Recommended",
+      },
+      {
+        id: "rec-zambia-curriculum",
+        category: "Curriculum & Educational Platform",
+        title: "SADC & African Emerging Market Case Studies in Curriculum",
+        priority: "High",
+        actionType: "Add",
+        description: "Add localized African wealth case studies and live masterclass webinar scheduling with Mr. Seedwell Khayalethu Masuku and Zacheus Simbaya to Module 4 and 5.",
+        impact: "Deepens engagement for African entrepreneurs and international investors seeking frontier market insights.",
+        status: "Recommended",
+      },
+      {
+        id: "rec-db-persistence",
+        category: "Technical & Database Infrastructure",
+        title: "Connect Vercel Postgres / Supabase for Production Persistence",
+        priority: "High",
+        actionType: "Upgrade",
+        description: "Connect a hosted database via DATABASE_URL so that investor inquiries, student progress, and admin logs persist across cloud deployments.",
+        impact: "Guarantees zero data loss for production investor deal flow.",
+        status: "Recommended",
+      },
+    ],
+  });
+});
+
+/* ----------------------------- investor inquiries ----------------------------- */
+app.post("/api/investors", async (req, res) => {
+  const { name, email, phone, interestArea = "School Building & AI Business", amountRange, message } = req.body || {};
+  if (!name || !email) {
+    return json(res, 400, { error: "name and email are required to submit an investor inquiry" });
+  }
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+    return json(res, 400, { error: "email is not valid" });
+  }
+  const created = await (await store()).addInvestorInquiry({
+    name: clip(name, 120),
+    email: clip(email, 200),
+    phone: clip(phone || "", 50),
+    interest_area: clip(interestArea, 120),
+    amount_range: clip(amountRange || "", 80),
+    message: clip(message || "", 5000),
+  });
+  json(res, 201, { success: true, inquiry: created });
+});
+app.get("/api/investors", async (_req, res) => {
+  json(res, 200, await (await store()).listInvestorInquiries());
+});
+
 /* ------------------------------ static SPA ------------------------------ */
 if (existsSync(DIST)) {
   app.use(express.static(DIST));

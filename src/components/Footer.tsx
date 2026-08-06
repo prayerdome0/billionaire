@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { CheckCircle, Crown, Loader2, Mail, Newspaper, Send, Users, TerminalSquare } from "lucide-react";
+import { CheckCircle, Crown, Loader2, Mail, Newspaper, Send, Users, TerminalSquare, ShieldCheck, Briefcase } from "lucide-react";
 import { subscribeNewsletter } from "../lib/api";
 
 export default function Footer() {
@@ -27,13 +27,18 @@ export default function Footer() {
       <div className="max-w-6xl mx-auto px-4">
         <div className="grid md:grid-cols-3 gap-10 mb-10">
           <div>
-            <Link to="/" className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-amber-400 to-yellow-600 rounded-xl flex items-center justify-center">
-                <Crown className="w-5 h-5 text-gray-900" />
+            <Link to="/" className="flex items-center gap-3.5 group">
+              <div className="w-12 h-12 rounded-2xl bg-white/95 p-1.5 flex items-center justify-center shadow-lg shadow-amber-500/10 group-hover:scale-105 transition-transform shrink-0">
+                <img
+                  src="/images/seedwel-logo.svg"
+                  alt="Seedwel Investment Limited Logo"
+                  className="w-full h-full object-contain"
+                />
               </div>
               <div>
-                <span className="text-white font-bold text-lg">Billionaire Blueprint</span>
-                <p className="text-gray-500 text-xs">Your guide to extraordinary wealth</p>
+                <span className="text-white font-bold text-lg block">Billionaire Blueprint</span>
+                <span className="text-amber-400 font-bold text-xs uppercase tracking-wider block mt-0.5">Seedwel Investment Limited</span>
+                <span className="text-gray-500 text-[11px] block mt-0.5">Registered 2025 • Open for Investors</span>
               </div>
             </Link>
             <p className="text-gray-600 text-sm mt-4 leading-relaxed">
@@ -47,14 +52,17 @@ export default function Footer() {
             <Link to="/lessons" className="hover:text-amber-400 transition-colors flex items-center gap-1.5">
               <Newspaper className="w-3.5 h-3.5" /> Lessons
             </Link>
-            <Link to="/blog" className="hover:text-amber-400 transition-colors flex items-center gap-1.5">
-              <Newspaper className="w-3.5 h-3.5" /> Blog
+            <Link to="/founders" className="hover:text-amber-400 transition-colors flex items-center gap-1.5">
+              <Users className="w-3.5 h-3.5" /> Founders & Leadership
             </Link>
-            <Link to="/certificate" className="hover:text-amber-400 transition-colors flex items-center gap-1.5">
-              <Users className="w-3.5 h-3.5" /> Certificate
+            <Link to="/founders#invest" className="hover:text-amber-400 transition-colors flex items-center gap-1.5 text-emerald-400">
+              <Briefcase className="w-3.5 h-3.5" /> Invest With Us
             </Link>
             <Link to="/api-docs" className="hover:text-amber-400 transition-colors flex items-center gap-1.5">
               <TerminalSquare className="w-3.5 h-3.5" /> API & Database
+            </Link>
+            <Link to="/admin" className="hover:text-amber-400 transition-colors flex items-center gap-1.5 text-amber-400/80 font-medium">
+              <ShieldCheck className="w-3.5 h-3.5" /> Admin Portal
             </Link>
           </div>
 
@@ -91,14 +99,20 @@ export default function Footer() {
         </div>
 
         <div className="pt-8 border-t border-gray-800/50 text-center">
-          <p className="text-gray-600 text-sm">
-            © {new Date().getFullYear()} Billionaire Blueprint. For educational purposes only.
-            Not financial advice. All billionaire data sourced from public records.
+          <p className="text-gray-500 text-sm font-medium">
+            © {new Date().getFullYear()} Seedwel Investment Limited (Registered 2025). Founder Mr. Seedwell Khayalethu Masuku • Zambia Country Director Zacheus Simbaya.
+          </p>
+          <p className="text-gray-600 text-xs mt-1">
+            Open for investors in school building, AI business, and software developers.
           </p>
           <p className="text-gray-700 text-xs mt-2">
             Powered by a SQLite database &amp; REST API —{" "}
             <Link to="/api-docs" className="text-amber-500/80 hover:text-amber-400">
               explore the live API
+            </Link>{" "}
+            •{" "}
+            <Link to="/admin" className="text-amber-500/80 hover:text-amber-400">
+              admin portal
             </Link>
           </p>
         </div>
