@@ -1,0 +1,3066 @@
+{
+  "site": {
+    "name": "Billionaire Blueprint",
+    "tagline": "The proven playbook for building extraordinary wealth",
+    "description": "A complete curriculum of lessons, video masterclasses, founder insights, and a live REST API — everything you need to go from spectator to owner."
+  },
+  "siteStats": [
+    {
+      "label": "In-Depth Lessons",
+      "value": "28"
+    },
+    {
+      "label": "Video Masterclasses",
+      "value": "7"
+    },
+    {
+      "label": "High-Paying Niches",
+      "value": "6"
+    },
+    {
+      "label": "Billionaire Examples",
+      "value": "18"
+    },
+    {
+      "label": "Actionable Strategies",
+      "value": "30+"
+    },
+    {
+      "label": "Founders & Mentors",
+      "value": "4"
+    }
+  ],
+  "heroImage": "https://images.pexels.com/photos/36945570/pexels-photo-36945570.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=627&w=1200",
+  "stepsToWealth": [
+    {
+      "number": 1,
+      "title": "Develop a Wealth Mindset",
+      "description": "Think abundance, not scarcity. Every billionaire started with a vision that others thought was impossible. Read voraciously, surround yourself with ambitious people, and believe in exponential growth.",
+      "icon": "Brain"
+    },
+    {
+      "number": 2,
+      "title": "Identify a Massive Problem",
+      "description": "Billionaires solve problems at scale. Find pain points that affect millions or billions of people. The bigger the problem, the bigger the opportunity. Focus on industries ripe for disruption.",
+      "icon": "Search"
+    },
+    {
+      "number": 3,
+      "title": "Build Scalable Systems",
+      "description": "Create business models that can grow without linear increases in cost. Software, platforms, and networks are inherently scalable. Your income should not be tied directly to your time.",
+      "icon": "Layers"
+    },
+    {
+      "number": 4,
+      "title": "Master Capital & Investment",
+      "description": "Learn to raise capital, reinvest profits, and make money work for you. Understand compound interest, venture capital, and how to leverage other people's money (OPM) strategically.",
+      "icon": "TrendingUp"
+    },
+    {
+      "number": 5,
+      "title": "Build an Elite Team",
+      "description": "No billionaire built their empire alone. Attract A-players, create a culture of excellence, and delegate ruthlessly. Your team's capabilities determine your ceiling.",
+      "icon": "Users"
+    },
+    {
+      "number": 6,
+      "title": "Execute Relentlessly",
+      "description": "Ideas are worthless without execution. Move fast, iterate constantly, and outwork your competition. Be prepared to fail multiple times before you succeed at scale.",
+      "icon": "Rocket"
+    }
+  ],
+  "wealthPrinciples": [
+    {
+      "title": "Think in Decades, Not Days",
+      "description": "Billionaires play long-term games. Jeff Bezos didn't take a salary for years. Warren Buffett made 99% of his wealth after age 50. Patience combined with consistent action creates exponential results.",
+      "icon": "Clock"
+    },
+    {
+      "title": "Own Equity, Not Just Income",
+      "description": "You cannot become a billionaire on salary alone. You must own equity in something that scales — a company, real estate portfolio, or investment portfolio. Ownership is the key to asymmetric wealth creation.",
+      "icon": "Key"
+    },
+    {
+      "title": "Leverage Technology & People",
+      "description": "Use technology to serve millions. Hire people who are better than you. Create systems that generate value while you sleep. Leverage is the multiplier that turns hard work into extraordinary outcomes.",
+      "icon": "Zap"
+    },
+    {
+      "title": "Embrace Calculated Risk",
+      "description": "Every billionaire took risks others wouldn't. But these are calculated risks — thorough research, diversification, and understanding the downside. Risk is not reckless; it's strategic.",
+      "icon": "Target"
+    },
+    {
+      "title": "Create Multiple Income Streams",
+      "description": "Diversify your revenue sources. Build businesses, invest in stocks, own real estate, create intellectual property. Multiple streams of income provide security and accelerate wealth accumulation.",
+      "icon": "GitBranch"
+    },
+    {
+      "title": "Network is Net Worth",
+      "description": "Your relationships determine your opportunities. Every billionaire has a powerful network. Attend events, provide value to others first, and cultivate relationships with people who are where you want to be.",
+      "icon": "Network"
+    }
+  ],
+  "founders": [
+    {
+      "id": "alex-morgan",
+      "name": "Alex Morgan",
+      "role": "Co-Founder & CEO",
+      "photo": "/images/founders/alex-morgan.jpg",
+      "bio": "Alex spent 12 years on Wall Street running multi-billion-dollar trading desks before founding a fintech company that reached a $2.3B valuation. He teaches the capital side of the blueprint — how money actually moves and how to make it work for you.",
+      "quote": "Wealth is a system, not a lottery ticket. Learn the system and the lottery becomes irrelevant.",
+      "focus": [
+        "Capital Markets",
+        "Trading & Investing",
+        "Startup Finance"
+      ],
+      "funFact": "Made his first $1M at age 27 — and lost it all at 28. Rebuilt it by 31.",
+      "email": "alex@billionaireblueprint.io",
+      "socials": {
+        "linkedin": "https://linkedin.com",
+        "twitter": "https://x.com"
+      }
+    },
+    {
+      "id": "sarah-chen",
+      "name": "Sarah Chen",
+      "role": "Co-Founder & Head of Education",
+      "photo": "/images/founders/sarah-chen.jpg",
+      "bio": "Sarah is a former McKinsey consultant and Harvard MBA who scaled three startups past $100M in revenue. She designs the curriculum — turning billion-dollar operating principles into step-by-step lessons anyone can execute.",
+      "quote": "Education without execution is entertainment. Every lesson in this course ends with a move you can make today.",
+      "focus": [
+        "Business Strategy",
+        "Scaling Operations",
+        "Curriculum Design"
+      ],
+      "funFact": "Has personally reviewed 2,000+ business models — and can smell an unsellable one in 60 seconds.",
+      "email": "sarah@billionaireblueprint.io",
+      "socials": {
+        "linkedin": "https://linkedin.com",
+        "twitter": "https://x.com"
+      }
+    },
+    {
+      "id": "marcus-johnson",
+      "name": "Marcus Johnson",
+      "role": "Co-Founder & Director of Investments",
+      "photo": "/images/founders/marcus-johnson.jpg",
+      "bio": "Marcus has spent 25 years building wealth through real estate, private equity, and venture capital. He has closed over $1.5B in deals and teaches the asset-class playbooks: property, PE, VC, and alternative investments.",
+      "quote": "Deal flow is the only asset that matters. Great investors see ten deals for every one they take.",
+      "focus": [
+        "Real Estate",
+        "Private Equity",
+        "Venture Capital"
+      ],
+      "funFact": "Owns 11 rental properties in three countries — and still does his own underwriting on every single one.",
+      "email": "marcus@billionaireblueprint.io",
+      "socials": {
+        "linkedin": "https://linkedin.com",
+        "twitter": "https://x.com"
+      }
+    },
+    {
+      "id": "elena-rossi",
+      "name": "Elena Rossi",
+      "role": "Co-Founder & Head of Innovation",
+      "photo": "/images/founders/elena-rossi.jpg",
+      "bio": "Elena led AI product teams at Google before launching two venture-backed startups. She maps the frontier niches — AI, biotech, FinTech — and translates technical trends into practical wealth opportunities.",
+      "quote": "The biggest fortunes of the next decade are being coded right now. I want you in the room where it happens.",
+      "focus": [
+        "Artificial Intelligence",
+        "Deep Tech",
+        "Product Innovation"
+      ],
+      "funFact": "Fluent in 5 languages and 3 programming languages — she learned Python in a weekend on a dare.",
+      "email": "elena@billionaireblueprint.io",
+      "socials": {
+        "linkedin": "https://linkedin.com",
+        "twitter": "https://x.com"
+      }
+    }
+  ],
+  "testimonials": [
+    {
+      "name": "David Okafor",
+      "role": "SaaS Founder, Lagos",
+      "text": "The lessons on pricing and distribution alone paid for the course a hundred times over. I closed my first $50K enterprise deal 6 weeks in.",
+      "rating": 5
+    },
+    {
+      "name": "Priya Raman",
+      "role": "Real Estate Investor, Austin",
+      "text": "I followed the 12-month first-million roadmap and did my first BRRRR deal by month three. The founders actually reply to questions — unheard of.",
+      "rating": 5
+    },
+    {
+      "name": "Tom Becker",
+      "role": "Product Engineer, Berlin",
+      "text": "The AI niche module helped me reposition my career and build a side SaaS that's now doing $8K MRR. The video masterclasses are gold.",
+      "rating": 5
+    }
+  ],
+  "modules": [
+    {
+      "id": "m1",
+      "number": 1,
+      "title": "The Billionaire Mindset",
+      "tagline": "Rewire your thinking before you rewire your bank account.",
+      "description": "Wealth is 20% mechanics and 80% psychology. This module rewires how you think about risk, time, and money — the foundation every billionaire builds on.",
+      "icon": "Brain",
+      "gradient": "from-amber-400 to-yellow-600"
+    },
+    {
+      "id": "m2",
+      "number": 2,
+      "title": "Money Mechanics",
+      "tagline": "Understand exactly how money is created, moved, and multiplied.",
+      "description": "Before you can build wealth you must understand the machine. Learn assets vs liabilities, compound interest, inflation, and the four kinds of leverage.",
+      "icon": "Coins",
+      "gradient": "from-emerald-400 to-teal-600"
+    },
+    {
+      "id": "m3",
+      "number": 3,
+      "title": "Business Building",
+      "tagline": "Design companies that scale beyond your time.",
+      "description": "The engine of most billion-dollar fortunes is a company. Learn to find massive problems, validate fast, price for premium margins, hire A-players, and dominate distribution.",
+      "icon": "Rocket",
+      "gradient": "from-sky-400 to-blue-600"
+    },
+    {
+      "id": "m4",
+      "number": 4,
+      "title": "Investing & Capital",
+      "tagline": "Put your capital to work across every asset class.",
+      "description": "Business builds wealth; investing preserves and compounds it. Master capital allocation, public markets, private equity, real estate, and alternative assets.",
+      "icon": "TrendingUp",
+      "gradient": "from-violet-400 to-purple-600"
+    },
+    {
+      "id": "m5",
+      "number": 5,
+      "title": "High-Paying Niches",
+      "tagline": "Deploy the blueprint inside the industries that mint billionaires.",
+      "description": "AI, FinTech, DTC brands, healthcare — deep dives into the six niches that created the most self-made billionaires, with real case studies and entry playbooks.",
+      "icon": "Target",
+      "gradient": "from-rose-400 to-red-600"
+    },
+    {
+      "id": "m6",
+      "number": 6,
+      "title": "Execution & Legacy",
+      "tagline": "From first million to lasting empire.",
+      "description": "Ideas are cheap; execution is everything. A 12-month first-million roadmap, personal brand leverage, elite networking, and protecting what you build.",
+      "icon": "Crown",
+      "gradient": "from-yellow-400 to-amber-600"
+    }
+  ],
+  "lessons": [
+    {
+      "id": "l01-psychology-of-wealth",
+      "moduleId": "m1",
+      "number": 1,
+      "title": "The Psychology of Wealth",
+      "subtitle": "Why your beliefs about money come first",
+      "summary": "Your money ceiling is set by your psychology, not your paycheck. Discover the belief systems that separate the rich from the rest and how to rewire your own.",
+      "duration": "15 min",
+      "difficulty": "Beginner",
+      "content": [
+        {
+          "heading": "Money is a belief system",
+          "paragraphs": [
+            "Most people treat money as a math problem. It isn't — it's a psychology problem that math happens to describe. Morgan Housel, author of The Psychology of Money, studied decades of investor behavior and concluded that doing well with money has little to do with how smart you are and everything to do with how you behave.",
+            "Every family, culture, and generation hands down a money story: money is scarce, money is evil, rich people are lucky, investing is gambling. These stories become self-fulfilling prophecies. If you believe the market will always crash right before you invest, you will time yourself out of every bull run.",
+            "The first step to wealth is not a spreadsheet — it is an honest audit of the money stories you inherited."
+          ],
+          "bullets": [
+            "Wealthy people talk about systems, probabilities, and ownership; everyone else talks about prices and paychecks.",
+            "Scarcity thinking optimizes for survival; abundance thinking optimizes for opportunity.",
+            "Your brain treats money decisions as emotional decisions — understand the emotion before you touch the math."
+          ]
+        },
+        {
+          "heading": "The wealth mindset audit",
+          "paragraphs": [
+            "Write down your first three money memories. For each one, identify the belief it installed. Then ask: is this belief making me richer or keeping me safe? Beliefs that keep you safe usually also keep you small.",
+            "Replace disempowering beliefs with empowering ones, and back them with evidence. Instead of 'I can't afford that', ask 'how can I afford that?' Instead of 'investing is risky', ask 'what is the risk of not investing?'",
+            "This rewiring is not positive-thinking fluff. It changes behavior, and behavior — not IQ — is the single best predictor of financial outcomes."
+          ]
+        },
+        {
+          "heading": "Your assignment",
+          "paragraphs": [
+            "Complete the audit in writing. Share it with a trusted partner or mentor. Within 30 days, notice how often you catch yourself using a scarcity phrase — and replace it on the spot."
+          ]
+        }
+      ],
+      "takeaways": [
+        "Financial success is behavior, not intelligence.",
+        "Inherited money stories quietly cap your ceiling.",
+        "Abundance thinking changes which opportunities you even see.",
+        "Beliefs are changeable — and changed beliefs change outcomes."
+      ],
+      "actionSteps": [
+        "Write down your three earliest money memories and the beliefs they installed.",
+        "Replace one scarcity phrase you use with its abundance version today.",
+        "Pick one financial behavior you avoid and take the smallest possible step toward it this week."
+      ],
+      "quiz": [
+        {
+          "question": "According to The Psychology of Money, what matters most for financial success?",
+          "options": [
+            "High IQ and technical skill",
+            "Behavior and how you handle money",
+            "Lucky timing",
+            "A large starting salary"
+          ],
+          "answer": 1,
+          "explanation": "Housel's core thesis: doing well with money is more about behavior than brains."
+        },
+        {
+          "question": "What is the first step to changing your money psychology?",
+          "options": [
+            "Buying a course on investing",
+            "Auditing the money stories you inherited",
+            "Opening a brokerage account",
+            "Getting a raise"
+          ],
+          "answer": 1,
+          "explanation": "You can't rewrite beliefs you haven't identified — the audit comes first."
+        },
+        {
+          "question": "Which statement reflects abundance thinking?",
+          "options": [
+            "I can't afford that.",
+            "How can I afford that?",
+            "Rich people are just lucky.",
+            "The market always crashes for me."
+          ],
+          "answer": 1,
+          "explanation": "Abundance thinking converts a dead end into a problem to be solved."
+        }
+      ]
+    },
+    {
+      "id": "l02-asymmetric-bets",
+      "moduleId": "m1",
+      "number": 2,
+      "title": "Asymmetric Bets",
+      "subtitle": "The secret of outsize returns",
+      "summary": "Billionaires don't take balanced bets — they take asymmetric ones: small downside, enormous upside. Learn to structure your career and capital around payoff distributions, not averages.",
+      "duration": "20 min",
+      "difficulty": "Beginner",
+      "content": [
+        {
+          "heading": "Small losses, huge wins",
+          "paragraphs": [
+            "An asymmetric bet is one where you can only lose 1x but can win 50x. Venture capitalists fund nine failures for every one success — and the one success pays for all of them. This is the mathematics of the entire startup industry.",
+            "Naval Ravikant describes it simply: put yourself in situations with huge upside and small downside, and repeat. Bill Ackman turned $25 million into $2.6 billion in 2020 — not by being right often, but by being right when it mattered, with asymmetric positioning.",
+            "The average outcome of an asymmetric strategy can be excellent even when most individual bets fail."
+          ],
+          "bullets": [
+            "Most people optimize for the probability of winning; the wealthy optimize for the size of the win.",
+            "A 10% chance of 100x beats a 90% chance of 1.5x — over many repetitions.",
+            "Your career is the most important asymmetric bet you can structure."
+          ]
+        },
+        {
+          "heading": "Structuring your own asymmetry",
+          "paragraphs": [
+            "The classic route: keep your day job (bounded downside) while building equity in a venture (uncapped upside). A side business, a startup, a content brand, or a rental property all qualify.",
+            "At work, volunteer for the high-visibility, high-risk projects others avoid. If they fail, you learn; if they succeed, your career compounds. In investing, keep most of your money in boring index funds while reserving a small allocation for high-conviction moonshots.",
+            "Write the expected value of your options. If the EV is strongly positive, take the shot — even if failure is the most likely individual outcome."
+          ]
+        }
+      ],
+      "takeaways": [
+        "Wealth is built with asymmetric payoffs, not balanced risk.",
+        "Optimize the size of the win, not just the odds of winning.",
+        "Your career is an asymmetric bet — structure it deliberately.",
+        "Repeat asymmetric bets until variance is averaged out."
+      ],
+      "actionSteps": [
+        "List three opportunities in your life with capped downside and uncapped upside.",
+        "Assign rough probabilities and expected values to each.",
+        "Commit to pursuing the highest-EV one for 90 days."
+      ],
+      "quiz": [
+        {
+          "question": "What makes a bet 'asymmetric'?",
+          "options": [
+            "Equal chance of winning or losing",
+            "Small possible loss with large possible gain",
+            "Guaranteed return",
+            "High probability of a small win"
+          ],
+          "answer": 1,
+          "explanation": "Asymmetry means the upside dwarfs the downside."
+        },
+        {
+          "question": "Why do venture capitalists fund so many failing startups?",
+          "options": [
+            "They are bad at picking",
+            "One success pays for all failures",
+            "They enjoy risk for its own sake",
+            "Regulators require it"
+          ],
+          "answer": 1,
+          "explanation": "The power-law payoff of the winners funds the entire portfolio."
+        },
+        {
+          "question": "Which is an example of structuring asymmetric risk in a career?",
+          "options": [
+            "Staying in a safe role forever",
+            "Building a side venture while employed",
+            "Quitting without a plan",
+            "Diversifying into five side hustles at once"
+          ],
+          "answer": 1,
+          "explanation": "Employment caps the downside while the venture offers uncapped upside."
+        }
+      ]
+    },
+    {
+      "id": "l03-risk-failure-resilience",
+      "moduleId": "m1",
+      "number": 3,
+      "title": "Risk, Failure & Resilience",
+      "subtitle": "How billionaires lose — and come back",
+      "summary": "Every billionaire has been nearly wiped out at least once. What separates them is not avoiding failure but industrializing recovery from it.",
+      "duration": "18 min",
+      "difficulty": "Beginner",
+      "content": [
+        {
+          "heading": "Failure is tuition",
+          "paragraphs": [
+            "Steve Jobs was fired from the company he founded — then came back to make it the most valuable company on Earth. Ray Dalio called his 1982 bet against the market so wrong that he was bankrupt and had to borrow $4,000 from his father. He rebuilt Bridgewater into the world's largest hedge fund.",
+            "The pattern is universal: swing, miss, extract the lesson, swing again with better information. Failure is not the opposite of success; it is a component of it.",
+            "The real killer is not failing — it is failing small. Billionaires fail loudly and quickly, with full information, because they have structured their bets so that any single failure cannot destroy them."
+          ],
+          "bullets": [
+            "Never risk what you can't afford to lose on a lesson you can learn cheaply.",
+            "Debrief every failure within 48 hours while the details are fresh.",
+            "Reframe loss as the price of information — then use the information."
+          ]
+        },
+        {
+          "heading": "The resilience loop",
+          "paragraphs": [
+            "The resilience loop has four steps: Act, Fail (or succeed), Extract, Adjust. Run it weekly on your business and quarterly on your portfolio. The loop turns setbacks from emotional events into data points.",
+            "Practically, build 'tilt insurance': a cash buffer that lets you survive 12 months of failure, a peer group that normalizes loss, and a written journal of lessons so your experience compounds instead of evaporating.",
+            "Remember: your net worth is a function of how many informed reps you complete. More reps, faster — that's the whole game."
+          ]
+        }
+      ],
+      "takeaways": [
+        "Catastrophic comebacks are the norm among billionaires.",
+        "Structure bets so no single failure can wipe you out.",
+        "Debrief failures fast and in writing.",
+        "The compounding asset is experience, not luck."
+      ],
+      "actionSteps": [
+        "Write down your biggest failure and the three lessons it taught you.",
+        "Build a 12-month cash buffer plan (income + expenses gap).",
+        "Set a weekly 30-minute debrief block on your calendar."
+      ],
+      "quiz": [
+        {
+          "question": "What did Ray Dalio do after his catastrophic 1982 loss?",
+          "options": [
+            "Quit finance forever",
+            "Borrowed money, rebuilt, and created Bridgewater",
+            "Sued his investors",
+            "Wrote a book about avoiding markets"
+          ],
+          "answer": 1,
+          "explanation": "He treated the loss as tuition and rebuilt into the world's largest hedge fund."
+        },
+        {
+          "question": "What is 'tilt insurance'?",
+          "options": [
+            "An options strategy",
+            "A buffer so one failure can't destroy you",
+            "A type of life insurance",
+            "A market hedge fund"
+          ],
+          "answer": 1,
+          "explanation": "Cash buffers and support structures keep a failure from ending the game."
+        },
+        {
+          "question": "How quickly should you debrief a failure?",
+          "options": [
+            "Within 48 hours",
+            "After a month",
+            "Never — move on",
+            "Only at year end"
+          ],
+          "answer": 0,
+          "explanation": "Fast debriefs capture the details while they're still fresh."
+        }
+      ]
+    },
+    {
+      "id": "l04-time-horizons",
+      "moduleId": "m1",
+      "number": 4,
+      "title": "Time Horizons",
+      "subtitle": "Think in decades, not days",
+      "summary": "Almost nobody gets rich quickly. Learn to play the long game the way Bezos, Buffett, and Musk do — and why short-term thinking is the most expensive habit you have.",
+      "duration": "15 min",
+      "difficulty": "Intermediate",
+      "content": [
+        {
+          "heading": "The long game is the only game",
+          "paragraphs": [
+            "Jeff Bezos took no salary for years and let Amazon post losses for a decade while building infrastructure. Warren Buffett made 99% of his wealth after his 50th birthday. Elon Musk bet his last dollars on SpaceX after three rocket failures — and kept going.",
+            "Long time horizons let you do three things short-term players cannot: accept temporary losses for structural wins, let compounding do the heavy lifting, and attract partners who share your patience.",
+            "The stock market, the venture game, and real estate all reward the patient with the same instrument: compound interest, which Einstein reputedly called the eighth wonder of the world."
+          ],
+          "bullets": [
+            "Price follows noise in the short run and fundamentals in the long run.",
+            "Every year you shorten your horizon, you shrink your available strategies.",
+            "Long-horizon players get better deal terms because they can wait."
+          ]
+        },
+        {
+          "heading": "Training your patience muscle",
+          "paragraphs": [
+            "Patience is a skill, not a personality trait. Train it by writing 10-year plans, refusing to check portfolio values daily, and measuring progress quarterly instead of hourly.",
+            "Set 'boring rules' that automate long-term behavior: automatic investing, no impulse purchases above a threshold without a 72-hour wait, and annual reviews of your business instead of panicked weekly pivots.",
+            "Finally, remember that your competitors' impatience is your edge. While they churn on shiny objects, you compound quietly. The last decade of every long game belongs to whoever was still standing."
+          ]
+        }
+      ],
+      "takeaways": [
+        "Wealth builds in decades; get comfortable with that.",
+        "Compounding rewards patience mechanically.",
+        "Automate long-term behavior with boring rules.",
+        "Others' impatience is your structural edge."
+      ],
+      "actionSteps": [
+        "Write a one-paragraph 10-year wealth vision.",
+        "Set up automatic monthly investing that you can't easily cancel.",
+        "Add a 72-hour rule for purchases over a threshold you set."
+      ],
+      "quiz": [
+        {
+          "question": "When did Warren Buffett make most of his wealth?",
+          "options": [
+            "Before age 30",
+            "Between 30 and 40",
+            "After age 50",
+            "Evenly throughout his life"
+          ],
+          "answer": 2,
+          "explanation": "99% of his wealth came after 50 — the compounding curve is back-loaded."
+        },
+        {
+          "question": "Why did Bezos accept years of Amazon losses?",
+          "options": [
+            "He mismanaged the company",
+            "He was building long-term infrastructure",
+            "Tax avoidance only",
+            "He didn't care about profit"
+          ],
+          "answer": 1,
+          "explanation": "He traded short-term profit for compounding infrastructure advantage."
+        },
+        {
+          "question": "What is a 'boring rule'?",
+          "options": [
+            "A rule that prevents you from having fun",
+            "An automated rule that enforces long-term behavior",
+            "A tax rule",
+            "A rule about meetings"
+          ],
+          "answer": 1,
+          "explanation": "Boring rules automate patience so you don't have to rely on willpower."
+        }
+      ]
+    },
+    {
+      "id": "l05-how-money-works",
+      "moduleId": "m2",
+      "number": 5,
+      "title": "How Money Actually Works",
+      "subtitle": "From barter to fiat to digital",
+      "summary": "Money is not paper or coins — it is a social technology for transferring value across time and space. Understand its history, the money supply, and inflation before you try to master it.",
+      "duration": "16 min",
+      "difficulty": "Beginner",
+      "content": [
+        {
+          "heading": "Money is trust with a ledger",
+          "paragraphs": [
+            "Money is nothing more than a widely accepted claim on future value. Its three jobs are: store value, medium of exchange, and unit of account. Any object that does those three jobs well can be money — shells, gold, paper, or bits.",
+            "In 1971, the US ended the gold standard, and the world moved to fiat currency: money declared valuable by governments. Since then, central banks can expand the money supply at will — which is why inflation is a feature of the system, not a bug.",
+            "The practical implication for you: cash is a melting ice cube. Holding large amounts of uninvested cash is not safety — it is a slow, guaranteed loss to inflation."
+          ],
+          "bullets": [
+            "Since 1971, the dollar has lost roughly 85% of its purchasing power.",
+            "Central banks target mild inflation (~2%) because it incentivizes spending and investing.",
+            "Deflation, the opposite, punishes spending and can freeze economies — which is why it is feared."
+          ]
+        },
+        {
+          "heading": "The money supply and you",
+          "paragraphs": [
+            "Money is created in three main ways: central banks printing/creating reserves, commercial banks lending into existence (fractional reserve), and governments issuing debt that markets buy.",
+            "When the money supply grows faster than the economy's real output, prices rise. Assets that are scarce — stocks in growing companies, real estate in desirable cities, and certain commodities — tend to absorb the new money and rise with it. That is one reason the rich get richer during money expansion: they hold the assets, not the cash.",
+            "Your strategy: get out of the cash camp and into the asset camp as early as you responsibly can."
+          ]
+        }
+      ],
+      "takeaways": [
+        "Money is a claim on future value, not a thing.",
+        "Fiat money loses purchasing power by design.",
+        "Cash is a melting ice cube — assets absorb new money.",
+        "Understand inflation and you'll never fear investing again."
+      ],
+      "actionSteps": [
+        "Calculate how much purchasing power your savings have lost over the last 10 years.",
+        "List which of your holdings are assets vs melting cash.",
+        "Read one piece of history on the 1971 Nixon shock."
+      ],
+      "quiz": [
+        {
+          "question": "What are the three jobs of money?",
+          "options": [
+            "Print, lend, tax",
+            "Store value, medium of exchange, unit of account",
+            "Gold, silver, paper",
+            "Buy, sell, trade"
+          ],
+          "answer": 1,
+          "explanation": "Those three functions define what can serve as money."
+        },
+        {
+          "question": "What happened in 1971?",
+          "options": [
+            "The US adopted the gold standard",
+            "The US ended the gold standard",
+            "Bitcoin was created",
+            "The stock market was founded"
+          ],
+          "answer": 1,
+          "explanation": "The Nixon shock moved the world to fully fiat money."
+        },
+        {
+          "question": "Why does mild inflation exist by design?",
+          "options": [
+            "To punish savers specifically",
+            "To incentivize spending and investing",
+            "To make banks rich",
+            "To confuse consumers"
+          ],
+          "answer": 1,
+          "explanation": "Mild inflation encourages productive use of money rather than hoarding."
+        }
+      ]
+    },
+    {
+      "id": "l06-assets-vs-liabilities",
+      "moduleId": "m2",
+      "number": 6,
+      "title": "Assets vs Liabilities",
+      "subtitle": "The single most important distinction in finance",
+      "summary": "Rich people buy assets; everyone else buys things that look like assets. Learn the one-line test that instantly classifies everything you own.",
+      "duration": "12 min",
+      "difficulty": "Beginner",
+      "content": [
+        {
+          "heading": "The one-line test",
+          "paragraphs": [
+            "Robert Kiyosaki's definition, refined by decades of financial literature: an asset puts money in your pocket; a liability takes money out. That's it. A house you live in takes money out every month (mortgage, taxes, maintenance) — so, financially speaking, it is a liability until it produces income.",
+            "Your car, your leased phone, your subscription stack — all liabilities. Your rental property, your dividend stocks, your YouTube channel that earns ad revenue — assets.",
+            "The classification is personal and situational: the same item can be an asset in one structure and a liability in another. What matters is the direction of the cash flow."
+          ],
+          "bullets": [
+            "Asset: puts money in your pocket (rents, dividends, royalties, interest, business profit).",
+            "Liability: takes money out of your pocket (loans, subscriptions, depreciating goods).",
+            "The rich get richer because they funnel income into assets, which produce more income."
+          ]
+        },
+        {
+          "heading": "Re-engineering your cash flow",
+          "paragraphs": [
+            "Draw a simple map: income in the middle, arrows to assets on the left, liabilities on the right. Most people's map shows a firehose spraying liabilities.",
+            "Your goal over the next 24 months: shrink the liability side and grow the asset side until asset income covers your lifestyle. That point — passive income exceeding expenses — is financial independence.",
+            "Every purchase should pass the test: does this buy assets, or is this an asset? An expensive degree that raises your earning power can be an asset. A luxury car for status is a liability wearing a disguise."
+          ]
+        }
+      ],
+      "takeaways": [
+        "The asset/liability test is about cash-flow direction, not appearances.",
+        "Your primary residence is usually a liability until it earns income.",
+        "Financial independence = asset income > expenses.",
+        "Audit every purchase with the direction-of-cash-flow question."
+      ],
+      "actionSteps": [
+        "List your 10 biggest monthly expenses and classify each as asset or liability.",
+        "Calculate your current asset income per month.",
+        "Identify one liability to cut and one asset to add this quarter."
+      ],
+      "quiz": [
+        {
+          "question": "Which of these is an asset by the cash-flow definition?",
+          "options": [
+            "Your primary car",
+            "A rental property producing positive cash flow",
+            "Your phone on a lease",
+            "A boat in storage"
+          ],
+          "answer": 1,
+          "explanation": "The rental puts money in your pocket each month."
+        },
+        {
+          "question": "What is financial independence in this framework?",
+          "options": [
+            "A million dollars saved",
+            "Asset income exceeding expenses",
+            "Being debt-free",
+            "Retiring at 50"
+          ],
+          "answer": 1,
+          "explanation": "When your assets fund your lifestyle, you're financially independent."
+        },
+        {
+          "question": "Why do the rich keep buying assets?",
+          "options": [
+            "For status",
+            "Because assets produce more income to buy more assets",
+            "Tax rules only",
+            "They enjoy paperwork"
+          ],
+          "answer": 1,
+          "explanation": "It's a compounding flywheel: income → assets → more income."
+        }
+      ]
+    },
+    {
+      "id": "l07-compounding",
+      "moduleId": "m2",
+      "number": 7,
+      "title": "The Eighth Wonder",
+      "subtitle": "Compound interest and exponential growth",
+      "summary": "Compound interest is the quiet engine behind every large fortune. Learn the math, the three levers you control, and why starting early beats starting rich.",
+      "duration": "20 min",
+      "difficulty": "Beginner",
+      "content": [
+        {
+          "heading": "The math that changed the world",
+          "paragraphs": [
+            "If you invest $10,000 once at an 8% annual return, it becomes roughly $46,000 after 20 years and $217,000 after 40 years — without adding a single dollar. The growth is not linear; it is exponential, because returns earn returns.",
+            "The formula is simple: Future Value = Principal × (1 + rate)^time. Notice that time sits in the exponent — which is why time dwarfs every other variable you control.",
+            "This is why Warren Buffett's wealth curve is a hockey stick that only took off in his 50s. And why the single best financial gift you can give yourself is a head start."
+          ],
+          "bullets": [
+            "Rule of 72: divide 72 by your annual return to get years to double (72/8 = 9 years).",
+            "At 10% annual returns, money doubles roughly every 7.2 years — 4x in ~15 years, 16x in ~30.",
+            "Fees are a compounding tax: a 1% fee removes about a third of your long-term returns."
+          ]
+        },
+        {
+          "heading": "The three levers you actually control",
+          "paragraphs": [
+            "Lever one: rate. A slightly better long-term return (index funds over cash, skill over luck) compounds enormously. Lever two: time — the most powerful and the most urgent. Lever three: contributions — consistent investing adds fuel to the exponential fire.",
+            "The enemy of compounding is interruption: withdrawing early, panic-selling at bottoms, or taking on expensive debt that compounds against you. Credit-card debt at 22% APR is reverse compounding — it doubles against you every 3.3 years.",
+            "Set up the machine once (automatic investing into low-cost broad market funds) and let it run. Then spend your energy on the rate lever: improving your earning power and business skills."
+          ]
+        }
+      ],
+      "takeaways": [
+        "Time in the exponent means time beats timing and even beats size.",
+        "Rule of 72 makes compound growth instantly calculable.",
+        "Fees and withdrawals quietly destroy compounding.",
+        "Debt is negative compounding — clear it fast."
+      ],
+      "actionSteps": [
+        "Calculate what $500/month at 8% becomes in 30 years (hint: over $700K).",
+        "Use the Rule of 72 on your current portfolio's expected return.",
+        "Review your account fees — switch to low-cost funds if fees exceed ~0.2%."
+      ],
+      "quiz": [
+        {
+          "question": "At 8% annual return, how long does money take to double?",
+          "options": [
+            "5 years",
+            "9 years (Rule of 72)",
+            "12 years",
+            "18 years"
+          ],
+          "answer": 1,
+          "explanation": "72 ÷ 8 = 9 years to double."
+        },
+        {
+          "question": "Why does time matter more than the amount you start with?",
+          "options": [
+            "It doesn't",
+            "Time sits in the exponent of the growth formula",
+            "Markets rise over time",
+            "Inflation is low"
+          ],
+          "answer": 1,
+          "explanation": "Exponential growth makes each year of time worth more than the last."
+        },
+        {
+          "question": "What is the biggest quiet killer of compounding?",
+          "options": [
+            "Market volatility",
+            "Fees and early withdrawals",
+            "Diversification",
+            "Inflation"
+          ],
+          "answer": 1,
+          "explanation": "Fees tax your returns every single year, compounding the damage."
+        }
+      ]
+    },
+    {
+      "id": "l08-leverage",
+      "moduleId": "m2",
+      "number": 8,
+      "title": "Leverage",
+      "subtitle": "People, capital, code, and media",
+      "summary": "Effort alone can't make you rich. Leverage multiplies your effort — and the four kinds of leverage are the difference between trading time for money and building wealth.",
+      "duration": "25 min",
+      "difficulty": "Intermediate",
+      "content": [
+        {
+          "heading": "The four levers",
+          "paragraphs": [
+            "Labor leverage: hiring people so their hours become your output. Capital leverage: using money (yours or other people's) to scale. Code leverage: software that works while you sleep. Media leverage: content that teaches millions without your presence.",
+            "Labor and capital are 'permissioned' leverage — someone has to give you access. Code and media are 'permissionless': you can build an app or publish a post today with no one's approval. Naval Ravikant calls code and media the new rich-making levers.",
+            "Jeff Bezos used all four: employees (labor), investor capital, Amazon's software platform (code), and customer word-of-mouth (media)."
+          ],
+          "bullets": [
+            "Permissionless leverage is the great equalizer — it favors the bold and the skilled, not the connected.",
+            "One great media asset can outperform a sales team of 50.",
+            "Code and media scale to zero marginal cost — the purest forms of leverage."
+          ]
+        },
+        {
+          "heading": "Building your leverage stack",
+          "paragraphs": [
+            "Start with media (free, instant, compounding) — a blog, YouTube channel, newsletter, or LinkedIn presence in your niche. Then add code: automate one business process, or build a product that serves many. Add capital as you accumulate it. Add labor last, when the economics justify it.",
+            "The key insight: leverage isn't optional. A person selling 1 hour of labor for $100 is capped at ~$200K/year even with overtime. A person whose software serves 1M customers at $10/year earns $10M/year with the same effort.",
+            "Audit where your income comes from: pure labor is fine as a starting point, but your trajectory must bend toward leverage."
+          ]
+        }
+      ],
+      "takeaways": [
+        "Leverage multiplies effort; effort alone caps your earnings.",
+        "Code and media are permissionless — start there.",
+        "Labor and capital are powerful but require access.",
+        "Your income trajectory should bend from labor toward leverage."
+      ],
+      "actionSteps": [
+        "List every skill you could turn into a media asset (newsletter, video, course).",
+        "Identify one process in your work or life to automate with software.",
+        "Write down one way you could use someone else's capital (OPM) responsibly."
+      ],
+      "quiz": [
+        {
+          "question": "Which two forms of leverage are 'permissionless'?",
+          "options": [
+            "Labor and capital",
+            "Code and media",
+            "Capital and code",
+            "Media and labor"
+          ],
+          "answer": 1,
+          "explanation": "Anyone can build software or publish content without permission."
+        },
+        {
+          "question": "Why can't pure labor make you rich?",
+          "options": [
+            "Labor is taxed more",
+            "It scales linearly with your time",
+            "Employers pay badly",
+            "It isn't leverage"
+          ],
+          "answer": 1,
+          "explanation": "1-for-1 time-for-money trading has a hard ceiling."
+        },
+        {
+          "question": "What is the purest form of leverage?",
+          "options": [
+            "Hiring 100 employees",
+            "Borrowing $10M",
+            "Code and media at zero marginal cost",
+            "Working 100-hour weeks"
+          ],
+          "answer": 2,
+          "explanation": "Zero marginal cost means serving one more person costs almost nothing."
+        }
+      ]
+    },
+    {
+      "id": "l09-massive-problem",
+      "moduleId": "m3",
+      "number": 9,
+      "title": "Find a Massive Problem",
+      "subtitle": "The only business that works",
+      "summary": "Businesses exist to solve problems. The bigger the problem, the bigger the business. Learn how to identify pain points worth billions and test your thesis cheaply.",
+      "duration": "18 min",
+      "difficulty": "Intermediate",
+      "content": [
+        {
+          "heading": "Size the problem before you build",
+          "paragraphs": [
+            "Stripe solved the problem of accepting payments online — a problem affecting every business on the internet. Airbnb solved the problem of expensive, impersonal hotels. Stripe and Airbnb are worth tens of billions because the problems they solved touch hundreds of millions of people.",
+            "A 'massive problem' has three attributes: it affects a large population (or a small population with enormous budgets), it is painful and expensive to ignore, and existing solutions are visibly inadequate.",
+            "The size of the fortune you can build is roughly proportional to the size of the problem you solve multiplied by how much better you solve it."
+          ],
+          "bullets": [
+            "B2B problems are usually worth more per customer than B2C problems.",
+            "Regulatory pain, compliance, and security are premium-priced problem areas.",
+            "Problems that people complain about loudly and pay to avoid are the best problems."
+          ]
+        },
+        {
+          "heading": "The problem interview method",
+          "paragraphs": [
+            "Talk to 50 potential customers about their workflow — not about your idea. Ask what they spend money on, what they hate, what they'd pay to fix, and what they've already tried. If 40 of 50 describe the same pain, you've found a market.",
+            "Then score the problem on three axes: frequency (how often does it occur), intensity (how painful is it), and budget (how much are they already spending to solve it). High scores on all three = a business.",
+            "If you can't find anyone with the problem in 30 days, the problem isn't massive enough — move on without ego."
+          ]
+        }
+      ],
+      "takeaways": [
+        "Fortune size ≈ problem size × solution improvement.",
+        "Massive problems are frequent, painful, and already budgeted for.",
+        "50 problem interviews beat any amount of theorizing.",
+        "Kill weak problems fast; ego is the enemy of discovery."
+      ],
+      "actionSteps": [
+        "Write down the three most complained-about things in your industry.",
+        "Interview 10 people this week about their #1 work pain.",
+        "Score each problem on frequency, intensity, and budget."
+      ],
+      "quiz": [
+        {
+          "question": "What three attributes define a massive problem?",
+          "options": [
+            "Big, new, and complex",
+            "Frequent, painful, and already budgeted for",
+            "Technical, legal, and global",
+            "Cheap, fast, and easy"
+          ],
+          "answer": 1,
+          "explanation": "Those three attributes create willingness to pay."
+        },
+        {
+          "question": "What is the best way to validate a problem?",
+          "options": [
+            "Reading market reports",
+            "Interviewing 50 potential customers about their workflows",
+            "Building the product first",
+            "Asking your friends"
+          ],
+          "answer": 1,
+          "explanation": "Direct interviews reveal real pains and budgets — not polite opinions."
+        },
+        {
+          "question": "Why are B2B problems often more valuable?",
+          "options": [
+            "Businesses have bigger budgets per customer",
+            "They are easier to build",
+            "There are more businesses",
+            "They need less support"
+          ],
+          "answer": 0,
+          "explanation": "A business that spends $50K/year to fix a pain is a better customer than a consumer at $10/year."
+        }
+      ]
+    },
+    {
+      "id": "l10-validating-ideas",
+      "moduleId": "m3",
+      "number": 10,
+      "title": "Validating Ideas in 30 Days",
+      "subtitle": "Test before you build",
+      "summary": "Most startups die from building things nobody wants. Learn the lean validation stack: landing pages, concierge tests, and pre-sales that prove demand before you write real code.",
+      "duration": "15 min",
+      "difficulty": "Intermediate",
+      "content": [
+        {
+          "heading": "The lean validation stack",
+          "paragraphs": [
+            "Validation is a ladder, not a leap. Rung one: a landing page that describes the product and captures emails. Rung two: a concierge test where you deliver the service manually (yes, manually) to paying customers. Rung three: a pre-sale where customers pay upfront for delivery in 90 days.",
+            "The number that matters is not 'interest' — it is conversion: how many people take real action (email, payment, calendar booking) out of how many who saw the offer. Under 2% conversion means the problem or messaging needs work; 5-10% means you have something.",
+            "Dropbox validated with a 3-minute demo video before writing the product — it landed 75,000 signups overnight. Zappos validated by buying shoes from local stores and shipping them himself."
+          ],
+          "bullets": [
+            "Emails are weak validation; pre-sales are the strongest.",
+            "Manual delivery (concierge) reveals demand and teaches you the workflow.",
+            "A good validation funnel: 1,000 views → 100 clicks → 30 emails → 10 pre-sales."
+          ]
+        },
+        {
+          "heading": "Run the 30-day sprint",
+          "paragraphs": [
+            "Week 1: write your offer and build a one-page landing site with a payment button (Stripe/PayPal). Week 2: drive 500-1,000 targeted visitors through content and communities. Week 3: follow up with every signup personally and run concierge delivery for the first 5-10 buyers. Week 4: analyze the numbers and decide — build, pivot, or kill.",
+            "Decide in advance what numbers justify building. If you hit them, build with confidence. If you miss, you just saved yourself months and thousands of dollars — that's a win, not a failure.",
+            "The fastest founders validate in days, not months, because they refuse to fall in love with unproven ideas."
+          ]
+        }
+      ],
+      "takeaways": [
+        "Validation measures real action, not stated interest.",
+        "Pre-sales beat emails; concierge beats surveys.",
+        "A 30-day sprint generates a go/no-go decision.",
+        "Killing a bad idea fast is a victory."
+      ],
+      "actionSteps": [
+        "Write the one-sentence offer for your idea today.",
+        "Launch a landing page with a payment button this week.",
+        "Recruit 10 people for a concierge test by the end of the month."
+      ],
+      "quiz": [
+        {
+          "question": "Which is the strongest form of validation?",
+          "options": [
+            "Landing page emails",
+            "Pre-sales with real payments",
+            "Social media likes",
+            "Surveys from friends"
+          ],
+          "answer": 1,
+          "explanation": "Money exchanged is the strongest signal of demand."
+        },
+        {
+          "question": "What did Dropbox use to validate before building?",
+          "options": [
+            "A prototype app",
+            "A 3-minute demo video",
+            "A crowdfunding campaign",
+            "Press coverage"
+          ],
+          "answer": 1,
+          "explanation": "The demo video generated 75,000 signups overnight."
+        },
+        {
+          "question": "What conversion rate signals 'you have something'?",
+          "options": [
+            "Under 1%",
+            "2-5%",
+            "5-10%",
+            "Above 50%"
+          ],
+          "answer": 2,
+          "explanation": "5-10% conversion from views to action is a strong signal."
+        }
+      ]
+    },
+    {
+      "id": "l11-scalable-models",
+      "moduleId": "m3",
+      "number": 11,
+      "title": "Scalable Business Models",
+      "subtitle": "Revenue that grows without your hours",
+      "summary": "Scalability is what separates a job from a business. Compare software, platforms, marketplaces, subscriptions, and productized services — and pick a model that compounds.",
+      "duration": "22 min",
+      "difficulty": "Intermediate",
+      "content": [
+        {
+          "heading": "The scalability spectrum",
+          "paragraphs": [
+            "On one end: selling your time (consulting, freelancing) — every new dollar requires new hours. On the other end: software and platforms — serving a thousandth customer costs nearly nothing. In the middle: productized services, franchises, and content assets.",
+            "The business model determines your ceiling more than the idea does. Two identical services — one delivered by an agency of 50, one productized into a flat-fee software-plus-support package — will end up valued completely differently.",
+            "Marketplaces (Airbnb, Uber) are especially powerful because supply, demand, and the transaction all scale together — and the operator owns the middle."
+          ],
+          "bullets": [
+            "Subscription models convert one-time sales into lifetime value (LTV).",
+            "Platforms benefit from network effects: each user makes the service more valuable.",
+            "Productized services are the fastest step from hourly work to scalable business."
+          ]
+        },
+        {
+          "heading": "Choosing your model",
+          "paragraphs": [
+            "Score each candidate model on: marginal cost (cost to serve one more customer), recurring revenue (do they pay monthly?), network effects (does it get better with more users?), and exit value (do buyers pay 3x or 30x revenue?).",
+            "The classic path: start with a productized service (high-touch, learn the market), then productize further into software (scale without staff), then add platform elements (let others serve customers). Each step multiplies the multiple.",
+            "Whatever model you choose, design for the 80/20: 20% of customers and features drive 80% of value. Cut everything else ruthlessly — complexity is the silent killer of scale."
+          ]
+        }
+      ],
+      "takeaways": [
+        "The model, not the idea, sets your ceiling.",
+        "Marketplaces and software scale to zero marginal cost.",
+        "Recurring revenue transforms business valuation.",
+        "Productize your service first, then your software, then your platform."
+      ],
+      "actionSteps": [
+        "Score your current (or planned) model on the four criteria above.",
+        "Design one 'productized' package that converts your service into a flat fee.",
+        "Identify one feature or customer type to cut this month."
+      ],
+      "quiz": [
+        {
+          "question": "Which model has the lowest marginal cost per customer?",
+          "options": [
+            "Consulting",
+            "Software as a Service",
+            "Agency services",
+            "Custom development"
+          ],
+          "answer": 1,
+          "explanation": "Serving one more SaaS customer costs almost nothing."
+        },
+        {
+          "question": "Why are marketplaces especially powerful?",
+          "options": [
+            "They own the inventory",
+            "They benefit from network effects",
+            "They need no customers",
+            "They have no competition"
+          ],
+          "answer": 1,
+          "explanation": "Each new user makes the marketplace more valuable for everyone."
+        },
+        {
+          "question": "What multiplies a business's exit value?",
+          "options": [
+            "More employees",
+            "Recurring revenue and low marginal cost",
+            "Bigger offices",
+            "More features"
+          ],
+          "answer": 1,
+          "explanation": "Buyers pay far more for predictable, scalable revenue."
+        }
+      ]
+    },
+    {
+      "id": "l12-pricing",
+      "moduleId": "m3",
+      "number": 12,
+      "title": "Pricing for Premium Margins",
+      "subtitle": "Most products are underpriced",
+      "summary": "Price is the most powerful profit lever you own. Learn value-based pricing, tiered offers, and anchoring — and stop competing on price forever.",
+      "duration": "14 min",
+      "difficulty": "Intermediate",
+      "content": [
+        {
+          "heading": "Price is a strategy, not a number",
+          "paragraphs": [
+            "A 10% price increase on a business with 20% net margins roughly doubles profits — if volume holds. That is why pricing is the highest-leverage decision most founders never make consciously.",
+            "Value-based pricing means charging for the value the customer receives, not the cost of what you deliver. A $10,000 piece of software that saves a company $500,000 a year is underpriced at $10,000 — the customer would pay 10x.",
+            "Compete on differentiation, not discounting. If your only weapon is a low price, you are in the worst business in the world: a commodity where the cheapest wins until everyone is broke."
+          ],
+          "bullets": [
+            "Price to the value received, not the hours spent.",
+            "Anchoring: present a premium tier first so the mid tier looks reasonable.",
+            "Raising prices improves margins, funds quality, and filters for better customers."
+          ]
+        },
+        {
+          "heading": "The three-tier offer",
+          "paragraphs": [
+            "The classic structure: a low tier (entry price, high volume), a middle tier (the one you actually want to sell), and a premium tier (anchoring and aspiration). Most revenue comes from the middle; the premium tier exists to make the middle feel rational.",
+            "Test price changes with real customers, not gut feelings. A common experiment: raise prices 20% and measure churn. If volume barely moves, you were underpriced. If volume collapses, you found the ceiling — and can add value instead of cutting price.",
+            "Never discount as a first resort. Discounts train customers to wait for discounts — they destroy the anchor you worked to build."
+          ]
+        }
+      ],
+      "takeaways": [
+        "Price is the strongest profit lever in your business.",
+        "Charge for value delivered, not cost incurred.",
+        "Three-tier offers steer customers to your target price.",
+        "Discounts erode your anchor — add value instead."
+      ],
+      "actionSteps": [
+        "Calculate what a 10% price increase would do to your profit.",
+        "Write a three-tier offer for your product or service.",
+        "Run one pricing experiment this quarter and measure it."
+      ],
+      "quiz": [
+        {
+          "question": "What does a 10% price increase do to a business with 20% margins (if volume holds)?",
+          "options": [
+            "Increases profit slightly",
+            "Roughly doubles profit",
+            "Has no effect",
+            "Halves profit"
+          ],
+          "answer": 1,
+          "explanation": "The entire price increase flows to the bottom line."
+        },
+        {
+          "question": "What is the purpose of a premium tier?",
+          "options": [
+            "To sell the most units",
+            "To anchor and make the middle tier look reasonable",
+            "To confuse customers",
+            "To reduce support load"
+          ],
+          "answer": 1,
+          "explanation": "Anchoring steers buyers to your target offer."
+        },
+        {
+          "question": "What should you do instead of discounting first?",
+          "options": [
+            "Add value and justify the price",
+            "Drop prices 30%",
+            "Run constant sales",
+            "Match competitors' prices"
+          ],
+          "answer": 0,
+          "explanation": "Discounts erode your anchor; value additions strengthen it."
+        }
+      ]
+    },
+    {
+      "id": "l13-elite-team",
+      "moduleId": "m3",
+      "number": 13,
+      "title": "Recruiting Your A-Team",
+      "subtitle": "Your team's ceiling is your ceiling",
+      "summary": "No billionaire built an empire alone. Learn how to attract A-players, design incentives that align, and build a culture that retains them.",
+      "duration": "20 min",
+      "difficulty": "Intermediate",
+      "content": [
+        {
+          "heading": "A-players hire A-players",
+          "paragraphs": [
+            "The old saying: A players hire A players; B players hire C players; C players hire D players. Every hire sets a precedent for the quality bar — one compromise hire can drag an entire department down.",
+            "Steve Jobs said hiring A-players was his single most important job at Apple. The A-team effect compounds: better people produce better products, attract better customers, and recruit more better people.",
+            "You are looking for three things in every hire: competence (can they do the job at the level required?), drive (do they hold a standard higher than your own?), and fit (will they raise the bar or lower it?)."
+          ],
+          "bullets": [
+            "Hire slow, fire fast — quality is expensive only at the start.",
+            "Test skills with real work samples, not interviews alone.",
+            "Compensation should include upside (equity/profit share) so winners stay and share in growth."
+          ]
+        },
+        {
+          "heading": "Incentives and culture",
+          "paragraphs": [
+            "Charlie Munger's rule: never incentivize something you don't want more of. If you pay only for hours, you get hours — not outcomes. Tie meaningful comp to outcomes the business actually needs: revenue, retention, quality.",
+            "Culture is the set of behaviors you reward, tolerate, and punish. Write down the three behaviors you will never tolerate and the three you will always reward. Then enforce them consistently — culture is decided in your most uncomfortable meetings.",
+            "Finally, lead by calendar: where you spend time signals what matters. A founder who meets customers weekly creates a customer-obsessed company."
+          ]
+        }
+      ],
+      "takeaways": [
+        "Every hire raises or lowers your quality bar.",
+        "Hire slow, fire fast, and test with real work.",
+        "Incentives must reward outcomes, not hours.",
+        "Culture is what you tolerate — define it deliberately."
+      ],
+      "actionSteps": [
+        "Write your three non-negotiable cultural behaviors.",
+        "Redesign one job posting to include a paid work sample test.",
+        "Review your comp plan: does it reward outcomes or attendance?"
+      ],
+      "quiz": [
+        {
+          "question": "Why does one compromise hire matter so much?",
+          "options": [
+            "It's expensive to replace them",
+            "It lowers the quality bar others benchmark against",
+            "They cause lawsuits",
+            "It doesn't matter much"
+          ],
+          "answer": 1,
+          "explanation": "Standards are contagious — a low bar becomes the new norm."
+        },
+        {
+          "question": "What is the best way to evaluate a candidate's real skill?",
+          "options": [
+            "Interview questions",
+            "Paid work samples",
+            "References only",
+            "Social media presence"
+          ],
+          "answer": 1,
+          "explanation": "Real work demonstrates actual ability far better than talk."
+        },
+        {
+          "question": "How is culture actually decided?",
+          "options": [
+            "Mission statements",
+            "What you reward and tolerate",
+            "Office design",
+            "HR policies"
+          ],
+          "answer": 1,
+          "explanation": "Culture is the behavior you consistently accept and celebrate."
+        }
+      ]
+    },
+    {
+      "id": "l14-distribution",
+      "moduleId": "m3",
+      "number": 14,
+      "title": "Distribution",
+      "subtitle": "Sales, ads, and growth loops",
+      "summary": "A great product with no distribution dies quietly. Learn the distribution stack — content, paid ads, partnerships, and product-led growth — and build it before you need it.",
+      "duration": "24 min",
+      "difficulty": "Advanced",
+      "content": [
+        {
+          "heading": "Distribution is the moat",
+          "paragraphs": [
+            "Peter Thiel argues that distribution is part of the product: the best technology loses to adequate technology with 10x better reach. Every dollar and hour you spend on reach is an investment in your ceiling.",
+            "The modern stack has four pillars: content (SEO, video, newsletters that compound), paid (ads that scale fast but cost money), partnerships (distribution through others' audiences), and product-led growth (the product itself attracts users — free tiers, virality, referrals).",
+            "The best businesses combine them: content builds trust, ads amplify, partnerships unlock new audiences, and product-led loops make every user a recruiter."
+          ],
+          "bullets": [
+            "Growth loops (invite, share, embed) make acquisition compound like interest.",
+            "SEO is a slow asset that pays for years; ads are a fast rental.",
+            "Your distribution advantage is more defensible than your feature advantage."
+          ]
+        },
+        {
+          "heading": "Build the flywheel",
+          "paragraphs": [
+            "Choose one primary channel and go deep before adding others. For most people starting out, content (particularly video) is the highest-leverage entry: it compounds, builds trust, and doubles as product research.",
+            "Set up the flywheel: publish content → attract audience → convert to customers → customers generate referrals and feedback → feedback improves product → better product attracts more attention. Measure the loop's speed, not just individual campaigns.",
+            "The failure mode is spreading thin: five channels at 10% effort beat one channel at 100% effort rarely. Pick your channel, commit 12 months to it, and iterate on the offer and the hook — not the strategy."
+          ]
+        }
+      ],
+      "takeaways": [
+        "Adequate product + great distribution beats great product + no distribution.",
+        "Content compounds; ads rent; loops multiply.",
+        "Go deep on one channel before adding others.",
+        "Distribution advantages are the real moats."
+      ],
+      "actionSteps": [
+        "Choose your primary distribution channel and commit 12 months to it.",
+        "Map your current acquisition: content, paid, partnerships, or loops.",
+        "Design one referral mechanism for your product this month."
+      ],
+      "quiz": [
+        {
+          "question": "Why is distribution called a moat?",
+          "options": [
+            "It's expensive to build",
+            "It's hard for competitors to replicate your reach",
+            "It involves lawyers",
+            "It's a water metaphor"
+          ],
+          "answer": 1,
+          "explanation": "An audience and growth loop cannot be copied quickly."
+        },
+        {
+          "question": "Which acquisition channel compounds like interest?",
+          "options": [
+            "Paid ads",
+            "Content and SEO",
+            "Outbound cold calls",
+            "Events"
+          ],
+          "answer": 1,
+          "explanation": "Content assets keep producing results long after publication."
+        },
+        {
+          "question": "What is the common failure mode in distribution?",
+          "options": [
+            "Spreading thin across many channels",
+            "Investing in one channel",
+            "Measuring results",
+            "Creating too much content"
+          ],
+          "answer": 0,
+          "explanation": "Five channels at 10% effort beat one channel at 100% effort rarely."
+        }
+      ]
+    },
+    {
+      "id": "l15-capital-allocation",
+      "moduleId": "m4",
+      "number": 15,
+      "title": "Capital Allocation",
+      "subtitle": "The CEO's real job",
+      "summary": "What you do with cash is the most important business skill there is. Learn the four uses of capital and how great capital allocators think — Buffett-style.",
+      "duration": "18 min",
+      "difficulty": "Intermediate",
+      "content": [
+        {
+          "heading": "The four uses of cash",
+          "paragraphs": [
+            "Every dollar of profit can go four places: reinvest in the business, pay down debt, return to owners (dividends/buybacks), or acquire other businesses. The allocation decision determines whether a company compounds or stalls.",
+            "Warren Buffett's test: a dollar is worth keeping if it can create more than a dollar of value. Reinvest only where returns on capital are high; return cash to owners where they are not. This sounds obvious — most companies fail it.",
+            "Private individuals face the same question: should this bonus go to a side business (high return, higher risk), index funds (solid return), or a bigger apartment (lifestyle)? Allocate like a CEO of your own life."
+          ],
+          "bullets": [
+            "Return on capital is the scoreboard of allocation.",
+            "Buybacks and dividends are legitimate, tax-efficient uses of cash.",
+            "Hoarded cash that beats inflation only barely is a failed allocation."
+          ]
+        },
+        {
+          "heading": "Personal allocation framework",
+          "paragraphs": [
+            "Build a simple personal balance sheet: assets, liabilities, and your cash flow. Then set targets: emergency buffer (3-6 months), growth capital (index funds, business, education), and lifestyle (spending that buys genuine life improvement).",
+            "Allocate on a schedule — monthly — and review quarterly. The discipline matters more than the percentages. Automate each bucket so allocation happens before spending, not after.",
+            "The richest people treat every windfall (bonus, tax refund, gift) as capital to allocate, not income to spend. A 10% allocation habit on windfalls alone can fund a portfolio worth six figures within a decade."
+          ]
+        }
+      ],
+      "takeaways": [
+        "Capital allocation is the highest-leverage business skill.",
+        "Keep dollars only where they can create more than a dollar.",
+        "Automate allocation before spending.",
+        "Treat windfalls as capital, not consumption."
+      ],
+      "actionSteps": [
+        "Build your personal balance sheet today.",
+        "Set automated allocations: buffer, growth, lifestyle.",
+        "Write your rule for windfalls (e.g., 50% invest, 25% save, 25% spend)."
+      ],
+      "quiz": [
+        {
+          "question": "Which of these is NOT one of the four uses of cash?",
+          "options": [
+            "Reinvest in the business",
+            "Pay down debt",
+            "Return to owners",
+            "Pay higher salaries to executives"
+          ],
+          "answer": 3,
+          "explanation": "Salaries are operating costs; allocation concerns what to do with surplus cash."
+        },
+        {
+          "question": "When should a business keep its profit?",
+          "options": [
+            "Always",
+            "When it can create more than a dollar of value per dollar",
+            "Never",
+            "Only in recessions"
+          ],
+          "answer": 1,
+          "explanation": "Buffett's rule: keep capital only where returns exceed its cost."
+        },
+        {
+          "question": "What is the recommended treatment of windfalls?",
+          "options": [
+            "Spend them immediately",
+            "Allocate them as capital",
+            "Hide them from yourself",
+            "Lend them to friends"
+          ],
+          "answer": 1,
+          "explanation": "Windfalls are capital events, not consumption events."
+        }
+      ]
+    },
+    {
+      "id": "l16-public-markets",
+      "moduleId": "m4",
+      "number": 16,
+      "title": "Public Markets",
+      "subtitle": "Indexing to stock picking",
+      "summary": "The stock market is the most accessible wealth machine ever invented. Learn the index-fund baseline, the skill required to beat it, and the behavioral rules that keep you rich.",
+      "duration": "21 min",
+      "difficulty": "Advanced",
+      "content": [
+        {
+          "heading": "The index baseline",
+          "paragraphs": [
+            "Over long periods, the S&P 500 has returned roughly 9-10% annually. Almost nobody beats it consistently: over 15 years, about 90% of active fund managers underperform their benchmark. The index fund is not a compromise — it is the sophisticated default.",
+            "The math is brutal to beat: the average investor earns less than the average fund because of buying high and selling low. The solution is mechanical: automatic contributions, low costs, and doing nothing during drawdowns.",
+            "Jack Bogle's creation (Vanguard's index funds) may be the most effective wealth-transfer technology for ordinary people ever designed."
+          ],
+          "bullets": [
+            "Costs matter: 1% extra fees eats ~30% of lifetime returns.",
+            "Time in the market beats timing the market — almost always.",
+            "Dollar-cost averaging removes the psychology from investing."
+          ]
+        },
+        {
+          "heading": "When to concentrate",
+          "paragraphs": [
+            "If you have deep, verifiable insight into a specific company or sector (you work there, you study it, you know the numbers), a concentrated position is defensible — Buffett and Munger built fortunes this way. The rule: concentration is only justified by insight, not by excitement.",
+            "For everyone else, the portfolio is simple: broad low-cost index funds (global and domestic), your age in bonds as a rough guide, and a 'mad money' slice of 5-10% for high-conviction individual bets that scratch the stock-picking itch without endangering the plan.",
+            "Whatever you do, write an investment policy statement: your allocation, your rebalancing schedule, and your rules for selling. It will save you from yourself at the worst moments."
+          ]
+        }
+      ],
+      "takeaways": [
+        "Index funds beat almost all active managers long-term.",
+        "Behavior (staying invested) matters more than selection.",
+        "Concentrate only where you have verifiable insight.",
+        "An investment policy statement prevents emotional sabotage."
+      ],
+      "actionSteps": [
+        "Write your one-page investment policy statement.",
+        "Set up automatic monthly contributions to a low-cost index fund.",
+        "Define your rebalancing rule (e.g., annually) in writing."
+      ],
+      "quiz": [
+        {
+          "question": "What percentage of active managers underperform their benchmark over 15 years?",
+          "options": [
+            "About 10%",
+            "About 50%",
+            "About 90%",
+            "None"
+          ],
+          "answer": 2,
+          "explanation": "Roughly 90% fail to beat the index long-term."
+        },
+        {
+          "question": "What does an investment policy statement protect you from?",
+          "options": [
+            "Taxes",
+            "Your own emotions at market extremes",
+            "Broker fees",
+            "Inflation"
+          ],
+          "answer": 1,
+          "explanation": "Pre-committed rules prevent panic-selling and FOMO-buying."
+        },
+        {
+          "question": "When is concentration justified?",
+          "options": [
+            "When a stock is popular",
+            "When you have verifiable insight",
+            "When you feel lucky",
+            "Never"
+          ],
+          "answer": 1,
+          "explanation": "Concentration is a reward for genuine edge, not excitement."
+        }
+      ]
+    },
+    {
+      "id": "l17-private-markets",
+      "moduleId": "m4",
+      "number": 17,
+      "title": "Private Markets",
+      "subtitle": "Private equity and venture capital",
+      "summary": "The biggest returns in modern finance happen before companies go public. Understand how PE and VC actually work — and how you can get exposure beyond the public markets.",
+      "duration": "25 min",
+      "difficulty": "Advanced",
+      "content": [
+        {
+          "heading": "How the private game works",
+          "paragraphs": [
+            "Venture capital buys young companies with explosive growth potential, funding them in stages: seed, Series A, B, C. Returns follow a power law: the top fund of the top funds makes most of the money from a handful of companies. A fund that returns 3x is excellent; one that returns 10x is legendary.",
+            "Private equity buys mature companies, improves them (operations, leverage, multiple arbitrage), and sells them higher. PE returns come from the 'buy and improve' model: identify underperformance, fix it, sell.",
+            "Both are illiquid (5-10 year lockups), concentrated, and fee-heavy (2% management + 20% carry is standard). They are not for the faint-hearted or the small-accounted — but understanding them tells you where the smart money is looking."
+          ],
+          "bullets": [
+            "VC returns are power-law: a few winners pay for everything.",
+            "PE improves what exists; VC funds what doesn't yet.",
+            "Access: index funds can't buy private companies — exposure requires accredited-investor vehicles (or building your own company)."
+          ]
+        },
+        {
+          "heading": "Your private-market strategy",
+          "paragraphs": [
+            "Option one: invest as an LP in funds (requires accreditation, usually $100K+ minimums, long lockups). Option two: angel invest small checks ($5K-25K) into early startups — treat it as venture lottery with learning value. Option three — the most underrated: build equity in your own company. Your personal sweat equity is the highest-returning private asset most people own.",
+            "If you choose to angel invest, expect 90% of your bets to fail or flatline; the strategy only works if the remaining 10% can return 10-50x. Never invest money you need in the next decade.",
+            "The mindset lesson matters more than the money: private markets are where ownership is created. Public markets distribute ownership; private markets mint it."
+          ]
+        }
+      ],
+      "takeaways": [
+        "VC and PE are where the biggest returns — and risks — live.",
+        "Power law returns mean diversification is hard in private markets.",
+        "Angel investing requires 10x winners to justify 90% failures.",
+        "Your own company's equity is your best private asset."
+      ],
+      "actionSteps": [
+        "Learn the terms: seed, Series A, carry, LP, GP — write them down.",
+        "If accredited, evaluate one fund or platform this quarter.",
+        "Value your personal equity: what is 10% of your future company worth?"
+      ],
+      "quiz": [
+        {
+          "question": "What return makes a VC fund excellent?",
+          "options": [
+            "1.2x",
+            "3x",
+            "0.8x",
+            "1x"
+          ],
+          "answer": 1,
+          "explanation": "3x is excellent in a power-law asset class."
+        },
+        {
+          "question": "How do PE returns primarily come about?",
+          "options": [
+            "Market timing",
+            "Buying companies and improving them",
+            "Shorting stocks",
+            "Index investing"
+          ],
+          "answer": 1,
+          "explanation": "PE's model is buy-improve-sell."
+        },
+        {
+          "question": "What is the most underrated private-market asset?",
+          "options": [
+            "Crowdfunding notes",
+            "Equity in your own company",
+            "NFTs",
+            "Startup podcasts"
+          ],
+          "answer": 1,
+          "explanation": "Your own sweat equity has the highest potential return of all."
+        }
+      ]
+    },
+    {
+      "id": "l18-real-estate",
+      "moduleId": "m4",
+      "number": 18,
+      "title": "Real Estate",
+      "subtitle": "From first deal to portfolio",
+      "summary": "Real estate created more millionaires than any other asset class. Learn the deal math, the financing stack, and the scaling playbook from single-family to portfolio.",
+      "duration": "23 min",
+      "difficulty": "Intermediate",
+      "content": [
+        {
+          "heading": "Why real estate works",
+          "paragraphs": [
+            "Real estate offers four advantages simultaneously: leverage (mortgage = other people's money at low rates), cash flow (rents), appreciation (location and inflation), and tax benefits (depreciation, 1031 exchanges). Very few assets do all four.",
+            "The core deal math: buy at a discount to market, rent above carrying costs, force value through renovation, refinance to pull equity out, and repeat. This is the BRRRR method — Buy, Rehab, Rent, Refinance, Repeat — and it's how small investors become large ones.",
+            "The key number is cash-on-cash return: annual cash flow divided by cash invested. A good deal returns 8-15% cash-on-cash before appreciation — well above bonds and bank accounts."
+          ],
+          "bullets": [
+            "Leverage magnifies returns — and risk — so underwrite conservatively.",
+            "Location and buying below market protect you when cycles turn.",
+            "Rents rise with inflation; fixed mortgages don't — that spread is profit."
+          ]
+        },
+        {
+          "heading": "The scaling playbook",
+          "paragraphs": [
+            "Step one: house hack — live in one unit of a multi-unit property and rent the rest, often near-zero living cost. Step two: repeat with a second property, reinvesting cash flow. Step three: graduate to value-add deals and multi-family where the economies of scale kick in.",
+            "Systems beat heroics at scale: property management, standardized rehabs, and a lender relationship with 6+ months of lead time. The investors who scale are the ones who systematize — the ones who don't, stay at two or three doors.",
+            "Raise capital from partners (private money at agreed terms) when your own capital runs out — that's how real estate empires are actually built: on other people's money, prudently deployed."
+          ]
+        }
+      ],
+      "takeaways": [
+        "Real estate combines leverage, cash flow, appreciation, and tax benefits.",
+        "BRRRR turns one deal into a repeating machine.",
+        "House hacking is the zero-cost entry point.",
+        "Systems and private capital are how portfolios scale."
+      ],
+      "actionSteps": [
+        "Learn the five deal metrics: cap rate, cash-on-cash, ROI, 1% rule, debt service coverage.",
+        "Run the math on one property in your local market this month.",
+        "Identify one source of private capital you could approach."
+      ],
+      "quiz": [
+        {
+          "question": "What does BRRRR stand for?",
+          "options": [
+            "Buy, Rent, Relax, Retire, Repeat",
+            "Buy, Rehab, Rent, Refinance, Repeat",
+            "Buy, Rebuild, Rent, Refinance, Re-sell",
+            "Borrow, Rent, Refinance, Repeat"
+          ],
+          "answer": 1,
+          "explanation": "The BRRRR method cycles equity out of one deal into the next."
+        },
+        {
+          "question": "What is cash-on-cash return?",
+          "options": [
+            "Rent minus expenses",
+            "Annual cash flow divided by cash invested",
+            "Price minus mortgage",
+            "Appreciation divided by taxes"
+          ],
+          "answer": 1,
+          "explanation": "It measures the yield on the actual cash you put in."
+        },
+        {
+          "question": "What is house hacking?",
+          "options": [
+            "Buying homes with credit cards",
+            "Living in one unit of a multi-unit property and renting the rest",
+            "Flipping houses illegally",
+            "Renting rooms in someone else's house"
+          ],
+          "answer": 1,
+          "explanation": "It reduces your housing cost to near zero while building an asset."
+        }
+      ]
+    },
+    {
+      "id": "l19-alternatives",
+      "moduleId": "m4",
+      "number": 19,
+      "title": "Alternative Assets",
+      "subtitle": "Crypto, art, collectibles, and more",
+      "summary": "Beyond stocks and property lie the alternative assets — high volatility, high returns, high learning curves. Understand them so you can use them, not be used by them.",
+      "duration": "17 min",
+      "difficulty": "Advanced",
+      "content": [
+        {
+          "heading": "The alternatives universe",
+          "paragraphs": [
+            "Alternatives include crypto (Bitcoin, Ethereum, and beyond), commodities (gold, silver), art and collectibles, private credit, and even royalties (music, films, patents). Their common thread: low correlation with public markets — they zig when stocks zag.",
+            "Crypto deserves special attention because it is both an asset and a technology. Bitcoin is a fixed-supply digital store of value; Ethereum is a platform for decentralized applications. Both have gone through 70-90% drawdowns — and both have produced historic returns for long-term holders.",
+            "Art and collectibles are the classic wealth-adjacent assets: they store value, signal status, and diversify — but they are illiquid, costly to store, and hard to price. Treat them as a small lifestyle allocation, not a strategy."
+          ],
+          "bullets": [
+            "Alternatives' value is diversification — not guaranteed outperformance.",
+            "Position sizing is everything in volatile assets: 1-10% is the sane range.",
+            "Never invest in an alternative you don't understand deeply enough to explain to a skeptical friend."
+          ]
+        },
+        {
+          "heading": "The rules for owning them",
+          "paragraphs": [
+            "Rule one: size the position so that a 90% drawdown is survivable and boring. Rule two: only invest money with a 5+ year horizon — volatility is noise until you sell. Rule three: custody matters — self-custody your crypto or use a reputable regulated custodian; exchange failures have destroyed careless holders.",
+            "For royalties, the pitch is attractive (income from assets you don't operate), but underwriting is hard and diligence is thin in the marketplaces that sell them. Go in as an expert in the domain, not a tourist.",
+            "The alternative-asset class as a whole should be the dessert of your portfolio, not the meal. If your core (index funds, property, your business) is solid, alternatives add spice without threatening your future."
+          ]
+        }
+      ],
+      "takeaways": [
+        "Alternatives offer diversification at the cost of volatility and complexity.",
+        "Position size: small enough that a 90% crash is boring.",
+        "Crypto is both asset and technology — study both.",
+        "Custody is your responsibility; careless holders get burned."
+      ],
+      "actionSteps": [
+        "Write a one-page explainer of any alternative you're considering — in your own words.",
+        "Set a maximum allocation (e.g., 5%) before buying anything.",
+        "Decide your custody plan before your first crypto purchase."
+      ],
+      "quiz": [
+        {
+          "question": "Why do investors add alternatives?",
+          "options": [
+            "Guaranteed returns",
+            "Diversification and low correlation with stocks",
+            "They are free",
+            "To avoid taxes"
+          ],
+          "answer": 1,
+          "explanation": "Low correlation is the main portfolio benefit."
+        },
+        {
+          "question": "What is the sane allocation range for volatile alternatives?",
+          "options": [
+            "25-50%",
+            "1-10%",
+            "100%",
+            "0% for everyone"
+          ],
+          "answer": 1,
+          "explanation": "Small enough that drawdowns are survivable and boring."
+        },
+        {
+          "question": "What destroyed many crypto holders historically?",
+          "options": [
+            "High taxes",
+            "Exchange failures with careless custody",
+            "Low volatility",
+            "Government bans everywhere"
+          ],
+          "answer": 1,
+          "explanation": "Self-custody or regulated custody is essential."
+        }
+      ]
+    },
+    {
+      "id": "l20-ai-niche",
+      "moduleId": "m5",
+      "number": 20,
+      "title": "The AI & Tech Opportunity",
+      "subtitle": "The biggest wealth wave in history",
+      "summary": "AI is projected to add trillions to the global economy. Understand where the value concentrates — infrastructure, models, applications, and vertical tools — and where a newcomer can still enter.",
+      "duration": "22 min",
+      "difficulty": "Intermediate",
+      "content": [
+        {
+          "heading": "Where AI money is made",
+          "paragraphs": [
+            "The AI stack has layers: chips and infrastructure (NVIDIA's dominance made it the world's most valuable company), foundation models (OpenAI, Anthropic, Google), and applications (thousands of tools built on top of the models). The biggest fortunes so far sit in the infrastructure and model layers.",
+            "For a newcomer, the application layer is the entry point: vertical AI tools that solve specific industry problems (legal, healthcare, sales, education). The models are commoditizing underneath; the moat is domain data, distribution, and workflow integration.",
+            "Jensen Huang's NVIDIA story is the case study: a 30-year bet on accelerated computing that took off when AI hit the mainstream. The lesson: position early in the picks-and-shovels of the current wave."
+          ],
+          "bullets": [
+            "AI value flows: infrastructure > models > applications (for now).",
+            "Vertical AI tools win on data and workflow, not raw model quality.",
+            "Every decade's wave rewards those positioned before the headlines."
+          ]
+        },
+        {
+          "heading": "Your entry playbook",
+          "paragraphs": [
+            "Choose an industry you know. Interview 20 practitioners about their workflow. Find the task they hate most and currently do manually — that's your product. Build it on top of an existing model API; you don't need to train anything.",
+            "Pricing: sell outcomes, not access. 'We automate your claims processing' beats 'AI software'. Distribution is still the differentiator — the market rewards reach, not just technology.",
+            "And build durable skills: prompt engineering, API integration, data handling, and evaluation. These are the trades of the AI economy, and they're learnable by anyone with a computer and a project."
+          ]
+        }
+      ],
+      "takeaways": [
+        "AI wealth concentrates in infrastructure, models, and applications.",
+        "Newcomers enter at the application layer with vertical tools.",
+        "Domain knowledge plus AI APIs is a powerful combination.",
+        "Distribution and workflow integration are the real moats."
+      ],
+      "actionSteps": [
+        "Pick one industry you know and map its most hated manual task.",
+        "Build a prototype on a model API within 30 days.",
+        "Write one case study of an AI vertical company (e.g., Harvey, Cursor, Sierra)."
+      ],
+      "quiz": [
+        {
+          "question": "Where does AI value concentrate today?",
+          "options": [
+            "Consumer apps",
+            "Infrastructure and models",
+            "Government contracts",
+            "Hardware retail"
+          ],
+          "answer": 1,
+          "explanation": "NVIDIA and foundation labs capture the biggest slices so far."
+        },
+        {
+          "question": "What is the newcomer's entry point in AI?",
+          "options": [
+            "Training new foundation models",
+            "Vertical application tools with domain data",
+            "Chip manufacturing",
+            "Data center construction"
+          ],
+          "answer": 1,
+          "explanation": "Applications win on data, workflow, and distribution."
+        },
+        {
+          "question": "What makes a vertical AI tool defensible?",
+          "options": [
+            "Model quality alone",
+            "Domain data and workflow integration",
+            "Low price",
+            "Brand name"
+          ],
+          "answer": 1,
+          "explanation": "Moats come from owning the workflow and the data."
+        }
+      ]
+    },
+    {
+      "id": "l21-fintech-niche",
+      "moduleId": "m5",
+      "number": 21,
+      "title": "FinTech",
+      "subtitle": "Where money meets code",
+      "summary": "Financial services is a $26 trillion industry being rebuilt by software. From payments to lending to embedded finance, learn where the next financial giants are being born.",
+      "duration": "20 min",
+      "difficulty": "Intermediate",
+      "content": [
+        {
+          "heading": "The unbundling of the bank",
+          "paragraphs": [
+            "Banks used to be everything: payments, deposits, loans, investments. FinTech unbundled them — Stripe owns payments for developers, Wise owns cross-border transfers, Plaid owns data connectivity, and a thousand startups own slices of lending and investing.",
+            "Then came the rebundling: embedded finance. Now any company can offer banking, payments, or lending inside its own product. Shopify's Shopify Balance, Uber's wallet, and Apple's savings accounts are banks hiding inside non-banks.",
+            "The revenue pool is enormous because finance touches every transaction. Capturing a fraction of a percent of flow at massive volume creates billion-dollar companies — that's the Stripe and Visa playbook."
+          ],
+          "bullets": [
+            "Payments scale on volume: tiny fees × huge volume = huge revenue.",
+            "Regulation is the moat and the barrier — licensed players win.",
+            "Embedded finance lets non-banks become banks."
+          ]
+        },
+        {
+          "heading": "Entry points for builders",
+          "paragraphs": [
+            "Option one: build tools for existing financial businesses (compliance software, onboarding, analytics) — lower regulatory burden, real customers. Option two: white-label finance — offer banking-as-a-service through licensed partners instead of becoming a bank yourself. Option three: consumer niches — credit for underserved segments, financial education, and cross-border services.",
+            "The compliance burden is real: know your customer (KYC), anti-money-laundering (AML), and licensing rules vary by jurisdiction. Partnering with a licensed entity (BaaS) is how most startups manage this.",
+            "Case study mindset: Changpeng Zhao built Binance into the largest crypto exchange in 180 days — speed and focus in a new category. Patrick Collison built Stripe for a developer pain everyone else ignored. Find the ignored pain."
+          ]
+        }
+      ],
+      "takeaways": [
+        "FinTech unbundled banks, then rebundled them as embedded finance.",
+        "Tiny fees at massive volume make payments enormously profitable.",
+        "Regulation is both the moat and the barrier to entry.",
+        "Banking-as-a-service lets startups ship financial products without bank licenses."
+      ],
+      "actionSteps": [
+        "Map the financial stack: payments, lending, deposits, investing, insurance.",
+        "Pick one layer and identify a pain you know firsthand.",
+        "Read about one BaaS provider (e.g., Stripe Treasury, Unit) this week."
+      ],
+      "quiz": [
+        {
+          "question": "What did FinTech do to banks?",
+          "options": [
+            "Eliminated them",
+            "Unbundled their services into specialized companies",
+            "Merged them all",
+            "Nothing"
+          ],
+          "answer": 1,
+          "explanation": "Specialists took over each banking function."
+        },
+        {
+          "question": "What is embedded finance?",
+          "options": [
+            "Hiding money in apps",
+            "Non-banks offering financial services inside their products",
+            "Bank-only mobile apps",
+            "Paying with QR codes"
+          ],
+          "answer": 1,
+          "explanation": "Uber wallets and Shopify Balance are embedded finance."
+        },
+        {
+          "question": "How do most startups handle banking regulations?",
+          "options": [
+            "Ignore them",
+            "Partner with licensed entities via BaaS",
+            "Lobby for changes",
+            "Move to unregulated markets"
+          ],
+          "answer": 1,
+          "explanation": "Banking-as-a-service provides compliance through licensed partners."
+        }
+      ]
+    },
+    {
+      "id": "l22-dtc-niche",
+      "moduleId": "m5",
+      "number": 22,
+      "title": "DTC Brands",
+      "subtitle": "Building billion-dollar consumer companies",
+      "summary": "Direct-to-consumer brands skip the middleman and own the customer relationship. Learn the modern brand playbook: community, content, and obsessive product-market fit.",
+      "duration": "19 min",
+      "difficulty": "Intermediate",
+      "content": [
+        {
+          "heading": "The DTC revolution",
+          "paragraphs": [
+            "Direct-to-consumer means the brand owns the relationship: data, marketing, and repeat purchases. Glossier built a $1.8B beauty brand from a blog community. Warby Parker disrupted eyeglasses by selling direct at half price. Gymshark became a billion-dollar sportswear brand on the back of fitness influencers.",
+            "The economics are compelling: 60-80% gross margins (vs 30-40% through retail), full data ownership, and the ability to iterate products monthly based on customer feedback.",
+            "The hard part is the same for everyone: customer acquisition. Winning brands build community (Glossier), content (Gymshark), or a fundamentally better value proposition (Warby Parker)."
+          ],
+          "bullets": [
+            "Own the customer data — it's the asset you're really building.",
+            "Community turns customers into marketers.",
+            "A razor-sharp niche beats a diluted mass brand."
+          ]
+        },
+        {
+          "heading": "The 5-step brand launch",
+          "paragraphs": [
+            "Step one: pick a niche with passionate buyers and an underserved need. Step two: validate with a waitlist and pre-orders. Step three: manufacture small-batch and ship fast. Step four: content — document the journey, show the product in real life. Step five: reinvest 100% of early profit into acquisition until unit economics are proven.",
+            "Track the metrics that matter: customer acquisition cost (CAC), lifetime value (LTV), and LTV:CAC ratio. A healthy brand runs 3:1 or better. Below 1:1, you're buying customers with a net loss — fix the offer or the channel before scaling.",
+            "The graveyard is full of brands that scaled a broken funnel. Scale the product-market fit first, advertising second."
+          ]
+        }
+      ],
+      "takeaways": [
+        "DTC brands own data, margins, and the customer relationship.",
+        "Community and content are the modern acquisition engines.",
+        "LTV:CAC of 3:1 or better is the scaling green light.",
+        "Niche down until you're the obvious choice for someone."
+      ],
+      "actionSteps": [
+        "Define your niche in one sentence with a specific buyer.",
+        "Calculate the LTV:CAC you'd need to be profitable.",
+        "Start one piece of content (video, post, newsletter) about the brand this week."
+      ],
+      "quiz": [
+        {
+          "question": "What is the real asset a DTC brand builds?",
+          "options": [
+            "Inventory",
+            "Customer data and relationship",
+            "Store locations",
+            "Manufacturing capacity"
+          ],
+          "answer": 1,
+          "explanation": "Data and direct relationship enable repeat sales and iteration."
+        },
+        {
+          "question": "What is a healthy LTV:CAC ratio?",
+          "options": [
+            "1:1",
+            "3:1 or better",
+            "0.5:1",
+            "Any ratio is fine"
+          ],
+          "answer": 1,
+          "explanation": "Below 1:1 you lose money on every acquired customer."
+        },
+        {
+          "question": "How did Glossier and Gymshark acquire customers?",
+          "options": [
+            "TV ads",
+            "Community and content",
+            "Retail partnerships",
+            "Cold calling"
+          ],
+          "answer": 1,
+          "explanation": "Community-driven and content-driven acquisition built both brands."
+        }
+      ]
+    },
+    {
+      "id": "l23-biotech-niche",
+      "moduleId": "m5",
+      "number": 23,
+      "title": "Healthcare & Biotech",
+      "subtitle": "The trillion-dollar long game",
+      "summary": "Global healthcare spending exceeds $10 trillion a year. Biotech has produced some of the largest fortunes in history — and it rewards patience, expertise, and mission.",
+      "duration": "24 min",
+      "difficulty": "Advanced",
+      "content": [
+        {
+          "heading": "Why healthcare is different",
+          "paragraphs": [
+            "Healthcare is recession-proof, demographically growing (aging populations), and priced with near-zero elasticity — patients don't shop around when it's life or death. Drug margins can exceed 90% on patented medicines, and a single blockbuster can fund a generation of research.",
+            "Moderna's story shows the upside: a platform technology (mRNA) that was struggling for a decade became world-famous in months when COVID-19 arrived — and the company briefly reached a $200B valuation. Stéphane Bancel's patient bet on platform tech paid off historically.",
+            "The barriers are equally real: 10+ year development timelines, FDA-style regulatory risk, and clinical failure rates above 90% for new drugs. This is the ultimate long-horizon game."
+          ],
+          "bullets": [
+            "Digital health (telemedicine, AI diagnostics, health apps) has far lower regulatory barriers than drugs.",
+            "Platform technologies (mRNA, gene editing, AI drug discovery) compound across many products.",
+            "Healthcare SaaS (EHR, billing, prior authorization) is the fastest entry for builders."
+          ]
+        },
+        {
+          "heading": "Entry paths for non-scientists",
+          "paragraphs": [
+            "You don't need a PhD to participate. Digital health: telemedicine platforms, mental health apps, and AI-powered diagnostics are software businesses with healthcare economics. Healthtech SaaS: the administrative layer (scheduling, billing, prior authorization) is famously broken and ripe for disruption. Wellness DTC: supplements, devices, and longevity products with premium consumer margins.",
+            "For investors: diversified biotech funds and ETFs carry the sector's upside without single-stock clinical risk; biotech indexes capture the power-law returns while surviving the failures.",
+            "The mindset lesson: in biotech, the market is right to be skeptical — but a few wins can be so large that they eclipse everything else. That's the asymmetric bet in its purest, most patient form."
+          ]
+        }
+      ],
+      "takeaways": [
+        "Healthcare combines recession-proof demand with enormous margins.",
+        "Clinical risk is extreme; platform approaches spread it across products.",
+        "Digital health and healthtech SaaS are lower-barrier entries.",
+        "Diversified biotech exposure captures upside without single-stock risk."
+      ],
+      "actionSteps": [
+        "Research one healthtech SaaS pain point (billing, scheduling, prior auth).",
+        "If investing, evaluate a broad biotech ETF for a small allocation.",
+        "Read the Moderna story — from struggling startup to mRNA giant."
+      ],
+      "quiz": [
+        {
+          "question": "Why can drug margins exceed 90%?",
+          "options": [
+            "Drugs are cheap to make",
+            "Patents and low price elasticity",
+            "Governments pay everything",
+            "There is no competition"
+          ],
+          "answer": 1,
+          "explanation": "Patent protection plus essential demand supports premium pricing."
+        },
+        {
+          "question": "Which entry path has the lowest regulatory barrier?",
+          "options": [
+            "New drug development",
+            "Digital health and healthtech SaaS",
+            "Gene therapy",
+            "Medical devices"
+          ],
+          "answer": 1,
+          "explanation": "Software and services face far lighter regulation than therapies."
+        },
+        {
+          "question": "What is the safest way to invest in biotech upside?",
+          "options": [
+            "Single stock picks",
+            "Diversified biotech funds/ETFs",
+            "Avoiding the sector",
+            "Options trading"
+          ],
+          "answer": 1,
+          "explanation": "Diversified vehicles survive clinical failures and capture winners."
+        }
+      ]
+    },
+    {
+      "id": "l24-first-million",
+      "moduleId": "m6",
+      "number": 24,
+      "title": "The First Million",
+      "subtitle": "A 12-month roadmap",
+      "summary": "The first million is the hardest — and the most educational. Follow the 12-month roadmap that combines income, business, and investing into one compounding machine.",
+      "duration": "26 min",
+      "difficulty": "All Levels",
+      "content": [
+        {
+          "heading": "The three-engine approach",
+          "paragraphs": [
+            "The first million is built with three engines running at once: your primary income (the fuel), a side business or high-leverage project (the multiplier), and investing (the compounder). Each month, you split attention roughly 70/20/10 — day job first, side engine second, investing automated.",
+            "The math of $1M: at 8% annual returns, you need about $685K of contributions over 10 years ($5,700/month) — or fewer years if you build a business that produces a large lump (a sale, a buyout, a big contract).",
+            "Most people who cross $1M do it with a blend: high income years, disciplined investing, and one or two business wins that compress the timeline. The roadmap below optimizes for exactly that blend."
+          ],
+          "bullets": [
+            "Salary saves; equity makes you wealthy; investing compounds both.",
+            "A single $100K+ business outcome compresses years off the plan.",
+            "Automate investing so the compounder never sleeps."
+          ]
+        },
+        {
+          "heading": "The 12-month calendar",
+          "paragraphs": [
+            "Months 1-3 (Foundation): 6-month emergency fund, max employer match, fix your budget, and choose your side project with the massive-problem framework. Months 4-6 (Build): launch the side project MVP, land the first 10 customers, reinvest everything. Months 7-9 (Scale): productize, raise prices 20%, and hire or automate your first bottleneck. Months 10-12 (Accelerate): build a second income engine, review your portfolio, and plan next year's asymmetric bet.",
+            "Track one number per month: cash flow. Not vanity metrics — cash flow. If monthly profit grows every quarter, the machine is working.",
+            "Expect two emergencies (equipment, clients, health) — budget slack for both. The plan survives contact with reality only if you've left room for it."
+          ]
+        }
+      ],
+      "takeaways": [
+        "Run three engines: income, business, investing.",
+        "$1M is a contributions problem plus a business-compression problem.",
+        "One tracked number: monthly cash flow.",
+        "The plan must include slack for reality."
+      ],
+      "actionSteps": [
+        "Write your $1M target and the year you want it by.",
+        "Set up the 70/20/10 split in your calendar this week.",
+        "Choose your side project using the massive-problem framework."
+      ],
+      "quiz": [
+        {
+          "question": "What are the three engines of the first million?",
+          "options": [
+            "Salary, lottery, inheritance",
+            "Income, side business, investing",
+            "Savings, bonds, gold",
+            "Renting, lending, donating"
+          ],
+          "answer": 1,
+          "explanation": "The roadmap runs income, a business multiplier, and investing together."
+        },
+        {
+          "question": "What single number should you track monthly?",
+          "options": [
+            "Revenue",
+            "Cash flow",
+            "Followers",
+            "Hours worked"
+          ],
+          "answer": 1,
+          "explanation": "Cash flow reveals whether the machine actually works."
+        },
+        {
+          "question": "How do business wins help the timeline?",
+          "options": [
+            "They don't",
+            "A large lump compresses years off the plan",
+            "They replace investing",
+            "They increase taxes"
+          ],
+          "answer": 1,
+          "explanation": "A sale or big contract adds a lump that contributions alone would take years to reach."
+        }
+      ]
+    },
+    {
+      "id": "l25-personal-brand",
+      "moduleId": "m6",
+      "number": 25,
+      "title": "Personal Brand & Media Leverage",
+      "subtitle": "Make your name an asset",
+      "summary": "A personal brand is permissionless leverage: it compounds, opens doors, and multiplies every other asset you own. Here's the modern playbook for building one.",
+      "duration": "18 min",
+      "difficulty": "Intermediate",
+      "content": [
+        {
+          "heading": "Why personal brand is an asset",
+          "paragraphs": [
+            "Trust is the scarcest currency, and a personal brand manufactures it at scale. When you're known as the person who teaches X brilliantly, deals find you: partnerships, board seats, advisory fees, and job offers — without a single cold email.",
+            "The compounding mechanics are the same as investing: consistency over years beats intensity over months. One high-quality piece per week for three years beats a viral burst and silence.",
+            "Positioning beats popularity: being the go-to for a specific niche (B2B SaaS pricing, multifamily underwriting, AI legal tools) is worth more than being vaguely known by everyone."
+          ],
+          "bullets": [
+            "Personal brand lowers the cost of everything you ever sell.",
+            "Distribution on owned channels (newsletter, site) beats rented ones (platforms).",
+            "Document, don't create — share your real work and results."
+          ]
+        },
+        {
+          "heading": "The 90-day content engine",
+          "paragraphs": [
+            "Choose one platform and one niche. Publish twice weekly for 90 days: one teach piece (how-to, framework), one story piece (what you learned/are learning), one reaction piece (what's wrong with conventional wisdom). Repurpose each piece across channels.",
+            "Engage deliberately: reply to every thoughtful comment for the first 90 days — the algorithm and the community reward it. Track which content type drives the most 'follow and start a conversation' behavior; double down on it.",
+            "Monetize late, not early: build the audience and trust first. When you do offer something, make it the natural next step for people who already trust you — a course, a cohort, a service, or a book."
+          ]
+        }
+      ],
+      "takeaways": [
+        "Trust is the scarcest currency; a personal brand mints it.",
+        "Niche positioning beats broad popularity.",
+        "Consistency compounds like interest.",
+        "Monetize after trust, not before."
+      ],
+      "actionSteps": [
+        "Write your positioning statement: 'I help [audience] [outcome] via [method]'.",
+        "Pick one platform and commit to two posts per week.",
+        "Publish your first teach piece this week."
+      ],
+      "quiz": [
+        {
+          "question": "Why is a personal brand called permissionless leverage?",
+          "options": [
+            "Anyone can publish and compound an audience",
+            "It requires no money",
+            "It never fails",
+            "It replaces a business"
+          ],
+          "answer": 0,
+          "explanation": "No permission needed — consistency and skill do the work."
+        },
+        {
+          "question": "What beats popularity for building wealth from a brand?",
+          "options": [
+            "More followers",
+            "Niche positioning as the go-to expert",
+            "Viral moments",
+            "Buying ads"
+          ],
+          "answer": 1,
+          "explanation": "Being the obvious expert in a niche drives premium opportunities."
+        },
+        {
+          "question": "When should you monetize your audience?",
+          "options": [
+            "Immediately",
+            "After building trust with consistent value",
+            "Never",
+            "Only with ads"
+          ],
+          "answer": 1,
+          "explanation": "Monetization is the natural next step of trust, not the first step."
+        }
+      ]
+    },
+    {
+      "id": "l26-networking",
+      "moduleId": "m6",
+      "number": 26,
+      "title": "Network Like a Billionaire",
+      "subtitle": "Your net worth is your network",
+      "summary": "Every billionaire's story includes a pivotal relationship. Learn to build a network that generates deals, advice, and opportunities — by giving first.",
+      "duration": "16 min",
+      "difficulty": "Intermediate",
+      "content": [
+        {
+          "heading": "The give-first economy",
+          "paragraphs": [
+            "Networking fails when it's transactional: 'what can you do for me?' It compounds when it's generous: 'how can I help?' Adam Grant's research shows that the most successful professionals are consistently givers — not pushovers, but strategic givers who help with knowledge, introductions, and feedback.",
+            "The billionaire version: Reid Hoffman's network made LinkedIn possible; Buffett's partnership with Munger amplified both their returns. The relationship came first; the money followed.",
+            "A practical metric: aim to provide value to 3 people for every 1 favor you ask. Generosity is a lead-generation strategy with a long payback — and the payback is compound."
+          ],
+          "bullets": [
+            "Introductions are the highest-value gift you can give.",
+            "Help specific people with specific, useful things — not generic offers.",
+            "Stay visible: a monthly check-in with 20 key contacts beats annual catch-ups."
+          ]
+        },
+        {
+          "heading": "The 5-person-per-week system",
+          "paragraphs": [
+            "Spend 30 minutes, five days a week, on deliberate networking: reply thoughtfully to one person's work, make one introduction, or share one useful resource with a contact. Thirty minutes a day compounds into thousands of touchpoints a year.",
+            "When meeting someone important: do your homework, ask about their goals (not your pitch), and leave them with something useful — a resource, an intro, a sharp question. Follow up within 24 hours with a written recap and a next step.",
+            "Track your network like a portfolio: names, context, last touchpoint, and how you've helped. The people who treat relationships as an asset class end up owning the best deals."
+          ]
+        }
+      ],
+      "takeaways": [
+        "Networking compounds when you give first.",
+        "Introductions are the most valuable currency in your network.",
+        "30 minutes daily of deliberate outreach beats annual events.",
+        "Treat your network as a portfolio — track it."
+      ],
+      "actionSteps": [
+        "List your top 20 contacts and their current goals.",
+        "Make one introduction this week between two people who should know each other.",
+        "Set a daily 30-minute networking block on your calendar."
+      ],
+      "quiz": [
+        {
+          "question": "What does research show about the most successful networkers?",
+          "options": [
+            "They are the best salespeople",
+            "They are strategic givers",
+            "They attend the most events",
+            "They never ask for favors"
+          ],
+          "answer": 1,
+          "explanation": "Strategic generosity compounds into opportunity."
+        },
+        {
+          "question": "What is the highest-value gift in a network?",
+          "options": [
+            "Money",
+            "Introductions",
+            "Advice",
+            "Compliments"
+          ],
+          "answer": 1,
+          "explanation": "Connecting the right people creates value for both."
+        },
+        {
+          "question": "How should you treat your network?",
+          "options": [
+            "As a contact list",
+            "As an asset portfolio to track and grow",
+            "As a chore",
+            "As a favor ledger"
+          ],
+          "answer": 1,
+          "explanation": "Track context and touchpoints like a portfolio manager."
+        }
+      ]
+    },
+    {
+      "id": "l27-wealth-protection",
+      "moduleId": "m6",
+      "number": 27,
+      "title": "Wealth Protection & Legacy",
+      "subtitle": "Keep what you build",
+      "summary": "Building wealth is half the game; keeping it is the other half. Learn asset protection, tax efficiency, insurance, and how billionaires structure their legacies.",
+      "duration": "20 min",
+      "difficulty": "Advanced",
+      "content": [
+        {
+          "heading": "The protection stack",
+          "paragraphs": [
+            "Wealth protection has layers: insurance (health, disability, liability, property), legal structures (LLCs, trusts, holding companies), and tax strategy (asset location, retirement vehicles, capital gains timing). Each layer prevents a different disaster: an accident, a lawsuit, a tax bill, an estate fight.",
+            "The professionals call it 'shields up': insulate operating assets from personal assets, so a business lawsuit can't reach your family's home and portfolio. An LLC around each property, a holding company above them, and personal umbrella insurance are the standard stack.",
+            "Tax efficiency is not avoidance — it's legality. Maximize tax-advantaged accounts (401k, IRA, HSA), hold assets long-term for capital gains rates, and time realizations to your income years. A 10-20% tax drag over decades is a massive compounding difference."
+          ],
+          "bullets": [
+            "Separate entities protect you from business liabilities.",
+            "Umbrella insurance is cheap (a few hundred a year) and covers catastrophic gaps.",
+            "Asset location (which assets go in which accounts) is worth more than asset allocation in taxes."
+          ]
+        },
+        {
+          "heading": "Legacy and succession",
+          "paragraphs": [
+            "Legacy planning is governance: wills, trusts, powers of attorney, and beneficiaries — reviewed every 3-5 years and after major life events. The cost of failure is measured in family courtrooms and confiscated estate value.",
+            "Trusts (revocable while alive, irrevocable for estate planning) keep assets out of probate and control how they're distributed. Charitable structures (foundations, donor-advised funds) let wealth do good and reduce tax drag simultaneously — Buffett and Gates built the template.",
+            "The final lesson: wealth that doesn't outlast its builder isn't wealth — it's a rumor. Protect it, structure it, and teach the next generation how to handle it, or the legacy dissolves in a generation."
+          ]
+        }
+      ],
+      "takeaways": [
+        "Protection layers: insurance, legal structures, tax strategy.",
+        "Separate entities insulate personal assets from business risk.",
+        "Tax-advantaged accounts and long-term holdings cut the tax drag.",
+        "Trusts and wills are legacy infrastructure, not luxuries."
+      ],
+      "actionSteps": [
+        "Review your insurance coverage for the four big gaps this month.",
+        "If you own a business, separate your personal and business entities.",
+        "Book an annual estate review on your calendar."
+      ],
+      "quiz": [
+        {
+          "question": "What is the 'shields up' principle?",
+          "options": [
+            "Hiding assets illegally",
+            "Insulating operating and personal assets with entities and insurance",
+            "Buying gold",
+            "Deleting records"
+          ],
+          "answer": 1,
+          "explanation": "Legal separation limits what a single disaster can reach."
+        },
+        {
+          "question": "Which is more impactful for taxes over a lifetime?",
+          "options": [
+            "Asset location",
+            "Market timing",
+            "Frequent trading",
+            "Paying quarterly"
+          ],
+          "answer": 0,
+          "explanation": "Which assets live in which accounts determines the tax drag on compounding."
+        },
+        {
+          "question": "Why review estate plans every few years?",
+          "options": [
+            "To pay lawyers",
+            "Life and laws change — plans must track reality",
+            "To add more assets",
+            "It's legally required annually"
+          ],
+          "answer": 1,
+          "explanation": "Marriage, children, and tax law changes all invalidate old plans."
+        }
+      ]
+    },
+    {
+      "id": "l28-final-playbook",
+      "moduleId": "m6",
+      "number": 28,
+      "title": "The Final Playbook",
+      "subtitle": "Putting it all together",
+      "summary": "The capstone: your complete operating system for wealth — mindset, mechanics, business, capital, niche, and legacy — compressed into one repeatable annual play.",
+      "duration": "24 min",
+      "difficulty": "All Levels",
+      "content": [
+        {
+          "heading": "Your operating system",
+          "paragraphs": [
+            "Wealth is not one big move; it's an operating system you run every day. The system has six components: mindset (quarterly audit of beliefs), mechanics (automated saving/investing), business (one primary venture + one experiment), capital (annual allocation review), niche (deep knowledge in one high-paying domain), and legacy (protection and succession).",
+            "Run the system on rhythms: daily (30-minute networking + learning block), weekly (cash-flow check, one rep of the resilience loop), monthly (metrics review, one new contact), quarterly (mindset audit, allocation review), annually (the full playbook review).",
+            "Systems beat motivation. When your wealth machine runs on calendar blocks and automation, a bad week barely dents your trajectory."
+          ],
+          "bullets": [
+            "One page, six systems — write it down and stick it on your wall.",
+            "Your calendar is your strategy; if it isn't scheduled, it isn't real.",
+            "Every quarter, ask: which of the six systems is weakest? Fix that one first."
+          ]
+        },
+        {
+          "heading": "The next 90 days",
+          "paragraphs": [
+            "Immediate: set up automation (emergency fund, index investing, debt payoff), choose your niche, and start your personal brand. By day 30: your side project has a landing page and 10 problem interviews done. By day 60: first 10 customers or pre-orders. By day 90: first cash-flow-positive month or a documented pivot.",
+            "Then repeat the loop quarterly, compressing timelines as your skills compound. The blueprint is complete — but a blueprint is just paper until you build.",
+            "As the founders of this course like to say: the market doesn't care how much you know. It rewards what you do. Go build."
+          ]
+        }
+      ],
+      "takeaways": [
+        "Wealth is an operating system, not a single move.",
+        "Rhythms — daily, weekly, monthly, quarterly — run the system.",
+        "Your calendar is your strategy.",
+        "A blueprint is paper until you execute it."
+      ],
+      "actionSteps": [
+        "Write your one-page operating system today.",
+        "Set up the 3 automations: savings, investing, debt payoff.",
+        "Schedule your first 90-day sprint with the calendar above."
+      ],
+      "quiz": [
+        {
+          "question": "How should you treat your wealth plan?",
+          "options": [
+            "As a one-time event",
+            "As an operating system with rhythms",
+            "As a secret",
+            "As a motivational poster"
+          ],
+          "answer": 1,
+          "explanation": "Rhythms turn the plan into a living system."
+        },
+        {
+          "question": "What is the best proof your strategy is real?",
+          "options": [
+            "Your calendar",
+            "Your notebook",
+            "Your dreams",
+            "Your friends' opinions"
+          ],
+          "answer": 0,
+          "explanation": "If it isn't scheduled and executed, it isn't a strategy."
+        },
+        {
+          "question": "What does the market reward?",
+          "options": [
+            "Knowledge",
+            "Intentions",
+            "Execution",
+            "Titles"
+          ],
+          "answer": 2,
+          "explanation": "Outcomes, not intentions — the blueprint demands building."
+        }
+      ]
+    }
+  ],
+  "videos": [
+    {
+      "id": "vid-economic-machine",
+      "title": "How The Economic Machine Works",
+      "channel": "Principles by Ray Dalio",
+      "description": "Ray Dalio's animated explainer of the economy: transactions, credit cycles, and productivity — the operating manual every investor should watch first.",
+      "youtubeId": "PHe0bXAIuk0",
+      "moduleId": "m2",
+      "duration": "31 min",
+      "level": "Beginner",
+      "tags": [
+        "economy",
+        "credit",
+        "cycles"
+      ]
+    },
+    {
+      "id": "vid-naval-rich",
+      "title": "How to Get Rich Without Getting Lucky",
+      "channel": "Naval Ravikant",
+      "description": "The famous reading of Naval's Twitter thread: specific knowledge, leverage, equity ownership, and accountability — the modern framework for building wealth.",
+      "youtubeId": "FgF53b_ETRg",
+      "moduleId": "m1",
+      "duration": "45 min",
+      "level": "Beginner",
+      "tags": [
+        "mindset",
+        "leverage",
+        "equity"
+      ]
+    },
+    {
+      "id": "vid-startups-succeed",
+      "title": "The Single Biggest Reason Start-Ups Succeed",
+      "channel": "Bill Gross · TED",
+      "description": "After analyzing 200+ companies, Bill Gross found the #1 success factor — and it isn't the idea, the team, or even the business model. Timing rules.",
+      "youtubeId": "bNpx7gpSqbY",
+      "moduleId": "m3",
+      "duration": "17 min",
+      "level": "Beginner",
+      "tags": [
+        "startups",
+        "timing",
+        "founders"
+      ]
+    },
+    {
+      "id": "vid-start-with-why",
+      "title": "Start With Why",
+      "channel": "Simon Sinek · TEDx",
+      "description": "Great leaders inspire action by communicating why, not what. The classic talk on purpose-driven leadership and brand-building.",
+      "youtubeId": "u4ZoJKF_VuA",
+      "moduleId": "m1",
+      "duration": "18 min",
+      "level": "Beginner",
+      "tags": [
+        "leadership",
+        "purpose",
+        "brand"
+      ]
+    },
+    {
+      "id": "vid-principles-success",
+      "title": "Principles for Success",
+      "channel": "Principles by Ray Dalio",
+      "description": "Ray Dalio's 30-minute animated film distilling his life and investment principles: radical truth, radical transparency, and the 5-step process.",
+      "youtubeId": "B9XGUpQZY38",
+      "moduleId": "m4",
+      "duration": "31 min",
+      "level": "Intermediate",
+      "tags": [
+        "principles",
+        "decision-making",
+        "process"
+      ]
+    },
+    {
+      "id": "vid-psychology-of-money",
+      "title": "The Psychology of Money (Animated Summary)",
+      "channel": "The Swedish Investor",
+      "description": "Morgan Housel's timeless lessons — luck, risk, compounding, and behavior — in a tight animated summary of the modern classic.",
+      "youtubeId": "TJDcGv9OH4Q",
+      "moduleId": "m2",
+      "duration": "27 min",
+      "level": "Beginner",
+      "tags": [
+        "psychology",
+        "behavior",
+        "compounding"
+      ]
+    },
+    {
+      "id": "vid-psychology-10min",
+      "title": "Psychology of Money in 10 Minutes",
+      "channel": "Becoming More",
+      "description": "The five most powerful money lessons from Morgan Housel's book, condensed into a rapid 10-minute masterclass.",
+      "youtubeId": "yhq1cPRHR6k",
+      "moduleId": "m1",
+      "duration": "10 min",
+      "level": "Beginner",
+      "tags": [
+        "money",
+        "behavior",
+        "summary"
+      ]
+    }
+  ],
+  "niches": [
+    {
+      "id": "tech-ai",
+      "title": "AI & Technology",
+      "icon": "Cpu",
+      "image": "https://images.pexels.com/photos/8849295/pexels-photo-8849295.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=627&w=1200",
+      "description": "Artificial Intelligence and cutting-edge technology represent the fastest-growing wealth creation opportunity in human history. From machine learning to autonomous systems, this niche is creating billionaires at an unprecedented rate.",
+      "potentialEarnings": "$500K - $10B+",
+      "examples": [
+        {
+          "name": "Jensen Huang",
+          "netWorth": "$106B",
+          "company": "NVIDIA",
+          "story": "Founded NVIDIA in 1993 focusing on GPU technology. His early bet on AI computing chips made NVIDIA the backbone of the AI revolution, transforming a gaming chip company into the most valuable company on Earth."
+        },
+        {
+          "name": "Sam Altman",
+          "netWorth": "$1B+",
+          "company": "OpenAI",
+          "story": "Led OpenAI from a research lab to the fastest-growing tech company ever with ChatGPT. Demonstrated that AI products can achieve mass adoption almost overnight."
+        },
+        {
+          "name": "Elon Musk",
+          "netWorth": "$230B+",
+          "company": "Tesla, SpaceX, xAI",
+          "story": "Built multiple billion-dollar companies across electric vehicles, space exploration, and now AI. Proves that technology visionaries who execute can build unprecedented wealth."
+        }
+      ],
+      "strategies": [
+        "Build AI-powered SaaS products that solve enterprise problems",
+        "Create AI tools for specific industry verticals (healthcare, legal, finance)",
+        "Develop and license proprietary AI models and datasets",
+        "Build AI infrastructure and developer tools",
+        "Create AI-enhanced consumer products and apps"
+      ],
+      "whyHighPaying": "AI is projected to add $15.7 trillion to the global economy by 2030. Companies are desperate for AI solutions and willing to pay premium prices. The barrier to entry is high (requiring deep expertise), which limits competition and keeps margins fat.",
+      "gettingStarted": [
+        "Learn Python, machine learning, and deep learning fundamentals",
+        "Build projects using OpenAI API, Hugging Face, and cloud AI services",
+        "Identify an industry you know well and find AI-solvable problems",
+        "Start with consulting/services, then productize your solutions",
+        "Raise seed funding or bootstrap with early customer revenue"
+      ]
+    },
+    {
+      "id": "fintech",
+      "title": "Finance & FinTech",
+      "icon": "DollarSign",
+      "image": "https://images.pexels.com/photos/6770610/pexels-photo-6770610.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=627&w=1200",
+      "description": "Financial technology is disrupting traditional banking, investing, and payment systems. From cryptocurrency to algorithmic trading, this niche offers massive opportunities for wealth creation through innovation in how money moves.",
+      "potentialEarnings": "$300K - $5B+",
+      "examples": [
+        {
+          "name": "Changpeng Zhao (CZ)",
+          "netWorth": "$33B",
+          "company": "Binance",
+          "story": "Built Binance into the world's largest crypto exchange in just 180 days. Started with $15M ICO funding and grew it into a company processing billions in daily trading volume."
+        },
+        {
+          "name": "Patrick Collison",
+          "netWorth": "$11.5B",
+          "company": "Stripe",
+          "story": "Co-founded Stripe at age 19 with his brother. Simplified online payments for businesses and grew Stripe into a $95B company that processes hundreds of billions in transactions."
+        },
+        {
+          "name": "Brian Armstrong",
+          "netWorth": "$11B",
+          "company": "Coinbase",
+          "story": "Founded Coinbase in 2012 to make cryptocurrency accessible to everyone. Took the company public in 2021, becoming the first major crypto company to list on NASDAQ."
+        }
+      ],
+      "strategies": [
+        "Build payment processing solutions for underserved markets",
+        "Create algorithmic trading and robo-advisory platforms",
+        "Develop blockchain/DeFi protocols and applications",
+        "Build embedded finance solutions for non-financial companies",
+        "Create financial literacy and wealth management tools"
+      ],
+      "whyHighPaying": "The global financial services market is worth $26 trillion. FinTech companies can capture even tiny percentages of transaction flows to generate massive revenue. Recurring revenue models in finance create extremely valuable businesses.",
+      "gettingStarted": [
+        "Get deep knowledge of financial regulations (SEC, banking laws)",
+        "Learn blockchain development and smart contract programming",
+        "Understand payment processing infrastructure (ACH, SWIFT, APIs)",
+        "Build a prototype solving a specific financial pain point",
+        "Partner with established banks for regulatory compliance"
+      ]
+    },
+    {
+      "id": "real-estate",
+      "title": "Real Estate & PropTech",
+      "icon": "Building",
+      "image": "https://images.pexels.com/photos/943089/pexels-photo-943089.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=627&w=1200",
+      "description": "Real estate has created more millionaires and billionaires than any other industry. Combined with technology (PropTech), modern real estate opportunities range from traditional investing to innovative platforms that democratize property access.",
+      "potentialEarnings": "$200K - $20B+",
+      "examples": [
+        {
+          "name": "Donald Bren",
+          "netWorth": "$17B",
+          "company": "Irvine Company",
+          "story": "Built the Irvine Company into a real estate empire owning 126M+ sq ft of property across California. Focused on master-planned communities and commercial real estate."
+        },
+        {
+          "name": "Stephen Ross",
+          "netWorth": "$12.4B",
+          "company": "Related Companies",
+          "story": "Developed Hudson Yards, the largest private real estate development in US history ($25B project). Built wealth through mega-scale mixed-use developments."
+        },
+        {
+          "name": "Robert Reffkin",
+          "netWorth": "$500M+",
+          "company": "Compass",
+          "story": "Founded Compass to bring technology to real estate brokerage. Raised over $1.5B in funding and disrupted the traditional real estate agent model."
+        }
+      ],
+      "strategies": [
+        "Invest in multi-family properties with value-add renovations",
+        "Build PropTech platforms (listing sites, management tools, marketplaces)",
+        "Develop commercial real estate in growing metropolitan areas",
+        "Create real estate crowdfunding or fractional ownership platforms",
+        "Build short-term rental empires using data-driven property selection"
+      ],
+      "whyHighPaying": "Real estate is a $326 trillion global asset class. It offers leverage (mortgages), tax advantages (depreciation, 1031 exchanges), appreciation, and cash flow. Technology is only beginning to transform this traditionally analog industry.",
+      "gettingStarted": [
+        "Start with a single rental property using FHA loan (3.5% down)",
+        "Learn property analysis, cap rates, and cash-on-cash returns",
+        "Network with successful real estate investors in your market",
+        "Use house hacking (live in one unit, rent others) to start free",
+        "Scale through BRRRR strategy (Buy, Rehab, Rent, Refinance, Repeat)"
+      ]
+    },
+    {
+      "id": "ecommerce",
+      "title": "E-Commerce & DTC Brands",
+      "icon": "ShoppingCart",
+      "image": "https://images.pexels.com/photos/5632391/pexels-photo-5632391.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=627&w=1200",
+      "description": "E-commerce is reshaping global retail. Direct-to-consumer (DTC) brands are cutting out middlemen and building billion-dollar companies. From Amazon FBA to Shopify stores, the digital marketplace offers unlimited earning potential.",
+      "potentialEarnings": "$100K - $5B+",
+      "examples": [
+        {
+          "name": "Jeff Bezos",
+          "netWorth": "$200B+",
+          "company": "Amazon",
+          "story": "Started selling books online from his garage in 1994. Built Amazon into the everything store, then expanded into cloud computing, streaming, and logistics to become one of the wealthiest humans ever."
+        },
+        {
+          "name": "Tobias Lütke",
+          "netWorth": "$9B",
+          "company": "Shopify",
+          "story": "Built Shopify after trying to sell snowboards online and finding existing tools inadequate. Created a platform that now powers millions of online stores worldwide."
+        },
+        {
+          "name": "Emily Weiss",
+          "netWorth": "$400M+",
+          "company": "Glossier",
+          "story": "Turned a beauty blog into Glossier, a DTC beauty brand valued at $1.8B. Proved that community-driven brands can disrupt established beauty conglomerates."
+        }
+      ],
+      "strategies": [
+        "Build a DTC brand in a passionate niche (beauty, fitness, pets)",
+        "Create an Amazon FBA business with private-label products",
+        "Build a B2B e-commerce marketplace for a specific industry",
+        "Develop subscription box services with high retention",
+        "Create e-commerce enablement tools and SaaS platforms"
+      ],
+      "whyHighPaying": "Global e-commerce sales surpassed $6 trillion. DTC brands capture 60-80% margins vs. 30-40% through retailers. Digital distribution eliminates geographic limitations. Subscription models create predictable recurring revenue.",
+      "gettingStarted": [
+        "Research trending products using tools like Jungle Scout or Helium 10",
+        "Start a Shopify store or Amazon FBA business with <$5K",
+        "Master Facebook/Instagram ads and influencer marketing",
+        "Focus on one product category and dominate it completely",
+        "Reinvest profits into inventory and marketing to scale aggressively"
+      ]
+    },
+    {
+      "id": "biotech",
+      "title": "Healthcare & Biotech",
+      "icon": "Heart",
+      "image": "https://images.pexels.com/photos/9574516/pexels-photo-9574516.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=627&w=1200",
+      "description": "Healthcare and biotechnology innovations save lives and generate extraordinary returns. From drug development to medical devices and digital health, this niche combines purpose with massive financial opportunity.",
+      "potentialEarnings": "$400K - $15B+",
+      "examples": [
+        {
+          "name": "Stéphane Bancel",
+          "netWorth": "$6B",
+          "company": "Moderna",
+          "story": "Led Moderna from a struggling biotech startup to a COVID-19 vaccine powerhouse. The company's mRNA technology platform is now being applied to cancer, flu, and dozens of other diseases."
+        },
+        {
+          "name": "Patrick Soon-Shiong",
+          "netWorth": "$7.5B",
+          "company": "NantHealth/Abraxis",
+          "story": "Developed Abraxane, a revolutionary cancer drug, and sold Abraxis to Celgene for $2.9B. Now pioneering personalized cancer immunotherapy treatments."
+        },
+        {
+          "name": "Anne Wojcicki",
+          "netWorth": "$800M",
+          "company": "23andMe",
+          "story": "Founded 23andMe to make genetic testing accessible. Built a database of 12M+ genotyped customers and leveraged genetic data for drug discovery partnerships."
+        }
+      ],
+      "strategies": [
+        "Develop digital health and telemedicine platforms",
+        "Create AI-powered diagnostic and drug discovery tools",
+        "Build health & wellness DTC brands (supplements, devices)",
+        "Invest in or found biotech startups targeting unmet medical needs",
+        "Create healthcare SaaS (EHR, practice management, billing)"
+      ],
+      "whyHighPaying": "Global healthcare spending exceeds $10 trillion annually. Biotech companies can achieve 90%+ margins on patented drugs. An aging population and pandemic preparedness are driving unprecedented investment. Healthcare is recession-proof.",
+      "gettingStarted": [
+        "Get domain expertise (MD, PhD, or partner with scientists)",
+        "Identify unmet medical needs with large addressable markets",
+        "Apply for NIH/SBIR grants for non-dilutive early funding",
+        "Build relationships with pharma companies for partnerships",
+        "Consider digital health platforms with lower regulatory barriers"
+      ]
+    },
+    {
+      "id": "saas",
+      "title": "SaaS & Cloud Computing",
+      "icon": "Cloud",
+      "image": "https://images.pexels.com/photos/7413915/pexels-photo-7413915.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=627&w=1200",
+      "description": "Software-as-a-Service businesses generate recurring revenue, scale infinitely, and command the highest valuations in tech. Cloud computing infrastructure continues to grow at 20%+ annually, creating enormous opportunities.",
+      "potentialEarnings": "$200K - $50B+",
+      "examples": [
+        {
+          "name": "Marc Benioff",
+          "netWorth": "$7.5B",
+          "company": "Salesforce",
+          "story": "Pioneered the SaaS model with Salesforce CRM in 1999. Proved that cloud-based software could replace on-premise enterprise software. Built Salesforce into a $200B+ company."
+        },
+        {
+          "name": "Zoom's Eric Yuan",
+          "netWorth": "$4.5B",
+          "company": "Zoom",
+          "story": "Built Zoom after being frustrated with existing video conferencing tools at Cisco. Created a product so good it became a verb. Revenue went from $623M to $4B in one year during COVID."
+        },
+        {
+          "name": "Tope Awotona",
+          "netWorth": "$1.4B",
+          "company": "Calendly",
+          "story": "Nigerian immigrant who invested his life savings to build Calendly. Bootstrapped to profitability before raising capital, eventually reaching a $3B valuation for a scheduling tool."
+        }
+      ],
+      "strategies": [
+        "Build vertical SaaS for specific industries (legal, dental, construction)",
+        "Create micro-SaaS products solving narrow problems perfectly",
+        "Build API-first platforms that other developers integrate with",
+        "Create no-code/low-code tools for non-technical users",
+        "Build AI-enhanced productivity and workflow automation tools"
+      ],
+      "whyHighPaying": "SaaS companies trade at 10-30x revenue multiples. Monthly recurring revenue (MRR) creates predictable, compounding growth. Gross margins of 70-90% are standard. Low marginal cost per customer enables massive scale.",
+      "gettingStarted": [
+        "Learn to code or find a technical co-founder",
+        "Talk to 100 potential customers before writing any code",
+        "Build an MVP (Minimum Viable Product) in 30-60 days",
+        "Price based on value, not cost (most SaaS is underpriced)",
+        "Focus on reducing churn — retention is everything in SaaS"
+      ]
+    }
+  ],
+  "posts": [
+    {
+      "slug": "five-numbers-every-investor-must-know",
+      "title": "The 5 Numbers Every Investor Must Know",
+      "excerpt": "Before you buy a single share or property, learn these five numbers — they will save you from the most expensive mistakes in finance.",
+      "authorId": "marcus-johnson",
+      "date": "2026-07-28",
+      "readTime": "7 min",
+      "tags": [
+        "investing",
+        "basics"
+      ],
+      "content": [
+        {
+          "heading": "Number 1: Your compounding rate",
+          "paragraphs": [
+            "Every financial decision is a compounding decision. The Rule of 72 — divide 72 by your annual return to get your doubling time — turns any rate into a timeline. At 8% your money doubles every 9 years; at 12% every 6 years. That four-point difference is the difference between retiring rich and retiring comfortable.",
+            "The number matters because it forces you to see fees for what they are: a compounding tax that quietly steals a third of your lifetime returns."
+          ]
+        },
+        {
+          "heading": "Number 2: Cash-on-cash return",
+          "paragraphs": [
+            "Rental property returns are quoted in many ways, but the one that matters for your wallet is cash-on-cash: annual cash flow divided by the cash you actually put in. A deal that returns 10% cash-on-cash before appreciation beats a 'big' deal that ties up your capital for 4%.",
+            "Underwrite every real estate deal with this number and you'll stop overpaying for the illusion of appreciation."
+          ]
+        },
+        {
+          "heading": "Number 3: Net worth, not income",
+          "paragraphs": [
+            "Track your net worth monthly — assets minus liabilities. Income is a river; net worth is the reservoir. Two people earning the same salary can have a 10x difference in net worth simply by how they allocate what flows through their hands.",
+            "The moment you start measuring the reservoir instead of the river, your decisions change."
+          ]
+        },
+        {
+          "heading": "Numbers 4 & 5: Savings rate and the 4% rule",
+          "paragraphs": [
+            "Your savings rate — the percentage of income you keep — is the single most controllable lever of your wealth timeline. Bump it from 10% to 20% and you can cut years off your journey.",
+            "And once assets outnumber expenses, the 4% rule tells you how much you can safely withdraw: multiply your annual spending by 25 — that's your FIRE number. It converts an abstract dream into a concrete target."
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "pricing-saas-doubled-profit",
+      "title": "How We Priced Our First SaaS and Doubled Profit",
+      "excerpt": "The highest-leverage decision we ever made wasn't a feature — it was a price change. Here's the exact framework we used.",
+      "authorId": "sarah-chen",
+      "date": "2026-07-21",
+      "readTime": "6 min",
+      "tags": [
+        "saas",
+        "pricing",
+        "startups"
+      ],
+      "content": [
+        {
+          "heading": "The mistake we all make",
+          "paragraphs": [
+            "We launched our first SaaS at $9/month because it felt safe. Ninety days later we had users but no business — our customer acquisition cost was eating the entire lifetime value.",
+            "The fix wasn't more marketing. It was price. We moved to a three-tier structure and raised the middle tier 40%."
+          ]
+        },
+        {
+          "heading": "The three-tier framework",
+          "paragraphs": [
+            "Tier one is your entry offer: cheap, simple, and designed to get people through the door. Tier two is your real product — the one you actually want to sell. Tier three exists to make tier two look reasonable.",
+            "Most revenue comes from the middle. The premium tier is an anchor, and a good anchor makes the middle feel like a bargain."
+          ]
+        },
+        {
+          "heading": "The results",
+          "paragraphs": [
+            "Revenue per customer doubled, support tickets dropped (higher-paying customers churn less), and our acquisition math finally worked. The same number of customers now produced nearly double the profit.",
+            "If you haven't changed your price in the last 12 months, you are almost certainly underpriced. Raise it 20% and watch what happens — the data will tell you the truth."
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "ai-wont-replace-you",
+      "title": "AI Won't Replace You — But Someone Using AI Will",
+      "excerpt": "The biggest wealth transfer of our generation belongs to people who pair deep domain knowledge with AI leverage. Here's how to position yourself.",
+      "authorId": "elena-rossi",
+      "date": "2026-07-14",
+      "readTime": "8 min",
+      "tags": [
+        "ai",
+        "career",
+        "leverage"
+      ],
+      "content": [
+        {
+          "heading": "The leverage is permissionless",
+          "paragraphs": [
+            "Code and media are the permissionless levers of wealth — and AI just made both dramatically more powerful. A single person with a model API and domain knowledge can now ship what used to take a team of ten.",
+            "The people building fortunes aren't the ones asking whether AI will replace them. They're the ones asking which workflow they know intimately enough to automate."
+          ]
+        },
+        {
+          "heading": "Domain knowledge is the moat",
+          "paragraphs": [
+            "Models are commoditizing fast. What they can't commoditize is your judgment: which industry, which workflow, which customer, which objection. The vertical AI tools that win — in legal, healthcare, construction — are built by people who understood the domain first.",
+            "Pick one industry you know, find the most hated manual task in it, and automate it with an existing model API. That's the entire playbook."
+          ]
+        },
+        {
+          "heading": "Your 90-day AI plan",
+          "paragraphs": [
+            "Days 1-30: learn prompt engineering and API integration by building a toy project. Days 31-60: interview 20 practitioners about their most hated task. Days 61-90: ship a prototype to 10 of them and watch what they do with it.",
+            "The AI economy rewards builders, not spectators. Start this week."
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "the-power-of-losing",
+      "title": "The Power of Losing: What Failure Taught Me",
+      "excerpt": "I made my first million at 27 and lost all of it at 28. Rebuilding taught me more than the winning ever did.",
+      "authorId": "alex-morgan",
+      "date": "2026-07-07",
+      "readTime": "6 min",
+      "tags": [
+        "mindset",
+        "resilience"
+      ],
+      "content": [
+        {
+          "heading": "The wipeout",
+          "paragraphs": [
+            "At 27 I was up. At 28 I was flat broke, owing money to people I respected, and sitting in a borrowed apartment trying to figure out what happened. I had confused a good run with a good system.",
+            "The hardest part wasn't the money. It was the story I told myself about being smart — because that story had made me careless."
+          ]
+        },
+        {
+          "heading": "The four lessons that rebuilt me",
+          "paragraphs": [
+            "First: never risk what you can't afford to lose. Second: debrief every loss within 48 hours, in writing. Third: size every bet so that no single failure ends the game. Fourth: the market doesn't care how much you know — it pays for what you do.",
+            "I came back by 31, slower and richer. The system replaced the ego, and the system compounds."
+          ]
+        },
+        {
+          "heading": "Why failure is tuition",
+          "paragraphs": [
+            "Every billionaire in our curriculum has a wipeout story — Dalio, Jobs, Bezos's early missteps. The pattern isn't avoiding loss; it's industrializing recovery.",
+            "Build your tilt insurance now: a cash buffer, a peer group that normalizes loss, and a journal. When the bad bet comes — and it will — you'll pay the tuition once and keep the education."
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "house-hacking-101",
+      "title": "House Hacking 101: My First Property at 22",
+      "excerpt": "I bought my first four-plex with a 3.5% down payment, lived in one unit, and haven't paid rent since. Here's exactly how.",
+      "authorId": "marcus-johnson",
+      "date": "2026-06-30",
+      "readTime": "7 min",
+      "tags": [
+        "real-estate",
+        "house-hacking"
+      ],
+      "content": [
+        {
+          "heading": "Why house hacking is the best first deal",
+          "paragraphs": [
+            "A multi-unit property you live in turns your biggest expense into an income stream. Three tenants pay the mortgage; you live free — or get paid to live. It's the cheapest, lowest-risk way to enter real estate, and the FHA loan only needs 3.5% down.",
+            "I bought my first four-plex at 22 with $12,000 down. My cost of housing went from $1,100/month in rent to zero — and I owned an asset that appreciated while my tenants paid it off."
+          ]
+        },
+        {
+          "heading": "The deal math that matters",
+          "paragraphs": [
+            "Underwrite with three numbers: the 1% rule (monthly rent should be roughly 1% of purchase price), cap rate, and cash-on-cash return. Then stress-test: what does the deal look like if one unit sits vacant for 60 days? If you can survive that, you can survive real estate.",
+            "Walk the property with the inspector, talk to the neighbors, and read the actual lease documents. Cheap diligence now prevents expensive surprises later."
+          ]
+        },
+        {
+          "heading": "The path from one door to many",
+          "paragraphs": [
+            "Once your house hack is stabilized, refinance to pull equity out, rent your unit, and repeat with the next property. That's the BRRRR machine — Buy, Rehab, Rent, Refinance, Repeat.",
+            "Every real estate empire in our founder circle started with a single ugly first deal. Yours can too."
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "personal-brand-compounds",
+      "title": "Building a Personal Brand That Compounds",
+      "excerpt": "A personal brand is the highest-ROI asset you can build in 2026 — and it's permissionless. Here's the exact 90-day engine.",
+      "authorId": "sarah-chen",
+      "date": "2026-06-23",
+      "readTime": "6 min",
+      "tags": [
+        "personal-brand",
+        "content"
+      ],
+      "content": [
+        {
+          "heading": "Why your name is an asset",
+          "paragraphs": [
+            "Trust is the scarcest currency in the economy, and a personal brand manufactures it at scale. When you're known as the person who teaches X brilliantly, deals find you: partnerships, board seats, advisory fees — without a single cold email.",
+            "Positioning beats popularity. Being the go-to for a specific niche is worth more than being vaguely known by everyone."
+          ]
+        },
+        {
+          "heading": "The 90-day content engine",
+          "paragraphs": [
+            "Choose one platform and one niche. Publish twice weekly for 90 days: one teach piece, one story piece, one reaction piece. Reply to every thoughtful comment. Track which format drives the most conversation and double down.",
+            "Consistency over intensity: one high-quality piece per week for three years beats a viral burst and silence. Compounding is the whole game."
+          ]
+        },
+        {
+          "heading": "Monetize late, not early",
+          "paragraphs": [
+            "Build the audience and the trust first. When you do offer something, make it the natural next step for people who already trust you — a course, a cohort, a service.",
+            "The students in our program who built brands first are the ones closing enterprise deals without a sales team. The brand is the funnel."
+          ]
+        }
+      ]
+    }
+  ]
+}
