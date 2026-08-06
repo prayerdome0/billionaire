@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { CheckCircle, Crown, Loader2, Mail, Newspaper, Send, Users, TerminalSquare } from "lucide-react";
+import { CheckCircle, Crown, Loader2, Mail, Newspaper, Send, Users, TerminalSquare, ShieldCheck, Briefcase } from "lucide-react";
 import { subscribeNewsletter } from "../lib/api";
 
 export default function Footer() {
@@ -47,14 +47,17 @@ export default function Footer() {
             <Link to="/lessons" className="hover:text-amber-400 transition-colors flex items-center gap-1.5">
               <Newspaper className="w-3.5 h-3.5" /> Lessons
             </Link>
-            <Link to="/blog" className="hover:text-amber-400 transition-colors flex items-center gap-1.5">
-              <Newspaper className="w-3.5 h-3.5" /> Blog
+            <Link to="/founders" className="hover:text-amber-400 transition-colors flex items-center gap-1.5">
+              <Users className="w-3.5 h-3.5" /> Founders & Leadership
             </Link>
-            <Link to="/certificate" className="hover:text-amber-400 transition-colors flex items-center gap-1.5">
-              <Users className="w-3.5 h-3.5" /> Certificate
+            <Link to="/founders#invest" className="hover:text-amber-400 transition-colors flex items-center gap-1.5 text-emerald-400">
+              <Briefcase className="w-3.5 h-3.5" /> Invest With Us
             </Link>
             <Link to="/api-docs" className="hover:text-amber-400 transition-colors flex items-center gap-1.5">
               <TerminalSquare className="w-3.5 h-3.5" /> API & Database
+            </Link>
+            <Link to="/admin" className="hover:text-amber-400 transition-colors flex items-center gap-1.5 text-amber-400/80 font-medium">
+              <ShieldCheck className="w-3.5 h-3.5" /> Admin Portal
             </Link>
           </div>
 
@@ -91,14 +94,20 @@ export default function Footer() {
         </div>
 
         <div className="pt-8 border-t border-gray-800/50 text-center">
-          <p className="text-gray-600 text-sm">
-            © {new Date().getFullYear()} Billionaire Blueprint. For educational purposes only.
-            Not financial advice. All billionaire data sourced from public records.
+          <p className="text-gray-500 text-sm font-medium">
+            © {new Date().getFullYear()} Seedwel Investment Limited (Registered 2025). Founder Mr. Seedwell Khayalethu Masuku • Zambia Country Director Zacheus Simbaya.
+          </p>
+          <p className="text-gray-600 text-xs mt-1">
+            Open for investors in school building, AI business, and software developers.
           </p>
           <p className="text-gray-700 text-xs mt-2">
             Powered by a SQLite database &amp; REST API —{" "}
             <Link to="/api-docs" className="text-amber-500/80 hover:text-amber-400">
               explore the live API
+            </Link>{" "}
+            •{" "}
+            <Link to="/admin" className="text-amber-500/80 hover:text-amber-400">
+              admin portal
             </Link>
           </p>
         </div>

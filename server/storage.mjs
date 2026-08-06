@@ -145,12 +145,18 @@ class SqliteStore {
       CREATE TABLE IF NOT EXISTS subscribers (
         id INTEGER PRIMARY KEY AUTOINCREMENT, email TEXT NOT NULL UNIQUE, created_at TEXT NOT NULL
       );
+      CREATE TABLE IF NOT EXISTS investor_inquiries (
+        id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, email TEXT NOT NULL,
+        phone TEXT, interest_area TEXT NOT NULL, amount_range TEXT, message TEXT,
+        created_at TEXT NOT NULL
+      );
       CREATE TABLE IF NOT EXISTS lesson_progress (
         id INTEGER PRIMARY KEY AUTOINCREMENT, client_id TEXT NOT NULL, lesson_id TEXT NOT NULL,
         completed_at TEXT NOT NULL, UNIQUE(client_id, lesson_id)
       );
       CREATE INDEX IF NOT EXISTS idx_comments_lesson ON comments(lesson_id);
       CREATE INDEX IF NOT EXISTS idx_progress_client ON lesson_progress(client_id);
+      CREATE INDEX IF NOT EXISTS idx_inquiries_email ON investor_inquiries(email);
     `);
   }
 
@@ -202,7 +208,7 @@ class SqliteStore {
   }
 
   _tableCounts() {
-    const tables = ["founders", "modules", "lessons", "videos", "niches", "posts", "testimonials", "contact_messages", "comments", "subscribers", "lesson_progress"];
+    const tables = ["founders", "modules", "lessons", "videos", "niches", "posts", "testimonials", "contact_messages", "comments", "subscribers", "investor_inquiries", "lesson_progress"];
     const out = {};
     for (const t of tables) out[t] = this._count(t);
     return out;
@@ -249,6 +255,20 @@ class SqliteStore {
   }
   async listMessages() { return this.db.prepare("SELECT * FROM contact_messages ORDER BY id DESC LIMIT 200").all(); }
 
+  async addInvestorInquiry({ name, email, phone = "", interest_area, amount_range = "", message = "" }) {
+    const info = this.db.prepare(
+      "INSERT INTO investor_inquiries (name, email, phone, interest_area, amount_range, message, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)"
+    ).run(String(name), String(email), String(phone), String(interest_area), String(amount_range), String(message), nowIso());
+    return {
+      id: Number(info.lastInsertRowid),
+      name, email, phone, interest_area, amount_range, message,
+      created_at: nowIso(),
+    };
+  }
+  async listInvestorInquiries() {
+    return this.db.prepare("SELECT * FROM investor_inquiries ORDER BY id DESC LIMIT 200").all();
+  }
+
   async addComment({ lessonId, clientId, name, text }) {
     const info = this.db.prepare("INSERT INTO comments (lesson_id, client_id, name, text, created_at) VALUES (?, ?, ?, ?, ?)")
       .run(lessonId, clientId, String(name).slice(0, 80), String(text).slice(0, 2000), nowIso());
@@ -294,6 +314,7 @@ class SqliteStore {
       founders: counts.founders, modules: counts.modules, lessons: counts.lessons, videos: counts.videos,
       niches: counts.niches, posts: counts.posts, testimonials: counts.testimonials,
       contactMessages: counts.contact_messages, comments: counts.comments, subscribers: counts.subscribers,
+      investorInquiries: counts.investor_inquiries || 0,
       completedLessons: completed,
       totalProgress: counts.lessons ? Math.round((completed / counts.lessons) * 100) : 0,
       database: counts,
@@ -305,6 +326,7 @@ class SqliteStore {
       file: this.file,
       tables: this._tableCounts(),
       recentMessages: this.db.prepare("SELECT id, name, email, subject, created_at FROM contact_messages ORDER BY id DESC LIMIT 10").all(),
+      recentInvestorInquiries: this.db.prepare("SELECT id, name, email, interest_area, created_at FROM investor_inquiries ORDER BY id DESC LIMIT 10").all(),
       recentComments: this.db.prepare("SELECT id, lesson_id, name, text, created_at FROM comments ORDER BY id DESC LIMIT 10").all(),
       recentSubscribers: this.db.prepare("SELECT id, email, created_at FROM subscribers ORDER BY id DESC LIMIT 10").all(),
       recentProgress: this.db.prepare("SELECT client_id, lesson_id, completed_at FROM lesson_progress ORDER BY id DESC LIMIT 10").all(),
@@ -380,6 +402,8 @@ class KvStore {
   /* ---- dynamic data ---- */
   async addMessage(msg) { await this._ensureSeeded(); return this._append("bb:messages", { id: Date.now(), ...msg, created_at: nowIso() }); }
   async listMessages() { await this._ensureSeeded(); return JSON.parse((await this._get("bb:messages")) || "[]").reverse().slice(0, 200); }
+  async addInvestorInquiry(inquiry) { await this._ensureSeeded(); return this._append("bb:investors", { id: Date.now(), ...inquiry, created_at: nowIso() }); }
+  async listInvestorInquiries() { await this._ensureSeeded(); return JSON.parse((await this._get("bb:investors")) || "[]").reverse().slice(0, 200); }
 
   async addComment({ lessonId, clientId, name, text }) {
     await this._ensureSeeded();
@@ -445,6 +469,7 @@ class KvStore {
     const dynamic = {
       contactMessages: (JSON.parse((await this._get("bb:messages")) || "[]")).length,
       subscribers: (JSON.parse((await this._get("bb:subscribers")) || "[]")).length,
+      investorInquiries: (JSON.parse((await this._get("bb:investors")) || "[]")).length,
       comments: Object.keys(seed.lessons).length, // approximate; precise per-lesson below
     };
     const progress = JSON.parse((await this._get("bb:progress")) || "{}");
@@ -456,9 +481,10 @@ class KvStore {
       videos: seed.videos.length, niches: seed.niches.length, posts: seed.posts.length,
       testimonials: seed.testimonials.length,
       contactMessages: dynamic.contactMessages, comments: commentCount, subscribers: dynamic.subscribers,
+      investorInquiries: dynamic.investorInquiries,
       completedLessons: completed,
       totalProgress: seed.lessons.length ? Math.round((completed / seed.lessons.length) * 100) : 0,
-      database: { seeded_content: "bundled json", contactMessages: dynamic.contactMessages, comments: commentCount, subscribers: dynamic.subscribers, progress: Object.keys(progress).length },
+      database: { seeded_content: "bundled json", contactMessages: dynamic.contactMessages, comments: commentCount, subscribers: dynamic.subscribers, investorInquiries: dynamic.investorInquiries, progress: Object.keys(progress).length },
     };
   }
   async databaseInfo() {
@@ -508,6 +534,7 @@ class PgStore {
       CREATE TABLE IF NOT EXISTS contact_messages (id SERIAL PRIMARY KEY, name TEXT NOT NULL, email TEXT NOT NULL, subject TEXT, message TEXT NOT NULL, created_at TEXT NOT NULL);
       CREATE TABLE IF NOT EXISTS comments (id SERIAL PRIMARY KEY, lesson_id TEXT NOT NULL, client_id TEXT NOT NULL, name TEXT NOT NULL, text TEXT NOT NULL, created_at TEXT NOT NULL);
       CREATE TABLE IF NOT EXISTS subscribers (id SERIAL PRIMARY KEY, email TEXT NOT NULL UNIQUE, created_at TEXT NOT NULL);
+      CREATE TABLE IF NOT EXISTS investor_inquiries (id SERIAL PRIMARY KEY, name TEXT NOT NULL, email TEXT NOT NULL, phone TEXT, interest_area TEXT NOT NULL, amount_range TEXT, message TEXT, created_at TEXT NOT NULL);
       CREATE TABLE IF NOT EXISTS lesson_progress (id SERIAL PRIMARY KEY, client_id TEXT NOT NULL, lesson_id TEXT NOT NULL, completed_at TEXT NOT NULL, UNIQUE(client_id, lesson_id));
       CREATE INDEX IF NOT EXISTS idx_comments_lesson ON comments(lesson_id);
       CREATE INDEX IF NOT EXISTS idx_progress_client ON lesson_progress(client_id);
@@ -649,6 +676,21 @@ class PgStore {
     const r = await this._q("SELECT * FROM contact_messages ORDER BY id DESC LIMIT 200");
     return r.rows;
   }
+  async addInvestorInquiry({ name, email, phone = "", interest_area, amount_range = "", message = "" }) {
+    const r = await this._q(
+      "INSERT INTO investor_inquiries (name, email, phone, interest_area, amount_range, message, created_at) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING id, created_at",
+      [String(name), String(email), String(phone), String(interest_area), String(amount_range), String(message), nowIso()]
+    );
+    return {
+      id: Number(r.rows[0].id),
+      name, email, phone, interest_area, amount_range, message,
+      created_at: r.rows[0].created_at,
+    };
+  }
+  async listInvestorInquiries() {
+    const r = await this._q("SELECT * FROM investor_inquiries ORDER BY id DESC LIMIT 200");
+    return r.rows;
+  }
   async addComment({ lessonId, clientId, name, text }) {
     const r = await this._q(
       "INSERT INTO comments (lesson_id, client_id, name, text, created_at) VALUES ($1,$2,$3,$4,$5) RETURNING id, created_at",
@@ -689,25 +731,26 @@ class PgStore {
 
   /* ---- meta ---- */
   async stats() {
-    const [f, mo, l, v, n, p, t, cm, co, su, pr] = await Promise.all([
+    const [f, mo, l, v, n, p, t, cm, co, su, inv, pr] = await Promise.all([
       this._count("founders"), this._count("modules"), this._count("lessons"), this._count("videos"),
       this._count("niches"), this._count("posts"), this._count("testimonials"), this._count("contact_messages"),
-      this._count("comments"), this._count("subscribers"), this._count("lesson_progress"),
+      this._count("comments"), this._count("subscribers"), this._count("investor_inquiries"), this._count("lesson_progress"),
     ]);
     return {
       founders: f, modules: mo, lessons: l, videos: v, niches: n, posts: p, testimonials: t,
-      contactMessages: cm, comments: co, subscribers: su, completedLessons: pr,
+      contactMessages: cm, comments: co, subscribers: su, investorInquiries: inv, completedLessons: pr,
       totalProgress: l ? Math.round((pr / l) * 100) : 0,
-      database: { founders: f, modules: mo, lessons: l, videos: v, niches: n, posts: p, testimonials: t, contact_messages: cm, comments: co, subscribers: su, lesson_progress: pr },
+      database: { founders: f, modules: mo, lessons: l, videos: v, niches: n, posts: p, testimonials: t, contact_messages: cm, comments: co, subscribers: su, investor_inquiries: inv, lesson_progress: pr },
     };
   }
   async databaseInfo() {
     const counts = {};
-    for (const t of ["founders", "modules", "lessons", "videos", "niches", "posts", "testimonials", "contact_messages", "comments", "subscribers", "lesson_progress"]) counts[t] = await this._count(t);
-    const [messages, comments, subscribers, progress] = await Promise.all([
+    for (const t of ["founders", "modules", "lessons", "videos", "niches", "posts", "testimonials", "contact_messages", "comments", "subscribers", "investor_inquiries", "lesson_progress"]) counts[t] = await this._count(t);
+    const [messages, comments, subscribers, inquiries, progress] = await Promise.all([
       this._q("SELECT id, name, email, subject, created_at FROM contact_messages ORDER BY id DESC LIMIT 10"),
       this._q("SELECT id, lesson_id, name, text, created_at FROM comments ORDER BY id DESC LIMIT 10"),
       this._q("SELECT id, email, created_at FROM subscribers ORDER BY id DESC LIMIT 10"),
+      this._q("SELECT id, name, email, interest_area, created_at FROM investor_inquiries ORDER BY id DESC LIMIT 10"),
       this._q("SELECT client_id, lesson_id, completed_at FROM lesson_progress ORDER BY id DESC LIMIT 10"),
     ]);
     return {
@@ -715,6 +758,7 @@ class PgStore {
       file: this.file,
       tables: counts,
       recentMessages: messages.rows,
+      recentInvestorInquiries: inquiries.rows,
       recentComments: comments.rows,
       recentSubscribers: subscribers.rows,
       recentProgress: progress.rows,
@@ -731,6 +775,7 @@ class MemoryStore {
     this.messages = [];
     this.comments = [];
     this.subscribers = [];
+    this.investorInquiries = [];
     this.progress = {};
     this._id = 1;
   }
@@ -757,6 +802,8 @@ class MemoryStore {
   }
   async addMessage(msg) { const item = { id: this._id++, ...msg, created_at: nowIso() }; this.messages.push(item); return item; }
   async listMessages() { return [...this.messages].reverse().slice(0, 200); }
+  async addInvestorInquiry(inquiry) { const item = { id: this._id++, ...inquiry, created_at: nowIso() }; this.investorInquiries.push(item); return item; }
+  async listInvestorInquiries() { return [...this.investorInquiries].reverse().slice(0, 200); }
   async addComment({ lessonId, clientId, name, text }) {
     const item = { id: this._id++, lessonId, clientId: maskClient(clientId), name, text, created_at: nowIso() };
     this.comments.push(item);
@@ -792,9 +839,10 @@ class MemoryStore {
       videos: seed.videos.length, niches: seed.niches.length, posts: seed.posts.length,
       testimonials: seed.testimonials.length, contactMessages: this.messages.length,
       comments: this.comments.length, subscribers: this.subscribers.length,
+      investorInquiries: this.investorInquiries.length,
       completedLessons: completed,
       totalProgress: seed.lessons.length ? Math.round((completed / seed.lessons.length) * 100) : 0,
-      database: { contactMessages: this.messages.length, comments: this.comments.length, subscribers: this.subscribers.length, progress: Object.keys(this.progress).length },
+      database: { contactMessages: this.messages.length, comments: this.comments.length, subscribers: this.subscribers.length, investorInquiries: this.investorInquiries.length, progress: Object.keys(this.progress).length },
     };
   }
   async databaseInfo() {
@@ -804,6 +852,7 @@ class MemoryStore {
       file: "in-memory (resets on redeploy)",
       tables: s.database,
       recentMessages: [...this.messages].reverse().slice(0, 10).map(({ id, name, email, subject, created_at }) => ({ id, name, email, subject, created_at })),
+      recentInvestorInquiries: [...this.investorInquiries].reverse().slice(0, 10).map(({ id, name, email, interest_area, created_at }) => ({ id, name, email, interest_area, created_at })),
       recentComments: [...this.comments].reverse().slice(0, 10),
       recentSubscribers: [...this.subscribers].reverse().slice(0, 10).map(({ id, email, created_at }) => ({ id, email, created_at })),
       recentProgress: Object.entries(this.progress).flatMap(([clientId, ids]) => ids.map((lessonId) => ({ client_id: maskClient(clientId), lesson_id: lessonId, completed_at: "-" }))).slice(0, 10),
@@ -841,6 +890,6 @@ export const storageMethods = [
   "listFounders", "getFounder", "listModules", "listLessons", "getLesson", "listVideos",
   "listNiches", "getNiche", "listPosts", "getPost", "search",
   "addMessage", "listMessages", "addComment", "listComments", "leaderboard",
-  "addSubscriber", "listSubscribers", "getProgress", "setProgress", "clearProgress",
+  "addSubscriber", "listSubscribers", "addInvestorInquiry", "listInvestorInquiries", "getProgress", "setProgress", "clearProgress",
   "stats", "databaseInfo",
 ];

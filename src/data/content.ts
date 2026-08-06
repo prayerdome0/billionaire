@@ -113,6 +113,19 @@ export interface SiteStat {
   value: string;
 }
 
+export interface InvestmentOpportunity {
+  id: string;
+  title: string;
+  category: string;
+  location: string;
+  minimumInvestment: string;
+  projectedReturn: string;
+  status: string;
+  description: string;
+  highlights: string[];
+  contactEmail: string;
+}
+
 export const site: { name: string; tagline: string; description: string } = raw.site;
 export const siteStats: SiteStat[] = raw.siteStats;
 export const heroImage = raw.heroImage;
@@ -125,6 +138,7 @@ export const lessons: Lesson[] = raw.lessons;
 export const videos: Video[] = raw.videos;
 export const niches: Niche[] = raw.niches;
 export const posts: BlogPost[] = raw.posts;
+export const investmentOpportunities: InvestmentOpportunity[] = (raw as any).investmentOpportunities || [];
 
 export function getLesson(id: string): Lesson | undefined {
   return lessons.find((l) => l.id === id);

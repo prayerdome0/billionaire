@@ -33,6 +33,7 @@ interface DbSnapshot {
   file: string;
   tables: Record<string, number>;
   recentMessages: { id: number; name: string; email: string; subject: string; created_at: string }[];
+  recentInvestorInquiries?: { id: number; name: string; email: string; interest_area: string; created_at: string }[];
   recentComments: { id: number; lesson_id: string; name: string; text: string; created_at: string }[];
   recentSubscribers: { id: number; email: string; created_at: string }[];
   recentProgress: { client_id: string; lesson_id: string; completed_at: string }[];
@@ -270,6 +271,27 @@ export default function ApiDocsPage() {
                             <span className="text-gray-600 text-xs font-mono">{m.created_at.slice(0, 16).replace("T", " ")}</span>
                           </div>
                           <p className="text-gray-500 text-xs mt-0.5">{m.email} · {m.subject}</p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                <div className="bg-gray-950/60 border border-gray-800 rounded-2xl p-6">
+                  <p className="text-xs uppercase tracking-widest text-gray-500 font-semibold mb-4">
+                    Latest investor_inquiries (from Seedwel Investment Limited forms)
+                  </p>
+                  {!db.recentInvestorInquiries || db.recentInvestorInquiries.length === 0 ? (
+                    <p className="text-gray-600 text-sm">No investor inquiries yet — try submitting one on the Founders page!</p>
+                  ) : (
+                    <div className="space-y-2">
+                      {db.recentInvestorInquiries.map((inq) => (
+                        <div key={inq.id} className="bg-gray-900/80 border border-gray-800/60 rounded-lg px-4 py-2.5">
+                          <div className="flex items-center justify-between">
+                            <span className="text-white text-sm font-semibold">{inq.name}</span>
+                            <span className="text-gray-600 text-xs font-mono">{String(inq.created_at).slice(0, 16).replace("T", " ")}</span>
+                          </div>
+                          <p className="text-amber-400/80 text-xs mt-0.5">{inq.email} · {inq.interest_area}</p>
                         </div>
                       ))}
                     </div>

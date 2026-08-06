@@ -46,9 +46,11 @@ export default function HeroSection() {
       </div>
 
       <div className="relative z-10 text-center px-4 max-w-5xl mx-auto">
-        <div className="inline-flex items-center gap-2 bg-amber-500/10 border border-amber-500/20 rounded-full px-5 py-2 mb-8">
+        <div className="inline-flex items-center gap-2 bg-amber-500/10 border border-amber-500/30 rounded-full px-5 py-2 mb-8">
           <Sparkles className="w-4 h-4 text-amber-400" />
-          <span className="text-amber-300 text-sm font-medium tracking-wide">THE ULTIMATE WEALTH GUIDE</span>
+          <span className="text-amber-300 text-xs md:text-sm font-bold tracking-wider uppercase">
+            SEEDWEL INVESTMENT LIMITED • REGISTERED 2025 • OPEN FOR INVESTORS
+          </span>
         </div>
 
         <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-white mb-6 leading-tight tracking-tight">
@@ -59,12 +61,12 @@ export default function HeroSection() {
         </h1>
 
         <p className="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto mb-4 leading-relaxed">
-          Discover the proven paths to extraordinary wealth. Learn which high-paying niches create the most billionaires 
-          and get actionable strategies to build your empire.
+          Led by Founder &amp; CEO <strong className="text-white">Mr. Seedwell Khayalethu Masuku</strong> and Zambia Country Director{" "}
+          <strong className="text-white">Zacheus Simbaya</strong>. We invite investors into school building infrastructure &amp; AI business developer ecosystems, alongside our 28-lesson wealth curriculum.
         </p>
 
-        <p className="text-sm text-gray-500 max-w-2xl mx-auto mb-10">
-          Real billionaire case studies, a 28-lesson curriculum, video masterclasses, and founder mentorship — all served live from our SQLite database &amp; API
+        <p className="text-sm text-gray-400 max-w-2xl mx-auto mb-10">
+          Officially registered last year (2025). High-yield school construction projects in Zambia, AI developer incubators, and full executive admin portal (<code className="text-amber-400 font-mono">seed@admin</code>).
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -73,6 +75,12 @@ export default function HeroSection() {
             className="group bg-gradient-to-r from-amber-500 to-yellow-500 text-gray-900 font-bold px-8 py-4 rounded-xl text-lg hover:from-amber-400 hover:to-yellow-400 transition-all duration-300 shadow-lg shadow-amber-500/25 hover:shadow-amber-500/40 hover:scale-105"
           >
             Start Your Journey
+          </a>
+          <a
+            href="/founders#invest"
+            className="group flex items-center gap-2 bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 font-bold px-8 py-4 rounded-xl text-lg hover:bg-emerald-500/30 hover:border-emerald-500/60 transition-all duration-300 hover:scale-105"
+          >
+            Invest With Seedwel
           </a>
           <button
             onClick={handleDownload}
@@ -84,22 +92,22 @@ export default function HeroSection() {
           </button>
         </div>
 
-        <div className="mt-16 grid grid-cols-2 sm:grid-cols-4 gap-6 max-w-2xl mx-auto">
+        <div className="mt-16 grid grid-cols-2 sm:grid-cols-4 gap-6 max-w-3xl mx-auto">
+          <div className="text-center">
+            <div className="text-2xl md:text-3xl font-bold text-amber-400">2025</div>
+            <div className="text-xs text-gray-500 mt-1">Officially Registered</div>
+          </div>
+          <div className="text-center">
+            <div className="text-2xl md:text-3xl font-bold text-amber-400">15 Schools</div>
+            <div className="text-xs text-gray-500 mt-1">Zambia Construction Phase 1</div>
+          </div>
+          <div className="text-center">
+            <div className="text-2xl md:text-3xl font-bold text-amber-400">AI &amp; Devs</div>
+            <div className="text-xs text-gray-500 mt-1">Software Incubator Fund</div>
+          </div>
           <div className="text-center">
             <div className="text-2xl md:text-3xl font-bold text-amber-400">28</div>
-            <div className="text-xs text-gray-500 mt-1">In-Depth Lessons</div>
-          </div>
-          <div className="text-center">
-            <div className="text-2xl md:text-3xl font-bold text-amber-400">7</div>
-            <div className="text-xs text-gray-500 mt-1">Video Masterclasses</div>
-          </div>
-          <div className="text-center">
-            <div className="text-2xl md:text-3xl font-bold text-amber-400">18</div>
-            <div className="text-xs text-gray-500 mt-1">Billionaire Examples</div>
-          </div>
-          <div className="text-center">
-            <div className="text-2xl md:text-3xl font-bold text-amber-400">6</div>
-            <div className="text-xs text-gray-500 mt-1">High-Paying Niches</div>
+            <div className="text-xs text-gray-500 mt-1">Wealth Curriculum Lessons</div>
           </div>
         </div>
       </div>

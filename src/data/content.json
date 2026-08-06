@@ -1,12 +1,12 @@
 {
   "site": {
-    "name": "Billionaire Blueprint",
-    "tagline": "The proven playbook for building extraordinary wealth",
-    "description": "A complete curriculum of lessons, video masterclasses, founder insights, and a live REST API — everything you need to go from spectator to owner."
+    "name": "Seedwel Investment Limited",
+    "tagline": "The proven playbook for building extraordinary wealth & investing in school infrastructure and AI",
+    "description": "Seedwel Investment Limited — officially registered last year under Founder Mr. Seedwell Khayalethu Masuku & Zambia Country Director Zacheus Simbaya — is open for investors in school building, AI business & developers, alongside a 28-lesson wealth curriculum."
   },
   "siteStats": [
     {
-      "label": "In-Depth Lessons",
+      "label": "Lessons",
       "value": "28"
     },
     {
@@ -14,20 +14,20 @@
       "value": "7"
     },
     {
-      "label": "High-Paying Niches",
+      "label": "High-Income Niches",
+      "value": "12"
+    },
+    {
+      "label": "Founder Profiles",
       "value": "6"
     },
     {
-      "label": "Billionaire Examples",
-      "value": "18"
+      "label": "Core Wealth Principles",
+      "value": "8"
     },
     {
-      "label": "Actionable Strategies",
-      "value": "30+"
-    },
-    {
-      "label": "Founders & Mentors",
-      "value": "4"
+      "label": "Investment Pillars",
+      "value": "3"
     }
   ],
   "heroImage": "https://images.pexels.com/photos/36945570/pexels-photo-36945570.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=627&w=1200",
@@ -102,6 +102,46 @@
     }
   ],
   "founders": [
+    {
+      "id": "seedwell-masuku",
+      "name": "Mr. Seedwell Khayalethu Masuku",
+      "role": "Founder & CEO, Seedwel Investment Limited",
+      "photo": "/images/founders/seedwell-masuku.jpg",
+      "bio": "Mr. Seedwell Khayalethu Masuku is the visionary Founder and CEO of Seedwel Investment Limited. With a deep commitment to transforming economic landscapes across Africa and globally, he established Seedwel Investment Limited to pioneer high-impact investments in educational infrastructure, school building, and artificial intelligence businesses. Under his leadership, the firm has built a transparent, investor-ready ecosystem where institutional and private capital directly fuels foundational community growth and next-generation technology.",
+      "quote": "True wealth is built by investing in the future—through education that empowers minds, AI technology that drives innovation, and infrastructure that transforms communities.",
+      "focus": [
+        "School Building Infrastructure",
+        "AI Business & Software Development",
+        "Strategic Wealth & Investor Relations",
+        "African & Global Asset Expansion"
+      ],
+      "funFact": "Founded Seedwel Investment Limited with a mission to bridge global institutional investment with high-impact school building and AI development across Africa.",
+      "email": "seed@admin",
+      "socials": {
+        "linkedin": "https://linkedin.com/in/seedwell-masuku",
+        "twitter": "https://x.com/seedwel_invest"
+      }
+    },
+    {
+      "id": "zacheus-simbaya",
+      "name": "Zacheus Simbaya",
+      "role": "Country Director — Zambia, Seedwel Investment Limited",
+      "photo": "/images/founders/zacheus-simbaya.jpg",
+      "bio": "Zacheus Simbaya serves as the Country Director from Zambia for Seedwel Investment Limited. Officially registered last year (2025), our company operates at the forefront of African infrastructure and technology development. Zacheus spearheads Zambian regional operations, government and educational partnerships, and investor relations—welcoming global and local investors to invest in our core business pillars: school building infrastructure, cutting-edge AI business applications, and tech developer incubators.",
+      "quote": "Zambia and Africa are ripe for visionary capital. We open the doors for investors to build lasting legacies in school infrastructure and AI-powered innovation.",
+      "focus": [
+        "Zambia & SADC Operations",
+        "School Building Projects",
+        "AI Developer Ecosystems",
+        "Investor Deal Flow"
+      ],
+      "funFact": "Spearheads Seedwel Investment Limited's Zambia operations and actively mentors young tech developers and school infrastructure leaders across Zambia.",
+      "email": "zacheus@seedwelinvestment.com",
+      "socials": {
+        "linkedin": "https://linkedin.com/in/zacheus-simbaya",
+        "twitter": "https://x.com/seedwel_zambia"
+      }
+    },
     {
       "id": "alex-morgan",
       "name": "Alex Morgan",
@@ -2844,6 +2884,81 @@
   ],
   "posts": [
     {
+      "slug": "seedwel-investment-limited-open-for-investors",
+      "title": "Seedwel Investment Limited: Building the Future Through School Infrastructure and AI Development",
+      "excerpt": "Officially registered last year, Seedwel Investment Limited is opening its doors to strategic investors looking for high-impact growth in African school building and artificial intelligence developer ecosystems.",
+      "authorId": "seedwell-masuku",
+      "date": "2026-08-01",
+      "readTime": "6 min read",
+      "tags": [
+        "Seedwel Investment",
+        "School Building",
+        "AI Business",
+        "Investor Opportunity"
+      ],
+      "content": [
+        {
+          "heading": "A New Chapter in Strategic African Investment",
+          "paragraphs": [
+            "When we officially registered Seedwel Investment Limited last year, our goal was clear: create an institutional-grade investment platform where global capital can generate extraordinary financial returns while building foundational real-world assets. True wealth is not created in isolation—it requires building the infrastructure and technology that powers the next century of economic growth.",
+            "We identified two critical sectors that offer the highest leverage, strongest defensive moats, and most profound societal upside: modern school building infrastructure and cutting-edge artificial intelligence business development."
+          ]
+        },
+        {
+          "heading": "Why School Building & Educational Infrastructure?",
+          "paragraphs": [
+            "Across Zambia and Southern Africa, the demand for quality educational facilities far exceeds existing capacity. By investing in modern, solar-powered, AI-ready school infrastructure, our investors gain secured, land-backed real estate assets combined with predictable, long-term rental and tuition yields.",
+            "Our school building model is designed for scale: modular construction, sustainable energy integration, and direct partnerships with top educational operators."
+          ]
+        },
+        {
+          "heading": "Powering the Next Generation of AI Businesses & Developers",
+          "paragraphs": [
+            "In parallel with physical infrastructure, digital infrastructure is reshaping the global economy. Seedwel Investment Limited actively funds artificial intelligence software businesses, automated enterprise tools, and developer academies that train and deploy world-class African software developers.",
+            "We invite global investors, family offices, and individual partners to explore our open investment opportunities. Log into our portal or reach out to our team to review our prospectus and join our growth."
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "zambia-country-director-zacheus-simbaya-invest-in-zambia",
+      "title": "Zambia as an Innovation & Education Hub: Opportunities for Global Investors",
+      "excerpt": "Country Director Zacheus Simbaya shares how Seedwel Investment Limited's Zambian operations are scaling STEM schools and AI software developer incubators.",
+      "authorId": "zacheus-simbaya",
+      "date": "2026-08-04",
+      "readTime": "5 min read",
+      "tags": [
+        "Zambia",
+        "Country Director",
+        "School Building",
+        "AI Developers",
+        "Investment"
+      ],
+      "content": [
+        {
+          "heading": "Zambia's Strategic Growth Window",
+          "paragraphs": [
+            "As Country Director from Zambia for Seedwel Investment Limited, I have witnessed first-hand the tremendous economic transformation taking place across our nation. With a young, dynamic population and stable governance, Zambia has become one of the most attractive destinations for strategic direct investment in Southern Africa.",
+            "Since our official registration last year, our Zambian operations have focused on bridging the gap between capital and execution in school building projects and AI business solutions."
+          ]
+        },
+        {
+          "heading": "Our School Building Projects in Zambia",
+          "paragraphs": [
+            "We are currently rolling out Phase 1 of our Zambia Modern STEM & AI School Construction program. These campuses serve as community anchors and regional excellence centers, equipped with state-of-the-art laboratories and digital connectivity.",
+            "Investors in our Zambian school infrastructure benefit from secured property titles, stable cash flows, and transparent project milestone reporting."
+          ]
+        },
+        {
+          "heading": "Empowering Local Tech Developers & AI Ecosystems",
+          "paragraphs": [
+            "Beyond brick and mortar, we are investing heavily in Zambia's developer ecosystem. Through our AI Business and Tech Developer Fund, we mentor young software developers, build commercial AI applications for agriculture, mining, and finance, and export tech talent globally.",
+            "Whether you are looking to deploy $5,000 or $500,000, Seedwel Investment Limited is open for investors. Partner with us as we construct the schools and code the AI solutions of tomorrow."
+          ]
+        }
+      ]
+    },
+    {
       "slug": "five-numbers-every-investor-must-know",
       "title": "The 5 Numbers Every Investor Must Know",
       "excerpt": "Before you buy a single share or property, learn these five numbers — they will save you from the most expensive mistakes in finance.",
@@ -3061,6 +3176,59 @@
           ]
         }
       ]
+    }
+  ],
+  "investmentOpportunities": [
+    {
+      "id": "zambia-school-building-01",
+      "title": "Zambia Modern STEM & AI School Construction Phase 1",
+      "category": "School Building & Educational Infrastructure",
+      "location": "Lusaka & Copperbelt, Zambia",
+      "minimumInvestment": "$10,000",
+      "projectedReturn": "14% - 18% Annual Yield + Equity",
+      "status": "Open for Investors",
+      "description": "Led by Country Director Zacheus Simbaya, Seedwel Investment Limited is constructing 15 modern STEM and AI-ready schools across Zambia. Registered last year (2025), our company provides investors with secured physical asset ownership, sustainable tuition/lease yields, and high social impact.",
+      "highlights": [
+        "Secured real estate and land title backed infrastructure",
+        "Government & educational institution partnerships in Zambia",
+        "Integrated solar energy and AI-ready fiber optic connectivity",
+        "Quarterly investor distributions and milestone tracking"
+      ],
+      "contactEmail": "zacheus@seedwelinvestment.com"
+    },
+    {
+      "id": "ai-business-developer-incubator",
+      "title": "African AI Business & Tech Developer Ecosystem Fund",
+      "category": "AI Business & Technology Developers",
+      "location": "Pan-African & Regional Tech Hubs",
+      "minimumInvestment": "$5,000",
+      "projectedReturn": "25%+ Targeted IRR",
+      "status": "Open for Investors",
+      "description": "Led by Founder & CEO Mr. Seedwell Khayalethu Masuku, our AI business incubator funds proprietary artificial intelligence software, automated enterprise solutions, and developer academies that train and deploy elite African software engineers.",
+      "highlights": [
+        "Direct equity in scalable AI SaaS and developer tools",
+        "Access to top developer talent and tech incubator pipeline",
+        "High margin software business model with recurring revenue",
+        "Global institutional governance and transparent financial reporting"
+      ],
+      "contactEmail": "seed@admin"
+    },
+    {
+      "id": "seedwel-strategic-real-estate",
+      "title": "Seedwel Commercial & Educational Real Estate Fund",
+      "category": "Real Estate & Infrastructure",
+      "location": "Southern Africa Growth Corridors",
+      "minimumInvestment": "$25,000",
+      "projectedReturn": "16% Target Yield",
+      "status": "Open for Investors",
+      "description": "A diversified real estate investment vehicle focusing on educational campuses, commercial tech hubs, and affordable student housing. Backed by Seedwel Investment Limited's rigorous asset-class playbooks.",
+      "highlights": [
+        "Diversified asset portfolio across prime Zambian & regional markets",
+        "Triple-net lease agreements with established educational operators",
+        "Full transparency with underwriting by Mr. Seedwell Khayalethu Masuku & team",
+        "Option to participate in co-development equity"
+      ],
+      "contactEmail": "seed@admin"
     }
   ]
 }
