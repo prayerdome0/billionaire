@@ -22,8 +22,9 @@ export default defineConfig({
     // Allow preview hosts (e.g. *.e2b.app) to reach the dev server
     allowedHosts: true,
     proxy: {
-      // Forward API calls to the Express + SQLite backend during development
-      "/api": {
+      // Forward API calls to the Express + SQLite backend during development.
+      // Trailing slash is intentional: /api-docs is a frontend route, not the API.
+      "/api/": {
         target: "http://localhost:3001",
         changeOrigin: true,
       },

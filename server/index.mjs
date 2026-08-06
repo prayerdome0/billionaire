@@ -374,7 +374,9 @@ app.delete("/api/progress", (req, res) => {
 const DIST = join(ROOT, "dist");
 if (existsSync(DIST)) {
   app.use(express.static(DIST));
-  app.get(/^(?!\/api).*/, (_req, res) => {
+  // SPA fallback for client-side routes. Excludes real API paths (/api/...)
+  // but still serves /api-docs, which is a frontend page.
+  app.get(/^(?!\/api\/).*/, (_req, res) => {
     res.sendFile(join(DIST, "index.html"));
   });
   console.log(`[web] serving static build from ${DIST}`);
@@ -388,8 +390,8 @@ if (existsSync(DIST)) {
   });
 }
 
-/* --- 404 for unknown API routes --- */
-app.use("/api", (_req, res) => json(res, 404, { error: "Not found" }));
+/* --- 404 for unknown API routes (only real /api/ paths) --- */
+app.use("/api/", (_req, res) => json(res, 404, { error: "Not found" }));
 
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`[server] Billionaire Blueprint API listening on http://0.0.0.0:${PORT}`);
