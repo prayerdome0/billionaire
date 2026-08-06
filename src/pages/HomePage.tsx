@@ -1,7 +1,9 @@
 import { Link } from "react-router-dom";
 import {
   ArrowRight,
+  Award,
   BookOpen,
+  Newspaper,
   PlayCircle,
   Quote,
   Star,
@@ -17,7 +19,7 @@ import ComparisonSection from "../components/ComparisonSection";
 import GallerySection from "../components/GallerySection";
 import DownloadSection from "../components/DownloadSection";
 import Footer from "../components/Footer";
-import { founders, lessons, testimonials, videos } from "../data/content";
+import { founders, getFounder, lessons, posts, testimonials, videos } from "../data/content";
 
 function ExploreSection() {
   const cards = [
@@ -51,7 +53,23 @@ function ExploreSection() {
       title: "Live REST API + Database",
       desc: "Everything on this site runs through a SQLite-backed REST API. Explore the endpoints, inspect the database, and see the data flow in real time.",
       accent: "from-emerald-500 to-teal-600",
-      stat: "15 endpoints · SQLite database · live queries",
+      stat: "20+ endpoints · SQLite database · live queries",
+    },
+    {
+      to: "/blog",
+      icon: Newspaper,
+      title: "Blog & Newsletter",
+      desc: "Weekly essays from the founders plus a newsletter — the brief delivers one actionable wealth lesson every Friday.",
+      accent: "from-orange-500 to-amber-600",
+      stat: "6 articles · weekly newsletter · DB subscribers",
+    },
+    {
+      to: "/certificate",
+      icon: Award,
+      title: "Certification & Search",
+      desc: "Finish all 28 lessons to unlock your official certificate of completion, and search the entire platform in milliseconds.",
+      accent: "from-purple-500 to-indigo-600",
+      stat: "PDF certificate · site-wide search",
     },
   ];
 
@@ -94,6 +112,68 @@ function ExploreSection() {
               </div>
             </Link>
           ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function BlogPreview() {
+  const latest = [...posts].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 3);
+  return (
+    <section className="py-24 bg-gray-900 relative overflow-hidden">
+      <div className="max-w-6xl mx-auto px-4">
+        <div className="text-center mb-16">
+          <span className="text-amber-400 text-sm font-semibold tracking-widest uppercase">From the Blog</span>
+          <h2 className="text-4xl md:text-5xl font-black text-white mt-3 mb-5">
+            Insights From the{" "}
+            <span className="bg-gradient-to-r from-amber-300 to-yellow-500 bg-clip-text text-transparent">
+              Founders
+            </span>
+          </h2>
+          <p className="text-gray-400 max-w-2xl mx-auto text-lg">
+            Investing frameworks, pricing plays, AI strategy, and real estate math — written by the team.
+          </p>
+        </div>
+        <div className="grid md:grid-cols-3 gap-6">
+          {latest.map((post) => {
+            const author = getFounder(post.authorId);
+            return (
+              <Link
+                key={post.slug}
+                to={`/blog/${post.slug}`}
+                className="group flex flex-col bg-gray-950/60 border border-gray-800 rounded-2xl p-7 hover:border-amber-500/40 hover:-translate-y-1 transition-all duration-300"
+              >
+                <div className="flex items-center gap-2 text-xs text-gray-500 mb-4">
+                  <span className="font-mono">{post.date}</span>
+                  <span>·</span>
+                  <span>{post.readTime}</span>
+                </div>
+                <h3 className="text-lg font-bold text-white mb-3 group-hover:text-amber-300 transition-colors leading-snug flex-1">
+                  {post.title}
+                </h3>
+                <div className="flex items-center justify-between mt-4">
+                  <div className="flex items-center gap-2">
+                    {author && (
+                      <img src={author.photo} alt={author.name} className="w-7 h-7 rounded-full object-cover object-top border border-amber-500/30" />
+                    )}
+                    <span className="text-xs text-gray-500">{author?.name}</span>
+                  </div>
+                  <span className="flex items-center gap-1.5 text-amber-400 text-xs font-semibold">
+                    Read <ArrowRight className="w-3.5 h-3.5" />
+                  </span>
+                </div>
+              </Link>
+            );
+          })}
+        </div>
+        <div className="text-center mt-10">
+          <Link
+            to="/blog"
+            className="inline-flex items-center gap-3 bg-gray-800/60 border border-gray-700 text-white font-semibold px-8 py-4 rounded-xl hover:border-amber-500/40 hover:text-amber-400 transition-all"
+          >
+            <Newspaper className="w-5 h-5 text-amber-400" /> All Articles
+          </Link>
         </div>
       </div>
     </section>
@@ -146,6 +226,7 @@ export default function HomePage() {
       <NichesSection />
       <ComparisonSection />
       <GallerySection />
+      <BlogPreview />
       <TestimonialStrip />
       <DownloadSection />
       <Footer />

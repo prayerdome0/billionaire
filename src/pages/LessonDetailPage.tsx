@@ -14,11 +14,22 @@ import {
   Lightbulb,
   ListChecks,
   Loader2,
+  MessageSquare,
+  Send,
   Trophy,
 } from "lucide-react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import { fetchLesson, fetchLessons, fetchProgress, getClientId, markLessonComplete } from "../lib/api";
+import {
+  fetchComments,
+  fetchLesson,
+  fetchLessons,
+  fetchProgress,
+  getClientId,
+  markLessonComplete,
+  postComment,
+  type Comment,
+} from "../lib/api";
 import { getModule, type Lesson, type Module } from "../data/content";
 import { cn } from "../utils/cn";
 
@@ -28,6 +39,103 @@ const difficultyColor: Record<string, string> = {
   Advanced: "text-rose-400 bg-rose-500/10 border-rose-500/20",
   "All Levels": "text-sky-400 bg-sky-500/10 border-sky-500/20",
 };
+
+function Comments({ lessonId }: { lessonId: string }) {
+  const [comments, setComments] = useState<Comment[]>([]);
+  const [name, setName] = useState(() => localStorage.getItem("bb_comment_name") || "");
+  const [text, setText] = useState("");
+  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    let mounted = true;
+    fetchComments(lessonId).then((c) => mounted && setComments(c));
+    return () => {
+      mounted = false;
+    };
+  }, [lessonId]);
+
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!text.trim() || !name.trim()) return;
+    setStatus("sending");
+    setError("");
+    try {
+      const created = await postComment({ lessonId, clientId: getClientId(), name: name.trim(), text: text.trim() });
+      localStorage.setItem("bb_comment_name", name.trim());
+      setComments((prev) => [created, ...prev]);
+      setText("");
+      setStatus("sent");
+      setTimeout(() => setStatus("idle"), 3000);
+    } catch (err) {
+      setStatus("error");
+      setError(err instanceof Error ? err.message : "Failed to post comment.");
+    }
+  };
+
+  return (
+    <div className="bg-gray-900/60 border border-gray-800 rounded-2xl p-8">
+      <div className="flex items-center gap-3 mb-2">
+        <MessageSquare className="w-6 h-6 text-amber-400" />
+        <h3 className="text-xl font-bold text-white">Discussion ({comments.length})</h3>
+      </div>
+      <p className="text-gray-500 text-sm mb-6">
+        Ask questions, share takeaways, and learn from other students. Comments are stored in the database via{" "}
+        <code className="text-amber-500/80">POST /api/comments</code>.
+      </p>
+
+      <form onSubmit={submit} className="mb-8">
+        <input
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder="Your name"
+          required
+          maxLength={80}
+          className="w-full bg-gray-950/70 border border-gray-800 rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-amber-500/50 transition-colors mb-3"
+        />
+        <textarea
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          placeholder="Share your takeaway or question..."
+          required
+          rows={3}
+          maxLength={2000}
+          className="w-full bg-gray-950/70 border border-gray-800 rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-amber-500/50 transition-colors resize-none"
+        />
+        {status === "error" && <p className="text-rose-400 text-sm mt-2">{error}</p>}
+        <button
+          type="submit"
+          disabled={status === "sending" || !text.trim() || !name.trim()}
+          className="mt-3 inline-flex items-center gap-2 bg-gradient-to-r from-amber-500 to-yellow-500 text-gray-900 font-bold px-6 py-3 rounded-xl hover:from-amber-400 hover:to-yellow-400 transition-all disabled:opacity-40"
+        >
+          {status === "sending" ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+          {status === "sent" ? "Posted!" : "Post Comment"}
+        </button>
+      </form>
+
+      {comments.length === 0 ? (
+        <p className="text-gray-600 text-sm text-center py-4">No comments yet — start the discussion!</p>
+      ) : (
+        <div className="space-y-4">
+          {comments.map((c) => (
+            <div key={c.id} className="bg-gray-950/50 border border-gray-800/60 rounded-xl p-5">
+              <div className="flex items-center justify-between mb-2">
+                <span className="flex items-center gap-2">
+                  <span className="w-7 h-7 rounded-full bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-400 text-xs font-black">
+                    {c.name.charAt(0).toUpperCase()}
+                  </span>
+                  <span className="font-semibold text-white text-sm">{c.name}</span>
+                </span>
+                <span className="text-gray-600 text-xs">{new Date(c.created_at).toLocaleDateString()}</span>
+              </div>
+              <p className="text-gray-300 text-sm leading-relaxed">{c.text}</p>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
 function Quiz({ lesson, onPass }: { lesson: Lesson; onPass: () => void }) {
   const [answers, setAnswers] = useState<Record<number, number>>({});
@@ -371,6 +479,9 @@ export default function LessonDetailPage() {
                 }
               }}
             />
+
+            {/* Comments */}
+            <Comments lessonId={lesson.id} />
           </div>
 
           {/* Sidebar */}

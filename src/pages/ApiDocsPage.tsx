@@ -33,6 +33,8 @@ interface DbSnapshot {
   file: string;
   tables: Record<string, number>;
   recentMessages: { id: number; name: string; email: string; subject: string; created_at: string }[];
+  recentComments: { id: number; lesson_id: string; name: string; text: string; created_at: string }[];
+  recentSubscribers: { id: number; email: string; created_at: string }[];
   recentProgress: { client_id: string; lesson_id: string; completed_at: string }[];
 }
 
@@ -123,12 +125,14 @@ export default function ApiDocsPage() {
       <section className="pb-8">
         <div className="max-w-6xl mx-auto px-4">
           {stats ? (
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <StatCard label="Founders" value={stats.founders} icon={Server} />
               <StatCard label="Modules" value={stats.modules} icon={GitBranch} />
               <StatCard label="Lessons" value={stats.lessons} icon={Code2} />
               <StatCard label="Videos" value={stats.videos} icon={Play} />
+              <StatCard label="Blog Posts" value={stats.posts ?? 0} icon={Code2} />
               <StatCard label="Contact Messages" value={stats.contactMessages} icon={Database} />
+              <StatCard label="Comments" value={stats.comments ?? 0} icon={CheckCircle} />
               <StatCard label="Lessons Completed" value={stats.completedLessons} icon={CheckCircle} />
             </div>
           ) : (
@@ -266,6 +270,47 @@ export default function ApiDocsPage() {
                             <span className="text-gray-600 text-xs font-mono">{m.created_at.slice(0, 16).replace("T", " ")}</span>
                           </div>
                           <p className="text-gray-500 text-xs mt-0.5">{m.email} · {m.subject}</p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                <div className="bg-gray-950/60 border border-gray-800 rounded-2xl p-6">
+                  <p className="text-xs uppercase tracking-widest text-gray-500 font-semibold mb-4">
+                    Latest comments (from lesson discussions)
+                  </p>
+                  {db.recentComments.length === 0 ? (
+                    <p className="text-gray-600 text-sm">No comments yet — post one on any lesson!</p>
+                  ) : (
+                    <div className="space-y-2">
+                      {db.recentComments.map((c) => (
+                        <div key={c.id} className="bg-gray-900/80 border border-gray-800/60 rounded-lg px-4 py-2.5">
+                          <div className="flex items-center justify-between">
+                            <span className="text-white text-sm font-semibold">{c.name}</span>
+                            <span className="text-amber-400/80 text-xs font-mono truncate">{c.lesson_id}</span>
+                          </div>
+                          <p className="text-gray-500 text-xs mt-0.5 truncate">{c.text}</p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                <div className="bg-gray-950/60 border border-gray-800 rounded-2xl p-6">
+                  <p className="text-xs uppercase tracking-widest text-gray-500 font-semibold mb-4">
+                    Latest newsletter subscribers
+                  </p>
+                  {db.recentSubscribers.length === 0 ? (
+                    <p className="text-gray-600 text-sm">No subscribers yet — try the footer signup!</p>
+                  ) : (
+                    <div className="space-y-2">
+                      {db.recentSubscribers.map((s) => (
+                        <div key={s.id} className="bg-gray-900/80 border border-gray-800/60 rounded-lg px-4 py-2.5">
+                          <div className="flex items-center justify-between">
+                            <span className="text-emerald-400 text-sm font-mono">{s.email}</span>
+                            <span className="text-gray-600 text-xs font-mono">{String(s.created_at).slice(0, 10)}</span>
+                          </div>
                         </div>
                       ))}
                     </div>

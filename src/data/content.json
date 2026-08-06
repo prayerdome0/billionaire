@@ -5,12 +5,30 @@
     "description": "A complete curriculum of lessons, video masterclasses, founder insights, and a live REST API — everything you need to go from spectator to owner."
   },
   "siteStats": [
-    { "label": "In-Depth Lessons", "value": "28" },
-    { "label": "Video Masterclasses", "value": "7" },
-    { "label": "High-Paying Niches", "value": "6" },
-    { "label": "Billionaire Examples", "value": "18" },
-    { "label": "Actionable Strategies", "value": "30+" },
-    { "label": "Founders & Mentors", "value": "4" }
+    {
+      "label": "In-Depth Lessons",
+      "value": "28"
+    },
+    {
+      "label": "Video Masterclasses",
+      "value": "7"
+    },
+    {
+      "label": "High-Paying Niches",
+      "value": "6"
+    },
+    {
+      "label": "Billionaire Examples",
+      "value": "18"
+    },
+    {
+      "label": "Actionable Strategies",
+      "value": "30+"
+    },
+    {
+      "label": "Founders & Mentors",
+      "value": "4"
+    }
   ],
   "heroImage": "https://images.pexels.com/photos/36945570/pexels-photo-36945570.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=627&w=1200",
   "stepsToWealth": [
@@ -91,10 +109,17 @@
       "photo": "/images/founders/alex-morgan.jpg",
       "bio": "Alex spent 12 years on Wall Street running multi-billion-dollar trading desks before founding a fintech company that reached a $2.3B valuation. He teaches the capital side of the blueprint — how money actually moves and how to make it work for you.",
       "quote": "Wealth is a system, not a lottery ticket. Learn the system and the lottery becomes irrelevant.",
-      "focus": ["Capital Markets", "Trading & Investing", "Startup Finance"],
+      "focus": [
+        "Capital Markets",
+        "Trading & Investing",
+        "Startup Finance"
+      ],
       "funFact": "Made his first $1M at age 27 — and lost it all at 28. Rebuilt it by 31.",
       "email": "alex@billionaireblueprint.io",
-      "socials": { "linkedin": "https://linkedin.com", "twitter": "https://x.com" }
+      "socials": {
+        "linkedin": "https://linkedin.com",
+        "twitter": "https://x.com"
+      }
     },
     {
       "id": "sarah-chen",
@@ -103,10 +128,17 @@
       "photo": "/images/founders/sarah-chen.jpg",
       "bio": "Sarah is a former McKinsey consultant and Harvard MBA who scaled three startups past $100M in revenue. She designs the curriculum — turning billion-dollar operating principles into step-by-step lessons anyone can execute.",
       "quote": "Education without execution is entertainment. Every lesson in this course ends with a move you can make today.",
-      "focus": ["Business Strategy", "Scaling Operations", "Curriculum Design"],
+      "focus": [
+        "Business Strategy",
+        "Scaling Operations",
+        "Curriculum Design"
+      ],
       "funFact": "Has personally reviewed 2,000+ business models — and can smell an unsellable one in 60 seconds.",
       "email": "sarah@billionaireblueprint.io",
-      "socials": { "linkedin": "https://linkedin.com", "twitter": "https://x.com" }
+      "socials": {
+        "linkedin": "https://linkedin.com",
+        "twitter": "https://x.com"
+      }
     },
     {
       "id": "marcus-johnson",
@@ -115,10 +147,17 @@
       "photo": "/images/founders/marcus-johnson.jpg",
       "bio": "Marcus has spent 25 years building wealth through real estate, private equity, and venture capital. He has closed over $1.5B in deals and teaches the asset-class playbooks: property, PE, VC, and alternative investments.",
       "quote": "Deal flow is the only asset that matters. Great investors see ten deals for every one they take.",
-      "focus": ["Real Estate", "Private Equity", "Venture Capital"],
+      "focus": [
+        "Real Estate",
+        "Private Equity",
+        "Venture Capital"
+      ],
       "funFact": "Owns 11 rental properties in three countries — and still does his own underwriting on every single one.",
       "email": "marcus@billionaireblueprint.io",
-      "socials": { "linkedin": "https://linkedin.com", "twitter": "https://x.com" }
+      "socials": {
+        "linkedin": "https://linkedin.com",
+        "twitter": "https://x.com"
+      }
     },
     {
       "id": "elena-rossi",
@@ -127,10 +166,17 @@
       "photo": "/images/founders/elena-rossi.jpg",
       "bio": "Elena led AI product teams at Google before launching two venture-backed startups. She maps the frontier niches — AI, biotech, FinTech — and translates technical trends into practical wealth opportunities.",
       "quote": "The biggest fortunes of the next decade are being coded right now. I want you in the room where it happens.",
-      "focus": ["Artificial Intelligence", "Deep Tech", "Product Innovation"],
+      "focus": [
+        "Artificial Intelligence",
+        "Deep Tech",
+        "Product Innovation"
+      ],
       "funFact": "Fluent in 5 languages and 3 programming languages — she learned Python in a weekend on a dare.",
       "email": "elena@billionaireblueprint.io",
-      "socials": { "linkedin": "https://linkedin.com", "twitter": "https://x.com" }
+      "socials": {
+        "linkedin": "https://linkedin.com",
+        "twitter": "https://x.com"
+      }
     }
   ],
   "testimonials": [
@@ -262,19 +308,34 @@
       "quiz": [
         {
           "question": "According to The Psychology of Money, what matters most for financial success?",
-          "options": ["High IQ and technical skill", "Behavior and how you handle money", "Lucky timing", "A large starting salary"],
+          "options": [
+            "High IQ and technical skill",
+            "Behavior and how you handle money",
+            "Lucky timing",
+            "A large starting salary"
+          ],
           "answer": 1,
           "explanation": "Housel's core thesis: doing well with money is more about behavior than brains."
         },
         {
           "question": "What is the first step to changing your money psychology?",
-          "options": ["Buying a course on investing", "Auditing the money stories you inherited", "Opening a brokerage account", "Getting a raise"],
+          "options": [
+            "Buying a course on investing",
+            "Auditing the money stories you inherited",
+            "Opening a brokerage account",
+            "Getting a raise"
+          ],
           "answer": 1,
           "explanation": "You can't rewrite beliefs you haven't identified — the audit comes first."
         },
         {
           "question": "Which statement reflects abundance thinking?",
-          "options": ["I can't afford that.", "How can I afford that?", "Rich people are just lucky.", "The market always crashes for me."],
+          "options": [
+            "I can't afford that.",
+            "How can I afford that?",
+            "Rich people are just lucky.",
+            "The market always crashes for me."
+          ],
           "answer": 1,
           "explanation": "Abundance thinking converts a dead end into a problem to be solved."
         }
@@ -326,19 +387,34 @@
       "quiz": [
         {
           "question": "What makes a bet 'asymmetric'?",
-          "options": ["Equal chance of winning or losing", "Small possible loss with large possible gain", "Guaranteed return", "High probability of a small win"],
+          "options": [
+            "Equal chance of winning or losing",
+            "Small possible loss with large possible gain",
+            "Guaranteed return",
+            "High probability of a small win"
+          ],
           "answer": 1,
           "explanation": "Asymmetry means the upside dwarfs the downside."
         },
         {
           "question": "Why do venture capitalists fund so many failing startups?",
-          "options": ["They are bad at picking", "One success pays for all failures", "They enjoy risk for its own sake", "Regulators require it"],
+          "options": [
+            "They are bad at picking",
+            "One success pays for all failures",
+            "They enjoy risk for its own sake",
+            "Regulators require it"
+          ],
           "answer": 1,
           "explanation": "The power-law payoff of the winners funds the entire portfolio."
         },
         {
           "question": "Which is an example of structuring asymmetric risk in a career?",
-          "options": ["Staying in a safe role forever", "Building a side venture while employed", "Quitting without a plan", "Diversifying into five side hustles at once"],
+          "options": [
+            "Staying in a safe role forever",
+            "Building a side venture while employed",
+            "Quitting without a plan",
+            "Diversifying into five side hustles at once"
+          ],
           "answer": 1,
           "explanation": "Employment caps the downside while the venture offers uncapped upside."
         }
@@ -390,19 +466,34 @@
       "quiz": [
         {
           "question": "What did Ray Dalio do after his catastrophic 1982 loss?",
-          "options": ["Quit finance forever", "Borrowed money, rebuilt, and created Bridgewater", "Sued his investors", "Wrote a book about avoiding markets"],
+          "options": [
+            "Quit finance forever",
+            "Borrowed money, rebuilt, and created Bridgewater",
+            "Sued his investors",
+            "Wrote a book about avoiding markets"
+          ],
           "answer": 1,
           "explanation": "He treated the loss as tuition and rebuilt into the world's largest hedge fund."
         },
         {
           "question": "What is 'tilt insurance'?",
-          "options": ["An options strategy", "A buffer so one failure can't destroy you", "A type of life insurance", "A market hedge fund"],
+          "options": [
+            "An options strategy",
+            "A buffer so one failure can't destroy you",
+            "A type of life insurance",
+            "A market hedge fund"
+          ],
           "answer": 1,
           "explanation": "Cash buffers and support structures keep a failure from ending the game."
         },
         {
           "question": "How quickly should you debrief a failure?",
-          "options": ["Within 48 hours", "After a month", "Never — move on", "Only at year end"],
+          "options": [
+            "Within 48 hours",
+            "After a month",
+            "Never — move on",
+            "Only at year end"
+          ],
           "answer": 0,
           "explanation": "Fast debriefs capture the details while they're still fresh."
         }
@@ -454,19 +545,34 @@
       "quiz": [
         {
           "question": "When did Warren Buffett make most of his wealth?",
-          "options": ["Before age 30", "Between 30 and 40", "After age 50", "Evenly throughout his life"],
+          "options": [
+            "Before age 30",
+            "Between 30 and 40",
+            "After age 50",
+            "Evenly throughout his life"
+          ],
           "answer": 2,
           "explanation": "99% of his wealth came after 50 — the compounding curve is back-loaded."
         },
         {
           "question": "Why did Bezos accept years of Amazon losses?",
-          "options": ["He mismanaged the company", "He was building long-term infrastructure", "Tax avoidance only", "He didn't care about profit"],
+          "options": [
+            "He mismanaged the company",
+            "He was building long-term infrastructure",
+            "Tax avoidance only",
+            "He didn't care about profit"
+          ],
           "answer": 1,
           "explanation": "He traded short-term profit for compounding infrastructure advantage."
         },
         {
           "question": "What is a 'boring rule'?",
-          "options": ["A rule that prevents you from having fun", "An automated rule that enforces long-term behavior", "A tax rule", "A rule about meetings"],
+          "options": [
+            "A rule that prevents you from having fun",
+            "An automated rule that enforces long-term behavior",
+            "A tax rule",
+            "A rule about meetings"
+          ],
           "answer": 1,
           "explanation": "Boring rules automate patience so you don't have to rely on willpower."
         }
@@ -518,19 +624,34 @@
       "quiz": [
         {
           "question": "What are the three jobs of money?",
-          "options": ["Print, lend, tax", "Store value, medium of exchange, unit of account", "Gold, silver, paper", "Buy, sell, trade"],
+          "options": [
+            "Print, lend, tax",
+            "Store value, medium of exchange, unit of account",
+            "Gold, silver, paper",
+            "Buy, sell, trade"
+          ],
           "answer": 1,
           "explanation": "Those three functions define what can serve as money."
         },
         {
           "question": "What happened in 1971?",
-          "options": ["The US adopted the gold standard", "The US ended the gold standard", "Bitcoin was created", "The stock market was founded"],
+          "options": [
+            "The US adopted the gold standard",
+            "The US ended the gold standard",
+            "Bitcoin was created",
+            "The stock market was founded"
+          ],
           "answer": 1,
           "explanation": "The Nixon shock moved the world to fully fiat money."
         },
         {
           "question": "Why does mild inflation exist by design?",
-          "options": ["To punish savers specifically", "To incentivize spending and investing", "To make banks rich", "To confuse consumers"],
+          "options": [
+            "To punish savers specifically",
+            "To incentivize spending and investing",
+            "To make banks rich",
+            "To confuse consumers"
+          ],
           "answer": 1,
           "explanation": "Mild inflation encourages productive use of money rather than hoarding."
         }
@@ -582,19 +703,34 @@
       "quiz": [
         {
           "question": "Which of these is an asset by the cash-flow definition?",
-          "options": ["Your primary car", "A rental property producing positive cash flow", "Your phone on a lease", "A boat in storage"],
+          "options": [
+            "Your primary car",
+            "A rental property producing positive cash flow",
+            "Your phone on a lease",
+            "A boat in storage"
+          ],
           "answer": 1,
           "explanation": "The rental puts money in your pocket each month."
         },
         {
           "question": "What is financial independence in this framework?",
-          "options": ["A million dollars saved", "Asset income exceeding expenses", "Being debt-free", "Retiring at 50"],
+          "options": [
+            "A million dollars saved",
+            "Asset income exceeding expenses",
+            "Being debt-free",
+            "Retiring at 50"
+          ],
           "answer": 1,
           "explanation": "When your assets fund your lifestyle, you're financially independent."
         },
         {
           "question": "Why do the rich keep buying assets?",
-          "options": ["For status", "Because assets produce more income to buy more assets", "Tax rules only", "They enjoy paperwork"],
+          "options": [
+            "For status",
+            "Because assets produce more income to buy more assets",
+            "Tax rules only",
+            "They enjoy paperwork"
+          ],
           "answer": 1,
           "explanation": "It's a compounding flywheel: income → assets → more income."
         }
@@ -646,19 +782,34 @@
       "quiz": [
         {
           "question": "At 8% annual return, how long does money take to double?",
-          "options": ["5 years", "9 years (Rule of 72)", "12 years", "18 years"],
+          "options": [
+            "5 years",
+            "9 years (Rule of 72)",
+            "12 years",
+            "18 years"
+          ],
           "answer": 1,
           "explanation": "72 ÷ 8 = 9 years to double."
         },
         {
           "question": "Why does time matter more than the amount you start with?",
-          "options": ["It doesn't", "Time sits in the exponent of the growth formula", "Markets rise over time", "Inflation is low"],
+          "options": [
+            "It doesn't",
+            "Time sits in the exponent of the growth formula",
+            "Markets rise over time",
+            "Inflation is low"
+          ],
           "answer": 1,
           "explanation": "Exponential growth makes each year of time worth more than the last."
         },
         {
           "question": "What is the biggest quiet killer of compounding?",
-          "options": ["Market volatility", "Fees and early withdrawals", "Diversification", "Inflation"],
+          "options": [
+            "Market volatility",
+            "Fees and early withdrawals",
+            "Diversification",
+            "Inflation"
+          ],
           "answer": 1,
           "explanation": "Fees tax your returns every single year, compounding the damage."
         }
@@ -710,19 +861,34 @@
       "quiz": [
         {
           "question": "Which two forms of leverage are 'permissionless'?",
-          "options": ["Labor and capital", "Code and media", "Capital and code", "Media and labor"],
+          "options": [
+            "Labor and capital",
+            "Code and media",
+            "Capital and code",
+            "Media and labor"
+          ],
           "answer": 1,
           "explanation": "Anyone can build software or publish content without permission."
         },
         {
           "question": "Why can't pure labor make you rich?",
-          "options": ["Labor is taxed more", "It scales linearly with your time", "Employers pay badly", "It isn't leverage"],
+          "options": [
+            "Labor is taxed more",
+            "It scales linearly with your time",
+            "Employers pay badly",
+            "It isn't leverage"
+          ],
           "answer": 1,
           "explanation": "1-for-1 time-for-money trading has a hard ceiling."
         },
         {
           "question": "What is the purest form of leverage?",
-          "options": ["Hiring 100 employees", "Borrowing $10M", "Code and media at zero marginal cost", "Working 100-hour weeks"],
+          "options": [
+            "Hiring 100 employees",
+            "Borrowing $10M",
+            "Code and media at zero marginal cost",
+            "Working 100-hour weeks"
+          ],
           "answer": 2,
           "explanation": "Zero marginal cost means serving one more person costs almost nothing."
         }
@@ -774,19 +940,34 @@
       "quiz": [
         {
           "question": "What three attributes define a massive problem?",
-          "options": ["Big, new, and complex", "Frequent, painful, and already budgeted for", "Technical, legal, and global", "Cheap, fast, and easy"],
+          "options": [
+            "Big, new, and complex",
+            "Frequent, painful, and already budgeted for",
+            "Technical, legal, and global",
+            "Cheap, fast, and easy"
+          ],
           "answer": 1,
           "explanation": "Those three attributes create willingness to pay."
         },
         {
           "question": "What is the best way to validate a problem?",
-          "options": ["Reading market reports", "Interviewing 50 potential customers about their workflows", "Building the product first", "Asking your friends"],
+          "options": [
+            "Reading market reports",
+            "Interviewing 50 potential customers about their workflows",
+            "Building the product first",
+            "Asking your friends"
+          ],
           "answer": 1,
           "explanation": "Direct interviews reveal real pains and budgets — not polite opinions."
         },
         {
           "question": "Why are B2B problems often more valuable?",
-          "options": ["Businesses have bigger budgets per customer", "They are easier to build", "There are more businesses", "They need less support"],
+          "options": [
+            "Businesses have bigger budgets per customer",
+            "They are easier to build",
+            "There are more businesses",
+            "They need less support"
+          ],
           "answer": 0,
           "explanation": "A business that spends $50K/year to fix a pain is a better customer than a consumer at $10/year."
         }
@@ -838,19 +1019,34 @@
       "quiz": [
         {
           "question": "Which is the strongest form of validation?",
-          "options": ["Landing page emails", "Pre-sales with real payments", "Social media likes", "Surveys from friends"],
+          "options": [
+            "Landing page emails",
+            "Pre-sales with real payments",
+            "Social media likes",
+            "Surveys from friends"
+          ],
           "answer": 1,
           "explanation": "Money exchanged is the strongest signal of demand."
         },
         {
           "question": "What did Dropbox use to validate before building?",
-          "options": ["A prototype app", "A 3-minute demo video", "A crowdfunding campaign", "Press coverage"],
+          "options": [
+            "A prototype app",
+            "A 3-minute demo video",
+            "A crowdfunding campaign",
+            "Press coverage"
+          ],
           "answer": 1,
           "explanation": "The demo video generated 75,000 signups overnight."
         },
         {
           "question": "What conversion rate signals 'you have something'?",
-          "options": ["Under 1%", "2-5%", "5-10%", "Above 50%"],
+          "options": [
+            "Under 1%",
+            "2-5%",
+            "5-10%",
+            "Above 50%"
+          ],
           "answer": 2,
           "explanation": "5-10% conversion from views to action is a strong signal."
         }
@@ -902,19 +1098,34 @@
       "quiz": [
         {
           "question": "Which model has the lowest marginal cost per customer?",
-          "options": ["Consulting", "Software as a Service", "Agency services", "Custom development"],
+          "options": [
+            "Consulting",
+            "Software as a Service",
+            "Agency services",
+            "Custom development"
+          ],
           "answer": 1,
           "explanation": "Serving one more SaaS customer costs almost nothing."
         },
         {
           "question": "Why are marketplaces especially powerful?",
-          "options": ["They own the inventory", "They benefit from network effects", "They need no customers", "They have no competition"],
+          "options": [
+            "They own the inventory",
+            "They benefit from network effects",
+            "They need no customers",
+            "They have no competition"
+          ],
           "answer": 1,
           "explanation": "Each new user makes the marketplace more valuable for everyone."
         },
         {
           "question": "What multiplies a business's exit value?",
-          "options": ["More employees", "Recurring revenue and low marginal cost", "Bigger offices", "More features"],
+          "options": [
+            "More employees",
+            "Recurring revenue and low marginal cost",
+            "Bigger offices",
+            "More features"
+          ],
           "answer": 1,
           "explanation": "Buyers pay far more for predictable, scalable revenue."
         }
@@ -966,19 +1177,34 @@
       "quiz": [
         {
           "question": "What does a 10% price increase do to a business with 20% margins (if volume holds)?",
-          "options": ["Increases profit slightly", "Roughly doubles profit", "Has no effect", "Halves profit"],
+          "options": [
+            "Increases profit slightly",
+            "Roughly doubles profit",
+            "Has no effect",
+            "Halves profit"
+          ],
           "answer": 1,
           "explanation": "The entire price increase flows to the bottom line."
         },
         {
           "question": "What is the purpose of a premium tier?",
-          "options": ["To sell the most units", "To anchor and make the middle tier look reasonable", "To confuse customers", "To reduce support load"],
+          "options": [
+            "To sell the most units",
+            "To anchor and make the middle tier look reasonable",
+            "To confuse customers",
+            "To reduce support load"
+          ],
           "answer": 1,
           "explanation": "Anchoring steers buyers to your target offer."
         },
         {
           "question": "What should you do instead of discounting first?",
-          "options": ["Add value and justify the price", "Drop prices 30%", "Run constant sales", "Match competitors' prices"],
+          "options": [
+            "Add value and justify the price",
+            "Drop prices 30%",
+            "Run constant sales",
+            "Match competitors' prices"
+          ],
           "answer": 0,
           "explanation": "Discounts erode your anchor; value additions strengthen it."
         }
@@ -1030,19 +1256,34 @@
       "quiz": [
         {
           "question": "Why does one compromise hire matter so much?",
-          "options": ["It's expensive to replace them", "It lowers the quality bar others benchmark against", "They cause lawsuits", "It doesn't matter much"],
+          "options": [
+            "It's expensive to replace them",
+            "It lowers the quality bar others benchmark against",
+            "They cause lawsuits",
+            "It doesn't matter much"
+          ],
           "answer": 1,
           "explanation": "Standards are contagious — a low bar becomes the new norm."
         },
         {
           "question": "What is the best way to evaluate a candidate's real skill?",
-          "options": ["Interview questions", "Paid work samples", "References only", "Social media presence"],
+          "options": [
+            "Interview questions",
+            "Paid work samples",
+            "References only",
+            "Social media presence"
+          ],
           "answer": 1,
           "explanation": "Real work demonstrates actual ability far better than talk."
         },
         {
           "question": "How is culture actually decided?",
-          "options": ["Mission statements", "What you reward and tolerate", "Office design", "HR policies"],
+          "options": [
+            "Mission statements",
+            "What you reward and tolerate",
+            "Office design",
+            "HR policies"
+          ],
           "answer": 1,
           "explanation": "Culture is the behavior you consistently accept and celebrate."
         }
@@ -1094,19 +1335,34 @@
       "quiz": [
         {
           "question": "Why is distribution called a moat?",
-          "options": ["It's expensive to build", "It's hard for competitors to replicate your reach", "It involves lawyers", "It's a water metaphor"],
+          "options": [
+            "It's expensive to build",
+            "It's hard for competitors to replicate your reach",
+            "It involves lawyers",
+            "It's a water metaphor"
+          ],
           "answer": 1,
           "explanation": "An audience and growth loop cannot be copied quickly."
         },
         {
           "question": "Which acquisition channel compounds like interest?",
-          "options": ["Paid ads", "Content and SEO", "Outbound cold calls", "Events"],
+          "options": [
+            "Paid ads",
+            "Content and SEO",
+            "Outbound cold calls",
+            "Events"
+          ],
           "answer": 1,
           "explanation": "Content assets keep producing results long after publication."
         },
         {
           "question": "What is the common failure mode in distribution?",
-          "options": ["Spreading thin across many channels", "Investing in one channel", "Measuring results", "Creating too much content"],
+          "options": [
+            "Spreading thin across many channels",
+            "Investing in one channel",
+            "Measuring results",
+            "Creating too much content"
+          ],
           "answer": 0,
           "explanation": "Five channels at 10% effort beat one channel at 100% effort rarely."
         }
@@ -1158,19 +1414,34 @@
       "quiz": [
         {
           "question": "Which of these is NOT one of the four uses of cash?",
-          "options": ["Reinvest in the business", "Pay down debt", "Return to owners", "Pay higher salaries to executives"],
+          "options": [
+            "Reinvest in the business",
+            "Pay down debt",
+            "Return to owners",
+            "Pay higher salaries to executives"
+          ],
           "answer": 3,
           "explanation": "Salaries are operating costs; allocation concerns what to do with surplus cash."
         },
         {
           "question": "When should a business keep its profit?",
-          "options": ["Always", "When it can create more than a dollar of value per dollar", "Never", "Only in recessions"],
+          "options": [
+            "Always",
+            "When it can create more than a dollar of value per dollar",
+            "Never",
+            "Only in recessions"
+          ],
           "answer": 1,
           "explanation": "Buffett's rule: keep capital only where returns exceed its cost."
         },
         {
           "question": "What is the recommended treatment of windfalls?",
-          "options": ["Spend them immediately", "Allocate them as capital", "Hide them from yourself", "Lend them to friends"],
+          "options": [
+            "Spend them immediately",
+            "Allocate them as capital",
+            "Hide them from yourself",
+            "Lend them to friends"
+          ],
           "answer": 1,
           "explanation": "Windfalls are capital events, not consumption events."
         }
@@ -1222,19 +1493,34 @@
       "quiz": [
         {
           "question": "What percentage of active managers underperform their benchmark over 15 years?",
-          "options": ["About 10%", "About 50%", "About 90%", "None"],
+          "options": [
+            "About 10%",
+            "About 50%",
+            "About 90%",
+            "None"
+          ],
           "answer": 2,
           "explanation": "Roughly 90% fail to beat the index long-term."
         },
         {
           "question": "What does an investment policy statement protect you from?",
-          "options": ["Taxes", "Your own emotions at market extremes", "Broker fees", "Inflation"],
+          "options": [
+            "Taxes",
+            "Your own emotions at market extremes",
+            "Broker fees",
+            "Inflation"
+          ],
           "answer": 1,
           "explanation": "Pre-committed rules prevent panic-selling and FOMO-buying."
         },
         {
           "question": "When is concentration justified?",
-          "options": ["When a stock is popular", "When you have verifiable insight", "When you feel lucky", "Never"],
+          "options": [
+            "When a stock is popular",
+            "When you have verifiable insight",
+            "When you feel lucky",
+            "Never"
+          ],
           "answer": 1,
           "explanation": "Concentration is a reward for genuine edge, not excitement."
         }
@@ -1286,19 +1572,34 @@
       "quiz": [
         {
           "question": "What return makes a VC fund excellent?",
-          "options": ["1.2x", "3x", "0.8x", "1x"],
+          "options": [
+            "1.2x",
+            "3x",
+            "0.8x",
+            "1x"
+          ],
           "answer": 1,
           "explanation": "3x is excellent in a power-law asset class."
         },
         {
           "question": "How do PE returns primarily come about?",
-          "options": ["Market timing", "Buying companies and improving them", "Shorting stocks", "Index investing"],
+          "options": [
+            "Market timing",
+            "Buying companies and improving them",
+            "Shorting stocks",
+            "Index investing"
+          ],
           "answer": 1,
           "explanation": "PE's model is buy-improve-sell."
         },
         {
           "question": "What is the most underrated private-market asset?",
-          "options": ["Crowdfunding notes", "Equity in your own company", "NFTs", "Startup podcasts"],
+          "options": [
+            "Crowdfunding notes",
+            "Equity in your own company",
+            "NFTs",
+            "Startup podcasts"
+          ],
           "answer": 1,
           "explanation": "Your own sweat equity has the highest potential return of all."
         }
@@ -1350,19 +1651,34 @@
       "quiz": [
         {
           "question": "What does BRRRR stand for?",
-          "options": ["Buy, Rent, Relax, Retire, Repeat", "Buy, Rehab, Rent, Refinance, Repeat", "Buy, Rebuild, Rent, Refinance, Re-sell", "Borrow, Rent, Refinance, Repeat"],
+          "options": [
+            "Buy, Rent, Relax, Retire, Repeat",
+            "Buy, Rehab, Rent, Refinance, Repeat",
+            "Buy, Rebuild, Rent, Refinance, Re-sell",
+            "Borrow, Rent, Refinance, Repeat"
+          ],
           "answer": 1,
           "explanation": "The BRRRR method cycles equity out of one deal into the next."
         },
         {
           "question": "What is cash-on-cash return?",
-          "options": ["Rent minus expenses", "Annual cash flow divided by cash invested", "Price minus mortgage", "Appreciation divided by taxes"],
+          "options": [
+            "Rent minus expenses",
+            "Annual cash flow divided by cash invested",
+            "Price minus mortgage",
+            "Appreciation divided by taxes"
+          ],
           "answer": 1,
           "explanation": "It measures the yield on the actual cash you put in."
         },
         {
           "question": "What is house hacking?",
-          "options": ["Buying homes with credit cards", "Living in one unit of a multi-unit property and renting the rest", "Flipping houses illegally", "Renting rooms in someone else's house"],
+          "options": [
+            "Buying homes with credit cards",
+            "Living in one unit of a multi-unit property and renting the rest",
+            "Flipping houses illegally",
+            "Renting rooms in someone else's house"
+          ],
           "answer": 1,
           "explanation": "It reduces your housing cost to near zero while building an asset."
         }
@@ -1414,19 +1730,34 @@
       "quiz": [
         {
           "question": "Why do investors add alternatives?",
-          "options": ["Guaranteed returns", "Diversification and low correlation with stocks", "They are free", "To avoid taxes"],
+          "options": [
+            "Guaranteed returns",
+            "Diversification and low correlation with stocks",
+            "They are free",
+            "To avoid taxes"
+          ],
           "answer": 1,
           "explanation": "Low correlation is the main portfolio benefit."
         },
         {
           "question": "What is the sane allocation range for volatile alternatives?",
-          "options": ["25-50%", "1-10%", "100%", "0% for everyone"],
+          "options": [
+            "25-50%",
+            "1-10%",
+            "100%",
+            "0% for everyone"
+          ],
           "answer": 1,
           "explanation": "Small enough that drawdowns are survivable and boring."
         },
         {
           "question": "What destroyed many crypto holders historically?",
-          "options": ["High taxes", "Exchange failures with careless custody", "Low volatility", "Government bans everywhere"],
+          "options": [
+            "High taxes",
+            "Exchange failures with careless custody",
+            "Low volatility",
+            "Government bans everywhere"
+          ],
           "answer": 1,
           "explanation": "Self-custody or regulated custody is essential."
         }
@@ -1478,19 +1809,34 @@
       "quiz": [
         {
           "question": "Where does AI value concentrate today?",
-          "options": ["Consumer apps", "Infrastructure and models", "Government contracts", "Hardware retail"],
+          "options": [
+            "Consumer apps",
+            "Infrastructure and models",
+            "Government contracts",
+            "Hardware retail"
+          ],
           "answer": 1,
           "explanation": "NVIDIA and foundation labs capture the biggest slices so far."
         },
         {
           "question": "What is the newcomer's entry point in AI?",
-          "options": ["Training new foundation models", "Vertical application tools with domain data", "Chip manufacturing", "Data center construction"],
+          "options": [
+            "Training new foundation models",
+            "Vertical application tools with domain data",
+            "Chip manufacturing",
+            "Data center construction"
+          ],
           "answer": 1,
           "explanation": "Applications win on data, workflow, and distribution."
         },
         {
           "question": "What makes a vertical AI tool defensible?",
-          "options": ["Model quality alone", "Domain data and workflow integration", "Low price", "Brand name"],
+          "options": [
+            "Model quality alone",
+            "Domain data and workflow integration",
+            "Low price",
+            "Brand name"
+          ],
           "answer": 1,
           "explanation": "Moats come from owning the workflow and the data."
         }
@@ -1542,19 +1888,34 @@
       "quiz": [
         {
           "question": "What did FinTech do to banks?",
-          "options": ["Eliminated them", "Unbundled their services into specialized companies", "Merged them all", "Nothing"],
+          "options": [
+            "Eliminated them",
+            "Unbundled their services into specialized companies",
+            "Merged them all",
+            "Nothing"
+          ],
           "answer": 1,
           "explanation": "Specialists took over each banking function."
         },
         {
           "question": "What is embedded finance?",
-          "options": ["Hiding money in apps", "Non-banks offering financial services inside their products", "Bank-only mobile apps", "Paying with QR codes"],
+          "options": [
+            "Hiding money in apps",
+            "Non-banks offering financial services inside their products",
+            "Bank-only mobile apps",
+            "Paying with QR codes"
+          ],
           "answer": 1,
           "explanation": "Uber wallets and Shopify Balance are embedded finance."
         },
         {
           "question": "How do most startups handle banking regulations?",
-          "options": ["Ignore them", "Partner with licensed entities via BaaS", "Lobby for changes", "Move to unregulated markets"],
+          "options": [
+            "Ignore them",
+            "Partner with licensed entities via BaaS",
+            "Lobby for changes",
+            "Move to unregulated markets"
+          ],
           "answer": 1,
           "explanation": "Banking-as-a-service provides compliance through licensed partners."
         }
@@ -1606,19 +1967,34 @@
       "quiz": [
         {
           "question": "What is the real asset a DTC brand builds?",
-          "options": ["Inventory", "Customer data and relationship", "Store locations", "Manufacturing capacity"],
+          "options": [
+            "Inventory",
+            "Customer data and relationship",
+            "Store locations",
+            "Manufacturing capacity"
+          ],
           "answer": 1,
           "explanation": "Data and direct relationship enable repeat sales and iteration."
         },
         {
           "question": "What is a healthy LTV:CAC ratio?",
-          "options": ["1:1", "3:1 or better", "0.5:1", "Any ratio is fine"],
+          "options": [
+            "1:1",
+            "3:1 or better",
+            "0.5:1",
+            "Any ratio is fine"
+          ],
           "answer": 1,
           "explanation": "Below 1:1 you lose money on every acquired customer."
         },
         {
           "question": "How did Glossier and Gymshark acquire customers?",
-          "options": ["TV ads", "Community and content", "Retail partnerships", "Cold calling"],
+          "options": [
+            "TV ads",
+            "Community and content",
+            "Retail partnerships",
+            "Cold calling"
+          ],
           "answer": 1,
           "explanation": "Community-driven and content-driven acquisition built both brands."
         }
@@ -1670,19 +2046,34 @@
       "quiz": [
         {
           "question": "Why can drug margins exceed 90%?",
-          "options": ["Drugs are cheap to make", "Patents and low price elasticity", "Governments pay everything", "There is no competition"],
+          "options": [
+            "Drugs are cheap to make",
+            "Patents and low price elasticity",
+            "Governments pay everything",
+            "There is no competition"
+          ],
           "answer": 1,
           "explanation": "Patent protection plus essential demand supports premium pricing."
         },
         {
           "question": "Which entry path has the lowest regulatory barrier?",
-          "options": ["New drug development", "Digital health and healthtech SaaS", "Gene therapy", "Medical devices"],
+          "options": [
+            "New drug development",
+            "Digital health and healthtech SaaS",
+            "Gene therapy",
+            "Medical devices"
+          ],
           "answer": 1,
           "explanation": "Software and services face far lighter regulation than therapies."
         },
         {
           "question": "What is the safest way to invest in biotech upside?",
-          "options": ["Single stock picks", "Diversified biotech funds/ETFs", "Avoiding the sector", "Options trading"],
+          "options": [
+            "Single stock picks",
+            "Diversified biotech funds/ETFs",
+            "Avoiding the sector",
+            "Options trading"
+          ],
           "answer": 1,
           "explanation": "Diversified vehicles survive clinical failures and capture winners."
         }
@@ -1734,19 +2125,34 @@
       "quiz": [
         {
           "question": "What are the three engines of the first million?",
-          "options": ["Salary, lottery, inheritance", "Income, side business, investing", "Savings, bonds, gold", "Renting, lending, donating"],
+          "options": [
+            "Salary, lottery, inheritance",
+            "Income, side business, investing",
+            "Savings, bonds, gold",
+            "Renting, lending, donating"
+          ],
           "answer": 1,
           "explanation": "The roadmap runs income, a business multiplier, and investing together."
         },
         {
           "question": "What single number should you track monthly?",
-          "options": ["Revenue", "Cash flow", "Followers", "Hours worked"],
+          "options": [
+            "Revenue",
+            "Cash flow",
+            "Followers",
+            "Hours worked"
+          ],
           "answer": 1,
           "explanation": "Cash flow reveals whether the machine actually works."
         },
         {
           "question": "How do business wins help the timeline?",
-          "options": ["They don't", "A large lump compresses years off the plan", "They replace investing", "They increase taxes"],
+          "options": [
+            "They don't",
+            "A large lump compresses years off the plan",
+            "They replace investing",
+            "They increase taxes"
+          ],
           "answer": 1,
           "explanation": "A sale or big contract adds a lump that contributions alone would take years to reach."
         }
@@ -1798,19 +2204,34 @@
       "quiz": [
         {
           "question": "Why is a personal brand called permissionless leverage?",
-          "options": ["Anyone can publish and compound an audience", "It requires no money", "It never fails", "It replaces a business"],
+          "options": [
+            "Anyone can publish and compound an audience",
+            "It requires no money",
+            "It never fails",
+            "It replaces a business"
+          ],
           "answer": 0,
           "explanation": "No permission needed — consistency and skill do the work."
         },
         {
           "question": "What beats popularity for building wealth from a brand?",
-          "options": ["More followers", "Niche positioning as the go-to expert", "Viral moments", "Buying ads"],
+          "options": [
+            "More followers",
+            "Niche positioning as the go-to expert",
+            "Viral moments",
+            "Buying ads"
+          ],
           "answer": 1,
           "explanation": "Being the obvious expert in a niche drives premium opportunities."
         },
         {
           "question": "When should you monetize your audience?",
-          "options": ["Immediately", "After building trust with consistent value", "Never", "Only with ads"],
+          "options": [
+            "Immediately",
+            "After building trust with consistent value",
+            "Never",
+            "Only with ads"
+          ],
           "answer": 1,
           "explanation": "Monetization is the natural next step of trust, not the first step."
         }
@@ -1862,19 +2283,34 @@
       "quiz": [
         {
           "question": "What does research show about the most successful networkers?",
-          "options": ["They are the best salespeople", "They are strategic givers", "They attend the most events", "They never ask for favors"],
+          "options": [
+            "They are the best salespeople",
+            "They are strategic givers",
+            "They attend the most events",
+            "They never ask for favors"
+          ],
           "answer": 1,
           "explanation": "Strategic generosity compounds into opportunity."
         },
         {
           "question": "What is the highest-value gift in a network?",
-          "options": ["Money", "Introductions", "Advice", "Compliments"],
+          "options": [
+            "Money",
+            "Introductions",
+            "Advice",
+            "Compliments"
+          ],
           "answer": 1,
           "explanation": "Connecting the right people creates value for both."
         },
         {
           "question": "How should you treat your network?",
-          "options": ["As a contact list", "As an asset portfolio to track and grow", "As a chore", "As a favor ledger"],
+          "options": [
+            "As a contact list",
+            "As an asset portfolio to track and grow",
+            "As a chore",
+            "As a favor ledger"
+          ],
           "answer": 1,
           "explanation": "Track context and touchpoints like a portfolio manager."
         }
@@ -1926,19 +2362,34 @@
       "quiz": [
         {
           "question": "What is the 'shields up' principle?",
-          "options": ["Hiding assets illegally", "Insulating operating and personal assets with entities and insurance", "Buying gold", "Deleting records"],
+          "options": [
+            "Hiding assets illegally",
+            "Insulating operating and personal assets with entities and insurance",
+            "Buying gold",
+            "Deleting records"
+          ],
           "answer": 1,
           "explanation": "Legal separation limits what a single disaster can reach."
         },
         {
           "question": "Which is more impactful for taxes over a lifetime?",
-          "options": ["Asset location", "Market timing", "Frequent trading", "Paying quarterly"],
+          "options": [
+            "Asset location",
+            "Market timing",
+            "Frequent trading",
+            "Paying quarterly"
+          ],
           "answer": 0,
           "explanation": "Which assets live in which accounts determines the tax drag on compounding."
         },
         {
           "question": "Why review estate plans every few years?",
-          "options": ["To pay lawyers", "Life and laws change — plans must track reality", "To add more assets", "It's legally required annually"],
+          "options": [
+            "To pay lawyers",
+            "Life and laws change — plans must track reality",
+            "To add more assets",
+            "It's legally required annually"
+          ],
           "answer": 1,
           "explanation": "Marriage, children, and tax law changes all invalidate old plans."
         }
@@ -1990,19 +2441,34 @@
       "quiz": [
         {
           "question": "How should you treat your wealth plan?",
-          "options": ["As a one-time event", "As an operating system with rhythms", "As a secret", "As a motivational poster"],
+          "options": [
+            "As a one-time event",
+            "As an operating system with rhythms",
+            "As a secret",
+            "As a motivational poster"
+          ],
           "answer": 1,
           "explanation": "Rhythms turn the plan into a living system."
         },
         {
           "question": "What is the best proof your strategy is real?",
-          "options": ["Your calendar", "Your notebook", "Your dreams", "Your friends' opinions"],
+          "options": [
+            "Your calendar",
+            "Your notebook",
+            "Your dreams",
+            "Your friends' opinions"
+          ],
           "answer": 0,
           "explanation": "If it isn't scheduled and executed, it isn't a strategy."
         },
         {
           "question": "What does the market reward?",
-          "options": ["Knowledge", "Intentions", "Execution", "Titles"],
+          "options": [
+            "Knowledge",
+            "Intentions",
+            "Execution",
+            "Titles"
+          ],
           "answer": 2,
           "explanation": "Outcomes, not intentions — the blueprint demands building."
         }
@@ -2019,7 +2485,11 @@
       "moduleId": "m2",
       "duration": "31 min",
       "level": "Beginner",
-      "tags": ["economy", "credit", "cycles"]
+      "tags": [
+        "economy",
+        "credit",
+        "cycles"
+      ]
     },
     {
       "id": "vid-naval-rich",
@@ -2030,7 +2500,11 @@
       "moduleId": "m1",
       "duration": "45 min",
       "level": "Beginner",
-      "tags": ["mindset", "leverage", "equity"]
+      "tags": [
+        "mindset",
+        "leverage",
+        "equity"
+      ]
     },
     {
       "id": "vid-startups-succeed",
@@ -2041,7 +2515,11 @@
       "moduleId": "m3",
       "duration": "17 min",
       "level": "Beginner",
-      "tags": ["startups", "timing", "founders"]
+      "tags": [
+        "startups",
+        "timing",
+        "founders"
+      ]
     },
     {
       "id": "vid-start-with-why",
@@ -2052,7 +2530,11 @@
       "moduleId": "m1",
       "duration": "18 min",
       "level": "Beginner",
-      "tags": ["leadership", "purpose", "brand"]
+      "tags": [
+        "leadership",
+        "purpose",
+        "brand"
+      ]
     },
     {
       "id": "vid-principles-success",
@@ -2063,7 +2545,11 @@
       "moduleId": "m4",
       "duration": "31 min",
       "level": "Intermediate",
-      "tags": ["principles", "decision-making", "process"]
+      "tags": [
+        "principles",
+        "decision-making",
+        "process"
+      ]
     },
     {
       "id": "vid-psychology-of-money",
@@ -2074,7 +2560,11 @@
       "moduleId": "m2",
       "duration": "27 min",
       "level": "Beginner",
-      "tags": ["psychology", "behavior", "compounding"]
+      "tags": [
+        "psychology",
+        "behavior",
+        "compounding"
+      ]
     },
     {
       "id": "vid-psychology-10min",
@@ -2085,7 +2575,11 @@
       "moduleId": "m1",
       "duration": "10 min",
       "level": "Beginner",
-      "tags": ["money", "behavior", "summary"]
+      "tags": [
+        "money",
+        "behavior",
+        "summary"
+      ]
     }
   ],
   "niches": [
@@ -2345,6 +2839,227 @@
         "Build an MVP (Minimum Viable Product) in 30-60 days",
         "Price based on value, not cost (most SaaS is underpriced)",
         "Focus on reducing churn — retention is everything in SaaS"
+      ]
+    }
+  ],
+  "posts": [
+    {
+      "slug": "five-numbers-every-investor-must-know",
+      "title": "The 5 Numbers Every Investor Must Know",
+      "excerpt": "Before you buy a single share or property, learn these five numbers — they will save you from the most expensive mistakes in finance.",
+      "authorId": "marcus-johnson",
+      "date": "2026-07-28",
+      "readTime": "7 min",
+      "tags": [
+        "investing",
+        "basics"
+      ],
+      "content": [
+        {
+          "heading": "Number 1: Your compounding rate",
+          "paragraphs": [
+            "Every financial decision is a compounding decision. The Rule of 72 — divide 72 by your annual return to get your doubling time — turns any rate into a timeline. At 8% your money doubles every 9 years; at 12% every 6 years. That four-point difference is the difference between retiring rich and retiring comfortable.",
+            "The number matters because it forces you to see fees for what they are: a compounding tax that quietly steals a third of your lifetime returns."
+          ]
+        },
+        {
+          "heading": "Number 2: Cash-on-cash return",
+          "paragraphs": [
+            "Rental property returns are quoted in many ways, but the one that matters for your wallet is cash-on-cash: annual cash flow divided by the cash you actually put in. A deal that returns 10% cash-on-cash before appreciation beats a 'big' deal that ties up your capital for 4%.",
+            "Underwrite every real estate deal with this number and you'll stop overpaying for the illusion of appreciation."
+          ]
+        },
+        {
+          "heading": "Number 3: Net worth, not income",
+          "paragraphs": [
+            "Track your net worth monthly — assets minus liabilities. Income is a river; net worth is the reservoir. Two people earning the same salary can have a 10x difference in net worth simply by how they allocate what flows through their hands.",
+            "The moment you start measuring the reservoir instead of the river, your decisions change."
+          ]
+        },
+        {
+          "heading": "Numbers 4 & 5: Savings rate and the 4% rule",
+          "paragraphs": [
+            "Your savings rate — the percentage of income you keep — is the single most controllable lever of your wealth timeline. Bump it from 10% to 20% and you can cut years off your journey.",
+            "And once assets outnumber expenses, the 4% rule tells you how much you can safely withdraw: multiply your annual spending by 25 — that's your FIRE number. It converts an abstract dream into a concrete target."
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "pricing-saas-doubled-profit",
+      "title": "How We Priced Our First SaaS and Doubled Profit",
+      "excerpt": "The highest-leverage decision we ever made wasn't a feature — it was a price change. Here's the exact framework we used.",
+      "authorId": "sarah-chen",
+      "date": "2026-07-21",
+      "readTime": "6 min",
+      "tags": [
+        "saas",
+        "pricing",
+        "startups"
+      ],
+      "content": [
+        {
+          "heading": "The mistake we all make",
+          "paragraphs": [
+            "We launched our first SaaS at $9/month because it felt safe. Ninety days later we had users but no business — our customer acquisition cost was eating the entire lifetime value.",
+            "The fix wasn't more marketing. It was price. We moved to a three-tier structure and raised the middle tier 40%."
+          ]
+        },
+        {
+          "heading": "The three-tier framework",
+          "paragraphs": [
+            "Tier one is your entry offer: cheap, simple, and designed to get people through the door. Tier two is your real product — the one you actually want to sell. Tier three exists to make tier two look reasonable.",
+            "Most revenue comes from the middle. The premium tier is an anchor, and a good anchor makes the middle feel like a bargain."
+          ]
+        },
+        {
+          "heading": "The results",
+          "paragraphs": [
+            "Revenue per customer doubled, support tickets dropped (higher-paying customers churn less), and our acquisition math finally worked. The same number of customers now produced nearly double the profit.",
+            "If you haven't changed your price in the last 12 months, you are almost certainly underpriced. Raise it 20% and watch what happens — the data will tell you the truth."
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "ai-wont-replace-you",
+      "title": "AI Won't Replace You — But Someone Using AI Will",
+      "excerpt": "The biggest wealth transfer of our generation belongs to people who pair deep domain knowledge with AI leverage. Here's how to position yourself.",
+      "authorId": "elena-rossi",
+      "date": "2026-07-14",
+      "readTime": "8 min",
+      "tags": [
+        "ai",
+        "career",
+        "leverage"
+      ],
+      "content": [
+        {
+          "heading": "The leverage is permissionless",
+          "paragraphs": [
+            "Code and media are the permissionless levers of wealth — and AI just made both dramatically more powerful. A single person with a model API and domain knowledge can now ship what used to take a team of ten.",
+            "The people building fortunes aren't the ones asking whether AI will replace them. They're the ones asking which workflow they know intimately enough to automate."
+          ]
+        },
+        {
+          "heading": "Domain knowledge is the moat",
+          "paragraphs": [
+            "Models are commoditizing fast. What they can't commoditize is your judgment: which industry, which workflow, which customer, which objection. The vertical AI tools that win — in legal, healthcare, construction — are built by people who understood the domain first.",
+            "Pick one industry you know, find the most hated manual task in it, and automate it with an existing model API. That's the entire playbook."
+          ]
+        },
+        {
+          "heading": "Your 90-day AI plan",
+          "paragraphs": [
+            "Days 1-30: learn prompt engineering and API integration by building a toy project. Days 31-60: interview 20 practitioners about their most hated task. Days 61-90: ship a prototype to 10 of them and watch what they do with it.",
+            "The AI economy rewards builders, not spectators. Start this week."
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "the-power-of-losing",
+      "title": "The Power of Losing: What Failure Taught Me",
+      "excerpt": "I made my first million at 27 and lost all of it at 28. Rebuilding taught me more than the winning ever did.",
+      "authorId": "alex-morgan",
+      "date": "2026-07-07",
+      "readTime": "6 min",
+      "tags": [
+        "mindset",
+        "resilience"
+      ],
+      "content": [
+        {
+          "heading": "The wipeout",
+          "paragraphs": [
+            "At 27 I was up. At 28 I was flat broke, owing money to people I respected, and sitting in a borrowed apartment trying to figure out what happened. I had confused a good run with a good system.",
+            "The hardest part wasn't the money. It was the story I told myself about being smart — because that story had made me careless."
+          ]
+        },
+        {
+          "heading": "The four lessons that rebuilt me",
+          "paragraphs": [
+            "First: never risk what you can't afford to lose. Second: debrief every loss within 48 hours, in writing. Third: size every bet so that no single failure ends the game. Fourth: the market doesn't care how much you know — it pays for what you do.",
+            "I came back by 31, slower and richer. The system replaced the ego, and the system compounds."
+          ]
+        },
+        {
+          "heading": "Why failure is tuition",
+          "paragraphs": [
+            "Every billionaire in our curriculum has a wipeout story — Dalio, Jobs, Bezos's early missteps. The pattern isn't avoiding loss; it's industrializing recovery.",
+            "Build your tilt insurance now: a cash buffer, a peer group that normalizes loss, and a journal. When the bad bet comes — and it will — you'll pay the tuition once and keep the education."
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "house-hacking-101",
+      "title": "House Hacking 101: My First Property at 22",
+      "excerpt": "I bought my first four-plex with a 3.5% down payment, lived in one unit, and haven't paid rent since. Here's exactly how.",
+      "authorId": "marcus-johnson",
+      "date": "2026-06-30",
+      "readTime": "7 min",
+      "tags": [
+        "real-estate",
+        "house-hacking"
+      ],
+      "content": [
+        {
+          "heading": "Why house hacking is the best first deal",
+          "paragraphs": [
+            "A multi-unit property you live in turns your biggest expense into an income stream. Three tenants pay the mortgage; you live free — or get paid to live. It's the cheapest, lowest-risk way to enter real estate, and the FHA loan only needs 3.5% down.",
+            "I bought my first four-plex at 22 with $12,000 down. My cost of housing went from $1,100/month in rent to zero — and I owned an asset that appreciated while my tenants paid it off."
+          ]
+        },
+        {
+          "heading": "The deal math that matters",
+          "paragraphs": [
+            "Underwrite with three numbers: the 1% rule (monthly rent should be roughly 1% of purchase price), cap rate, and cash-on-cash return. Then stress-test: what does the deal look like if one unit sits vacant for 60 days? If you can survive that, you can survive real estate.",
+            "Walk the property with the inspector, talk to the neighbors, and read the actual lease documents. Cheap diligence now prevents expensive surprises later."
+          ]
+        },
+        {
+          "heading": "The path from one door to many",
+          "paragraphs": [
+            "Once your house hack is stabilized, refinance to pull equity out, rent your unit, and repeat with the next property. That's the BRRRR machine — Buy, Rehab, Rent, Refinance, Repeat.",
+            "Every real estate empire in our founder circle started with a single ugly first deal. Yours can too."
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "personal-brand-compounds",
+      "title": "Building a Personal Brand That Compounds",
+      "excerpt": "A personal brand is the highest-ROI asset you can build in 2026 — and it's permissionless. Here's the exact 90-day engine.",
+      "authorId": "sarah-chen",
+      "date": "2026-06-23",
+      "readTime": "6 min",
+      "tags": [
+        "personal-brand",
+        "content"
+      ],
+      "content": [
+        {
+          "heading": "Why your name is an asset",
+          "paragraphs": [
+            "Trust is the scarcest currency in the economy, and a personal brand manufactures it at scale. When you're known as the person who teaches X brilliantly, deals find you: partnerships, board seats, advisory fees — without a single cold email.",
+            "Positioning beats popularity. Being the go-to for a specific niche is worth more than being vaguely known by everyone."
+          ]
+        },
+        {
+          "heading": "The 90-day content engine",
+          "paragraphs": [
+            "Choose one platform and one niche. Publish twice weekly for 90 days: one teach piece, one story piece, one reaction piece. Reply to every thoughtful comment. Track which format drives the most conversation and double down.",
+            "Consistency over intensity: one high-quality piece per week for three years beats a viral burst and silence. Compounding is the whole game."
+          ]
+        },
+        {
+          "heading": "Monetize late, not early",
+          "paragraphs": [
+            "Build the audience and the trust first. When you do offer something, make it the natural next step for people who already trust you — a course, a cohort, a service.",
+            "The students in our program who built brands first are the ones closing enterprise deals without a sales team. The brand is the funnel."
+          ]
+        }
       ]
     }
   ]

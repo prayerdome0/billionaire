@@ -2,10 +2,12 @@ import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   ArrowRight,
+  Award,
   BookOpen,
   CheckCircle,
   Circle,
   Clock,
+  Crown,
   GraduationCap,
   Loader2,
   PlayCircle,
@@ -15,10 +17,12 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import PageHeader from "../components/PageHeader";
 import {
+  fetchLeaderboard,
   fetchLessons,
   fetchModules,
   fetchProgress,
   getClientId,
+  type LeaderboardEntry,
   type Lesson,
   type Module,
 } from "../lib/api";
@@ -35,21 +39,24 @@ export default function LessonsPage() {
   const [lessons, setLessons] = useState<Lesson[]>([]);
   const [modules, setModules] = useState<Module[]>([]);
   const [completed, setCompleted] = useState<Set<string>>(new Set());
+  const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let mounted = true;
     (async () => {
       try {
-        const [l, m, prog] = await Promise.all([
+        const [l, m, prog, board] = await Promise.all([
           fetchLessons(),
           fetchModules(),
           fetchProgress(getClientId()),
+          fetchLeaderboard(),
         ]);
         if (!mounted) return;
         setLessons(l);
         setModules(m);
         setCompleted(new Set(prog));
+        setLeaderboard(board);
       } finally {
         if (mounted) setLoading(false);
       }
@@ -196,20 +203,83 @@ export default function LessonsPage() {
                 );
               })}
 
-          <div className="bg-gradient-to-br from-gray-900 to-gray-900/60 border border-amber-500/20 rounded-3xl p-8 md:p-12 text-center">
-            <PlayCircle className="w-12 h-12 text-amber-400 mx-auto mb-4" />
-            <h2 className="text-2xl md:text-3xl font-black text-white mb-3">
-              Prefer watching to reading?
-            </h2>
-            <p className="text-gray-400 max-w-xl mx-auto mb-6">
-              Every module pairs with curated video masterclasses from the world's best — playable right inside the platform.
+          <div className="grid md:grid-cols-2 gap-6">
+            <div className="bg-gradient-to-br from-gray-900 to-gray-900/60 border border-amber-500/20 rounded-3xl p-8 md:p-10 text-center">
+              <PlayCircle className="w-12 h-12 text-amber-400 mx-auto mb-4" />
+              <h2 className="text-2xl md:text-3xl font-black text-white mb-3">
+                Prefer watching to reading?
+              </h2>
+              <p className="text-gray-400 max-w-md mx-auto mb-6">
+                Every module pairs with curated video masterclasses from the world's best — playable right inside the platform.
+              </p>
+              <Link
+                to="/videos"
+                className="inline-flex items-center gap-3 bg-gradient-to-r from-amber-500 to-yellow-500 text-gray-900 font-bold px-8 py-4 rounded-xl hover:from-amber-400 hover:to-yellow-400 transition-all hover:scale-105"
+              >
+                <BookOpen className="w-5 h-5" /> Watch the Videos
+              </Link>
+            </div>
+
+            <div className="bg-gradient-to-br from-gray-900 to-gray-900/60 border border-amber-500/20 rounded-3xl p-8 md:p-10 text-center">
+              <Award className="w-12 h-12 text-amber-400 mx-auto mb-4" />
+              <h2 className="text-2xl md:text-3xl font-black text-white mb-3">
+                {done === total ? "You've finished the course!" : "Earn your certificate"}
+              </h2>
+              <p className="text-gray-400 max-w-md mx-auto mb-6">
+                {done === total
+                  ? "Complete all 28 lessons. Congratulations — claim your official certificate now."
+                  : `Complete all ${total} lessons (${total - done} remaining) to unlock your official certificate of completion.`}
+              </p>
+              <Link
+                to="/certificate"
+                className="inline-flex items-center gap-3 bg-gradient-to-r from-amber-500 to-yellow-500 text-gray-900 font-bold px-8 py-4 rounded-xl hover:from-amber-400 hover:to-yellow-400 transition-all hover:scale-105"
+              >
+                <Award className="w-5 h-5" /> {done === total ? "Get Your Certificate" : "View Progress"}
+              </Link>
+            </div>
+          </div>
+
+          {/* Leaderboard */}
+          <div className="bg-gray-900/60 border border-gray-800 rounded-3xl p-8 md:p-10">
+            <div className="flex items-center gap-3 mb-2">
+              <Crown className="w-6 h-6 text-amber-400" />
+              <h2 className="text-2xl font-black text-white">Student Leaderboard</h2>
+            </div>
+            <p className="text-gray-500 text-sm mb-6">
+              Top students by completed lessons — powered by <code className="text-amber-500/80">GET /api/leaderboard</code>.
+              Complete lessons to climb the ranks.
             </p>
-            <Link
-              to="/videos"
-              className="inline-flex items-center gap-3 bg-gradient-to-r from-amber-500 to-yellow-500 text-gray-900 font-bold px-8 py-4 rounded-xl hover:from-amber-400 hover:to-yellow-400 transition-all hover:scale-105"
-            >
-              <BookOpen className="w-5 h-5" /> Watch the Videos
-            </Link>
+            {leaderboard.length === 0 ? (
+              <p className="text-gray-600 text-sm text-center py-6">
+                No completions yet — be the first to finish a lesson and claim the top spot!
+              </p>
+            ) : (
+              <div className="space-y-2">
+                {leaderboard.slice(0, 10).map((entry) => (
+                  <div
+                    key={entry.rank}
+                    className="flex items-center gap-4 bg-gray-950/50 border border-gray-800/60 rounded-xl px-5 py-3"
+                  >
+                    <span
+                      className={cn(
+                        "w-8 h-8 rounded-lg flex items-center justify-center font-black text-sm shrink-0",
+                        entry.rank === 1
+                          ? "bg-gradient-to-br from-amber-400 to-yellow-600 text-gray-950"
+                          : entry.rank <= 3
+                          ? "bg-gray-700 text-amber-300"
+                          : "bg-gray-800 text-gray-400"
+                      )}
+                    >
+                      {entry.rank}
+                    </span>
+                    <span className="text-white font-mono text-sm">{entry.clientId}</span>
+                    <span className="ml-auto text-sm text-gray-400">
+                      <span className="text-amber-400 font-bold">{entry.completed}</span> lessons
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </section>

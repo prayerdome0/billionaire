@@ -6,6 +6,10 @@ import LessonDetailPage from "./pages/LessonDetailPage";
 import VideosPage from "./pages/VideosPage";
 import FoundersPage from "./pages/FoundersPage";
 import ApiDocsPage from "./pages/ApiDocsPage";
+import SearchPage from "./pages/SearchPage";
+import BlogPage from "./pages/BlogPage";
+import BlogPostPage from "./pages/BlogPostPage";
+import CertificatePage from "./pages/CertificatePage";
 import NotFoundPage from "./pages/NotFoundPage";
 
 function ScrollToTop() {
@@ -26,6 +30,10 @@ export default function App() {
         <Route path="/lessons/:id" element={<LessonDetailPage />} />
         <Route path="/videos" element={<VideosPage />} />
         <Route path="/founders" element={<FoundersPage />} />
+        <Route path="/blog" element={<BlogPage />} />
+        <Route path="/blog/:slug" element={<BlogPostPage />} />
+        <Route path="/certificate" element={<CertificatePage />} />
+        <Route path="/search" element={<SearchPage />} />
         <Route path="/api-docs" element={<ApiDocsPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>

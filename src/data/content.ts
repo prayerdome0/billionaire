@@ -97,6 +97,17 @@ export interface Video {
   tags: string[];
 }
 
+export interface BlogPost {
+  slug: string;
+  title: string;
+  excerpt: string;
+  authorId: string;
+  date: string;
+  readTime: string;
+  tags: string[];
+  content: { heading: string; paragraphs: string[] }[];
+}
+
 export interface SiteStat {
   label: string;
   value: string;
@@ -113,6 +124,7 @@ export const modules: Module[] = raw.modules;
 export const lessons: Lesson[] = raw.lessons;
 export const videos: Video[] = raw.videos;
 export const niches: Niche[] = raw.niches;
+export const posts: BlogPost[] = raw.posts;
 
 export function getLesson(id: string): Lesson | undefined {
   return lessons.find((l) => l.id === id);
@@ -124,6 +136,14 @@ export function getModule(id: string): Module | undefined {
 
 export function getVideo(id: string): Video | undefined {
   return videos.find((v) => v.id === id);
+}
+
+export function getPost(slug: string): BlogPost | undefined {
+  return posts.find((p) => p.slug === slug);
+}
+
+export function getFounder(id: string): Founder | undefined {
+  return founders.find((f) => f.id === id);
 }
 
 export function lessonsForModule(moduleId: string): Lesson[] {

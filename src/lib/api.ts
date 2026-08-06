@@ -26,6 +26,9 @@ export interface ApiStats {
   contactMessages: number;
   completedLessons: number;
   totalProgress: number;
+  posts?: number;
+  comments?: number;
+  subscribers?: number;
   database: Record<string, number>;
 }
 
@@ -35,6 +38,27 @@ export interface ContactMessage {
   email: string;
   subject: string;
   message: string;
+  created_at: string;
+}
+
+export interface Comment {
+  id: number;
+  lessonId: string;
+  clientId: string;
+  name: string;
+  text: string;
+  created_at: string;
+}
+
+export interface LeaderboardEntry {
+  rank: number;
+  clientId: string;
+  completed: number;
+}
+
+export interface Subscriber {
+  id: number;
+  email: string;
   created_at: string;
 }
 
@@ -154,6 +178,35 @@ export async function markLessonComplete(
   });
 }
 
+export async function postComment(input: {
+  lessonId: string;
+  clientId: string;
+  name: string;
+  text: string;
+}): Promise<Comment> {
+  return request<Comment>("/comments", { method: "POST", body: JSON.stringify(input) });
+}
+
+export async function fetchComments(lessonId: string): Promise<Comment[]> {
+  try {
+    return await request<Comment[]>(`/comments?lessonId=${encodeURIComponent(lessonId)}`);
+  } catch {
+    return [];
+  }
+}
+
+export async function fetchLeaderboard(): Promise<LeaderboardEntry[]> {
+  try {
+    return await request<LeaderboardEntry[]>("/leaderboard");
+  } catch {
+    return [];
+  }
+}
+
+export async function subscribeNewsletter(email: string): Promise<Subscriber> {
+  return request<Subscriber>("/newsletter", { method: "POST", body: JSON.stringify({ email }) });
+}
+
 export function getClientId(): string {
   const KEY = "bb_client_id";
   let id = localStorage.getItem(KEY);
@@ -227,6 +280,54 @@ export const API_ENDPOINTS: {
     path: "/api/niches",
     description: "List the high-paying niches and billionaire case studies.",
     example: '[{"id":"tech-ai","title":"AI & Technology",...}]',
+  },
+  {
+    method: "GET",
+    path: "/api/posts",
+    description: "List blog posts from the database.",
+    example: '[{"slug":"five-numbers-every-investor-must-know",...}]',
+  },
+  {
+    method: "GET",
+    path: "/api/posts/:slug",
+    description: "Fetch a single blog post by slug.",
+    example: '{"slug":"ai-wont-replace-you","title":"AI Won\'t Replace You",...}',
+  },
+  {
+    method: "GET",
+    path: "/api/search?q=...",
+    description: "Search across lessons, videos, niches, founders, and posts.",
+    example: '{"lessons":[...],"videos":[...],"posts":[...]}',
+  },
+  {
+    method: "POST",
+    path: "/api/comments",
+    description: "Add a comment to a lesson (database write).",
+    example: 'POST body {"lessonId":"l01-...","clientId":"...","name":"Ada","text":"..."}',
+  },
+  {
+    method: "GET",
+    path: "/api/comments?lessonId=...",
+    description: "List comments for a lesson.",
+    example: '[{"id":1,"name":"Ada","text":"Great lesson!",...}]',
+  },
+  {
+    method: "GET",
+    path: "/api/leaderboard",
+    description: "Top students by completed lessons.",
+    example: '[{"rank":1,"clientId":"#abc12345","completed":12}]',
+  },
+  {
+    method: "POST",
+    path: "/api/newsletter",
+    description: "Subscribe an email to the newsletter (database write).",
+    example: 'POST body {"email":"ada@example.com"}',
+  },
+  {
+    method: "GET",
+    path: "/api/newsletter",
+    description: "List newsletter subscribers from the database.",
+    example: '[{"id":1,"email":"ada@example.com",...}]',
   },
   {
     method: "GET",

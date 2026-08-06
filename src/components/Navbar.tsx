@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { NavLink, Link, useLocation } from "react-router-dom";
-import { Crown, Download, Menu, X, BookOpen, PlayCircle, Users, TerminalSquare } from "lucide-react";
+import { Crown, Download, Menu, X, BookOpen, PlayCircle, Users, TerminalSquare, Newspaper, Search, Award } from "lucide-react";
 import { generateBillionairePdf } from "../utils/generatePdf";
 import { cn } from "../utils/cn";
 
@@ -9,6 +9,8 @@ const navItems = [
   { to: "/lessons", label: "Lessons", icon: BookOpen },
   { to: "/videos", label: "Videos", icon: PlayCircle },
   { to: "/founders", label: "Founders", icon: Users },
+  { to: "/blog", label: "Blog", icon: Newspaper },
+  { to: "/certificate", label: "Certificate", icon: Award },
   { to: "/api-docs", label: "API", icon: TerminalSquare },
 ];
 
@@ -81,6 +83,13 @@ export default function Navbar() {
             <Download className="w-4 h-4" />
             {downloading ? "Generating..." : "Download PDF"}
           </button>
+          <Link
+            to="/search"
+            className="flex items-center justify-center w-10 h-10 rounded-lg border border-gray-800 text-gray-400 hover:text-amber-400 hover:border-amber-500/40 transition-all"
+            aria-label="Search"
+          >
+            <Search className="w-4 h-4" />
+          </Link>
         </div>
 
         {/* Mobile menu button */}
@@ -124,6 +133,12 @@ export default function Navbar() {
             <Download className="w-4 h-4" />
             {downloading ? "Generating..." : "Download PDF"}
           </button>
+          <Link
+            to="/search"
+            className="flex items-center justify-center gap-2 w-full py-2 text-gray-300 hover:text-amber-400 transition-colors"
+          >
+            <Search className="w-4 h-4" /> Search
+          </Link>
         </div>
       )}
     </nav>
