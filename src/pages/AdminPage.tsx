@@ -11,6 +11,7 @@ import {
   Sparkles,
   CheckCircle2,
   AlertCircle,
+  Info,
   Database,
   Users,
   MessageSquare,
@@ -63,8 +64,11 @@ import {
   seedFirestoreFromBundledContent,
   listCertificatesFirestore,
   listPendingPaymentsFirestore,
-  approvePaymentByAdmin,
+  markCertificateSentByAdmin,
   rejectPaymentByAdmin,
+  isCertificateIssued,
+  isCertificateAwaitingAdmin,
+  CERTIFICATE_DELIVERY_WINDOW_HOURS,
   type FirestoreUser,
   type CertificateClaim,
   type PaymentRecord,
@@ -237,20 +241,22 @@ export default function AdminPage() {
       loadDb();
       loadUsers();
       loadCertificates();
+      loadPendingPayments();
     }
-  }, [isAdmin, loadOverview, loadDb, loadUsers, loadCertificates]);
+  }, [isAdmin, loadOverview, loadDb, loadUsers, loadCertificates, loadPendingPayments]);
 
   useEffect(() => {
     if (isAdmin && activeTab === "content") loadResource(resource);
   }, [isAdmin, activeTab, resource, loadResource]);
 
   useEffect(() => {
-    if (isAdmin && (activeTab === "users" || activeTab === "database" || activeTab === "certificates")) {
+    if (isAdmin && (activeTab === "users" || activeTab === "database" || activeTab === "certificates" || activeTab === "payments")) {
       loadUsers();
       loadDb();
       loadCertificates();
+      if (activeTab === "payments") loadPendingPayments();
     }
-  }, [isAdmin, activeTab, loadUsers, loadDb, loadCertificates]);
+  }, [isAdmin, activeTab, loadUsers, loadDb, loadCertificates, loadPendingPayments]);
 
   // real-time admins
   useEffect(() => {
@@ -410,22 +416,30 @@ export default function AdminPage() {
     }
   };
 
-  /* ---------------- payment approval actions ---------------- */
-  const handleApprovePayment = async (payment: PaymentRecord) => {
-    if (!window.confirm(`Approve $${CERTIFICATE_FEE} USD payment for ${payment.email}?\n\nThis will unlock their certificate for download.`)) return;
+  /* ---------------- certificate quotation / manual delivery actions ---------------- */
+  const handleMarkCertificateSent = async (payment: PaymentRecord) => {
+    const sent = window.confirm(
+      `Before continuing, send the certificate to ${payment.email} through the official email channel.\n\n` +
+        `Click OK only after payment has been verified and the certificate has been sent. This records the delivery; it does not send email automatically.`
+    );
+    if (!sent) return;
+    const deliveryNote = window.prompt("Optional delivery note for the student:", "Certificate sent to registered email");
+    if (deliveryNote === null) return;
+
     setApprovingPaymentId(payment.id);
     try {
-      await approvePaymentByAdmin({
+      await markCertificateSentByAdmin({
         uid: payment.uid,
         paymentId: payment.id,
         method: (payment.method as any) || "manual",
         adminUid: user?.uid,
+        deliveryNote,
       });
-      showToast(`Payment approved — $${CERTIFICATE_FEE} USD from ${payment.email}`);
+      showToast(`Certificate marked sent to ${payment.email}`);
       loadPendingPayments();
       loadCertificates();
     } catch (err) {
-      showToast(err instanceof Error ? err.message : "Approval failed");
+      showToast(err instanceof Error ? err.message : "Could not record certificate delivery");
     } finally {
       setApprovingPaymentId(null);
     }
@@ -550,7 +564,7 @@ export default function AdminPage() {
     { id: "overview", label: "Overview", icon: Building2 },
     { id: "users", label: "Users (Firestore role)", icon: Users, badge: fsUsers.length || users.length || 0 },
     { id: "certificates", label: `Certificates $${CERTIFICATE_FEE}`, icon: Award, badge: certClaims.length },
-    { id: "payments", label: "Approve Payments", icon: CreditCard, badge: pendingPayments.length || 0 },
+    { id: "payments", label: "Certificate Requests", icon: CreditCard, badge: pendingPayments.length || 0 },
     { id: "content", label: "Content Manager", icon: FileEdit },
     { id: "inbox", label: "Inbox", icon: Inbox, badge: (overview?.investorInquiries.length || 0) + (overview?.messages.length || 0) },
     { id: "database", label: "True DB Console", icon: Database },
@@ -697,8 +711,8 @@ export default function AdminPage() {
                     ["Registered Users", fsUsers.length || users.length || overview?.users?.length || 0, Users],
                     ["Admins (role=admin)", fsAdmins.length, ShieldCheck],
                     ["Certificate Claims", certClaims.length, Award],
-                    ["Pending Payments", pendingPayments.length, Clock],
-                    ["Paid Certificates", certClaims.filter((c) => c.paid).length, CreditCard],
+                    ["Pending Certificate Requests", pendingPayments.length, Clock],
+                    ["Certificates Sent", certClaims.filter((c) => isCertificateIssued(c)).length, CreditCard],
                   ] as [string, any, React.ElementType][]
                 ).map(([label, val, Icon], idx) => (
                   <div key={idx} className="bg-gray-900/60 border border-gray-800 rounded-2xl p-5">
@@ -748,12 +762,12 @@ export default function AdminPage() {
                         <div className="text-xs font-bold text-white">{c.nameOnCertificate || c.email}</div>
                         <div className="text-[11px] text-gray-500 font-mono">{c.certificateNumber} • {c.completedLessons}/{c.totalLessons}</div>
                       </div>
-                      <span className={`text-[10px] font-black px-2 py-0.5 rounded-full ${c.paid ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40" : "bg-amber-500/20 text-amber-300 border border-amber-500/40"}`}>
-                        {c.paid ? `PAID $${c.feeUsd}` : `UNPAID $${c.feeUsd}`}
+                      <span className={`text-[10px] font-black px-2 py-0.5 rounded-full ${isCertificateIssued(c) ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40" : "bg-amber-500/20 text-amber-300 border border-amber-500/40"}`}>
+                        {isCertificateIssued(c) ? "SENT" : isCertificateAwaitingAdmin(c) ? "ADMIN QUEUE" : `READY $${c.feeUsd}`}
                       </span>
                     </div>
                   ))}
-                  {certClaims.length === 0 && <p className="text-gray-500 text-xs">No certificate claims yet — students claim after completion for ${CERTIFICATE_FEE}.</p>}
+                  {certClaims.length === 0 && <p className="text-gray-500 text-xs">No certificate claims yet — students send a ${CERTIFICATE_FEE} payment quotation after completion.</p>}
                 </div>
               </div>
             </div>
@@ -849,10 +863,10 @@ export default function AdminPage() {
             <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
               <div>
                 <h2 className="text-2xl font-black text-white flex items-center gap-3">
-                  <Award className="w-6 h-6 text-amber-400" /> Certificate Claims — ${CERTIFICATE_FEE} Paid, Tuition FREE
+                  <Award className="w-6 h-6 text-amber-400" /> Certificate Claims — ${CERTIFICATE_FEE} Quotation Workflow
                 </h2>
                 <p className="text-gray-400 text-sm mt-1 max-w-2xl">
-                  Incorporation note: We have not built any physical school yet. Seedwel is a certificate incorporation entity (2025). Students learn FREE, pay ${CERTIFICATE_FEE} USD only to claim verified certificate. True DB: Firestore certificates collection.
+                  Students learn FREE. Eligible students send a ${CERTIFICATE_FEE} USD payment quotation to this admin queue; after payment verification, an admin sends the certificate to the registered email within ${CERTIFICATE_DELIVERY_WINDOW_HOURS} hours. True DB: Firestore certificates collection.
                 </p>
               </div>
               <div className="flex items-center gap-2">
@@ -873,14 +887,14 @@ export default function AdminPage() {
                 <div className="text-[11px] text-gray-600">Firestore certificates collection</div>
               </div>
               <div className="rounded-2xl bg-emerald-500/10 border border-emerald-500/30 p-4">
-                <div className="text-xs text-emerald-300 uppercase tracking-wider">Paid ${CERTIFICATE_FEE}</div>
-                <div className="text-2xl font-black text-emerald-300 mt-1">{certClaims.filter((c) => c.paid).length}</div>
-                <div className="text-[11px] text-emerald-200/60">${certClaims.filter((c) => c.paid).length * CERTIFICATE_FEE} collected</div>
+                <div className="text-xs text-emerald-300 uppercase tracking-wider">Certificates sent</div>
+                <div className="text-2xl font-black text-emerald-300 mt-1">{certClaims.filter((c) => isCertificateIssued(c)).length}</div>
+                <div className="text-[11px] text-emerald-200/60">${certClaims.filter((c) => c.paid).length * CERTIFICATE_FEE} payment verified</div>
               </div>
               <div className="rounded-2xl bg-amber-500/10 border border-amber-500/30 p-4">
-                <div className="text-xs text-amber-300 uppercase tracking-wider">Unpaid (eligible)</div>
-                <div className="text-2xl font-black text-amber-300 mt-1">{certClaims.filter((c) => !c.paid).length}</div>
-                <div className="text-[11px] text-amber-200/60">Awaiting ${CERTIFICATE_FEE} payment</div>
+                <div className="text-xs text-amber-300 uppercase tracking-wider">Awaiting admin</div>
+                <div className="text-2xl font-black text-amber-300 mt-1">{certClaims.filter((c) => isCertificateAwaitingAdmin(c)).length}</div>
+                <div className="text-[11px] text-amber-200/60">Quotation / payment verification queue</div>
               </div>
             </div>
 
@@ -905,12 +919,12 @@ export default function AdminPage() {
                       </a>
                     )}
                   </div>
-                  <span className={`rounded-full px-3 py-1 text-[11px] font-black ${c.paid ? "bg-emerald-500/20 border border-emerald-500/40 text-emerald-300" : "bg-amber-500/20 border border-amber-500/40 text-amber-300"}`}>
-                    {c.paid ? `PAID $${c.feeUsd}` : `$${c.feeUsd} UNPAID`}
+                  <span className={`rounded-full px-3 py-1 text-[11px] font-black ${isCertificateIssued(c) ? "bg-emerald-500/20 border border-emerald-500/40 text-emerald-300" : "bg-amber-500/20 border border-amber-500/40 text-amber-300"}`}>
+                    {isCertificateIssued(c) ? "SENT" : isCertificateAwaitingAdmin(c) ? "ADMIN QUEUE" : `READY $${c.feeUsd}`}
                   </span>
                 </div>
               ))}
-              {certClaims.length === 0 && <p className="text-gray-500 text-sm text-center py-8 border border-dashed border-gray-800 rounded-2xl">No certificate claims in Firestore yet — students unlock after 28 lessons.</p>}
+              {certClaims.length === 0 && <p className="text-gray-500 text-sm text-center py-8 border border-dashed border-gray-800 rounded-2xl">No certificate claims in Firestore yet — eligible students send a payment quotation after 28 lessons.</p>}
             </div>
           </div>
         )}
@@ -920,15 +934,15 @@ export default function AdminPage() {
             <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
               <div>
                 <h2 className="text-2xl font-black text-white flex items-center gap-3">
-                  <CreditCard className="w-6 h-6 text-amber-400" /> Pending Payments — Admin Approval Required
+                  <CreditCard className="w-6 h-6 text-amber-400" /> Certificate Requests — Send Within {CERTIFICATE_DELIVERY_WINDOW_HOURS} Hours
                 </h2>
                 <p className="text-gray-400 text-sm mt-1 max-w-2xl">
-                  Students who submit certificate fee payments (${CERTIFICATE_FEE} USD) appear here for your review. Approve to unlock their certificate for download.
+                  Students send a ${CERTIFICATE_FEE} payment quotation and their preferred payment method here. Verify the payment, send the certificate through the official email channel, then mark it sent below.
                 </p>
               </div>
               <div className="flex items-center gap-2">
                 <div className="rounded-xl bg-amber-500/10 border border-amber-500/30 px-4 py-2 text-xs">
-                  <div className="text-amber-300 font-bold">Pending</div>
+                  <div className="text-amber-300 font-bold">Awaiting action</div>
                   <div className="text-white font-black">{pendingPayments.length}</div>
                 </div>
                 <button onClick={loadPendingPayments} className="flex items-center gap-2 rounded-xl bg-gray-800 hover:bg-gray-700 px-4 py-2 text-xs font-semibold text-gray-300">
@@ -937,11 +951,16 @@ export default function AdminPage() {
               </div>
             </div>
 
+            <div className="mb-6 rounded-xl border border-sky-500/25 bg-sky-500/5 px-4 py-3 text-xs text-sky-200/70 flex gap-2">
+              <Info className="w-4 h-4 text-sky-400 shrink-0 mt-0.5" />
+              <span><b className="text-sky-300">Manual delivery:</b> this portal tracks the request and delivery status. It does not send email automatically—use the student’s registered email, then click “Mark Certificate Sent.”</span>
+            </div>
+
             {pendingPayments.length === 0 ? (
               <div className="text-center py-14 border border-dashed border-gray-800 rounded-2xl">
                 <CheckCircle2 className="w-10 h-10 text-emerald-400 mx-auto mb-3" />
-                <p className="text-gray-400 font-semibold">No pending payments</p>
-                <p className="text-gray-500 text-xs mt-1">All certificate payments have been reviewed.</p>
+                <p className="text-gray-400 font-semibold">No pending certificate requests</p>
+                <p className="text-gray-500 text-xs mt-1">All submitted quotations have been reviewed and delivered or declined.</p>
               </div>
             ) : (
               <div className="space-y-3">
@@ -952,24 +971,37 @@ export default function AdminPage() {
                     </div>
                     <div className="flex-1 min-w-[200px]">
                       <div className="text-sm font-bold text-white truncate">{p.email}</div>
-                      <div className="text-[11px] text-gray-400 font-mono">
-                        {p.id} • {p.method} • ${p.amountUsd} USD
+                      <div className="text-[11px] text-amber-300/80 font-mono">
+                        {p.quotationNumber || p.id} • preferred: {p.method || "manual"} • ${p.amountUsd} USD
                       </div>
+                      {certClaims.find((c) => c.uid === p.uid) && (
+                        <div className="text-[10px] text-gray-400 mt-1">
+                          Certificate: <b className="text-white">{certClaims.find((c) => c.uid === p.uid)?.nameOnCertificate}</b> • {" "}
+                          <code className="text-amber-300/70">{certClaims.find((c) => c.uid === p.uid)?.certificateNumber}</code>
+                        </div>
+                      )}
                       <div className="text-[10px] text-gray-600 font-mono">
-                        uid: {p.uid.slice(0, 18)}… • {p.createdAt?.seconds ? new Date(p.createdAt.seconds * 1000).toLocaleString() : "—"}
+                        uid: {p.uid.slice(0, 18)}… • {p.createdAt?.seconds ? new Date(p.createdAt.seconds * 1000).toLocaleString() : "submitted"}
                       </div>
+                      <div className="text-[10px] text-sky-300/70 mt-1">Target: send certificate within {p.deliveryWindowHours || CERTIFICATE_DELIVERY_WINDOW_HOURS} hours of this quotation.</div>
                     </div>
                     <span className="rounded-full px-3 py-1 text-[11px] font-black bg-amber-500/20 border border-amber-500/40 text-amber-300">
-                      ${p.amountUsd} PENDING
+                      QUOTATION PENDING
                     </span>
-                    <div className="flex items-center gap-2">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <a
+                        href={`mailto:${p.email}?subject=${encodeURIComponent(`Seedwel Certificate — ${p.quotationNumber || p.id}`)}`}
+                        className="flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-bold bg-sky-500/10 border border-sky-500/30 text-sky-300 hover:bg-sky-500/20 transition-all"
+                      >
+                        <Mail className="w-3.5 h-3.5" /> Email Student
+                      </a>
                       <button
-                        onClick={() => handleApprovePayment(p)}
+                        onClick={() => handleMarkCertificateSent(p)}
                         disabled={approvingPaymentId === p.id}
                         className="flex items-center gap-1.5 rounded-xl px-4 py-2 text-xs font-bold bg-emerald-500/15 border border-emerald-500/40 text-emerald-300 hover:bg-emerald-500/25 transition-all disabled:opacity-50"
                       >
                         {approvingPaymentId === p.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <CheckCircle2 className="w-3.5 h-3.5" />}
-                        Approve
+                        Mark Certificate Sent
                       </button>
                       <button
                         onClick={() => handleRejectPayment(p)}
@@ -977,7 +1009,7 @@ export default function AdminPage() {
                         className="flex items-center gap-1.5 rounded-xl px-4 py-2 text-xs font-bold bg-rose-500/15 border border-rose-500/40 text-rose-300 hover:bg-rose-500/25 transition-all disabled:opacity-50"
                       >
                         {approvingPaymentId === p.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Trash2 className="w-3.5 h-3.5" />}
-                        Reject
+                        Decline Request
                       </button>
                     </div>
                   </div>

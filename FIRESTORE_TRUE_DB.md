@@ -19,7 +19,7 @@
     - `fetchLessonsFromFirestore`, `fetchModulesFromFirestore`, etc. — Firestore first, fallback bundled JSON.
     - `ensureUserDoc`, `getUserRole`, `setUserRoleFirestore`, `listAllUsersFirestore`, `subscribeToAdmins`, `subscribeToUsers` — admin role signed as role field.
     - `getProgressFirestore`, `setProgressFirestore`, `subscribeToProgress` — progress true DB.
-    - `getCertificateStatus`, `createOrUpdateCertificateClaim`, `markCertificatePaid`, `createPaymentRecord`, `confirmPaymentRecord`, `listCertificatesFirestore` — $5 certificate model.
+    - `getCertificateStatus`, `createOrUpdateCertificateClaim`, `submitCertificateQuotation`, `markCertificateSentByAdmin`, `listCertificatesFirestore` — $5 quotation + manual delivery model.
     - `seedFirestoreFromBundledContent` — admin can seed true DB with bundled curriculum.
     - `leaderboardFromFirestore`, `certificateIncorporationNote`, `genCertificateNumber`.
 
@@ -27,7 +27,7 @@
   - Public read for course content (tuition FREE).
   - Users can read own doc + write own progress/certificate (unpaid initially).
   - Admin (role=admin OR email allowlist) can write all.
-  - Certificates: $5 fee enforced, paid flag only admin can flip (mock flow via API).
+  - Certificates: $5 quotation is submitted by the student; only admin can verify payment and mark delivery sent.
 
 - **Server backup**: `server/storage.mjs` now includes `certificates` + `certificate_payments` tables for all engines (SQLite, Postgres, Memory, KV). True DB is Firestore, backup kept for compatibility. Admin tables list now includes those.
 
@@ -43,35 +43,30 @@
   - Shows incorporation banner (no school built yet, tuition FREE, cert $5).
   - Detects admin via Firestore role, shows "Management • Admin (Firestore role)" badge.
   - New **Admin Tab section** when `isAdmin`: lists total registered, admins count, true DB engine, link to full admin portal, and live list of all admins from Firestore (real-time `subscribeToAdmins`).
-  - Shows certificate paid status from Firestore `certificates/{uid}`.
+  - Shows certificate quotation, admin-queue, and sent status from Firestore `certificates/{uid}`.
   - Progress fetched from Firestore first (`getProgressFirestore`).
   - Firestore role shown as `Firestore role: admin`.
 
 - **File**: `src/pages/AdminPage.tsx`
-  - New tab: `certificates` — $5 claims, paid/unpaid stats, revenue = paid * $5, list of claims from Firestore.
+  - Certificate tabs show $5 claims, the admin quotation queue, sent status, and payment-verified revenue.
   - Users tab now shows Firestore users (role field) and can toggle role via **both API + Firestore** (`setUserRoleFirestore`).
   - Adds button **Seed Firestore True DB** (writes 28 lessons etc to Firestore).
   - Overview: metrics for Firestore admins, certificate claims, paid revenue.
   - Database console now includes certificates + payments tables.
   - Login screen explains Firestore role field.
 
-### 3. Certificate $5 paid, tuition FREE, incorporation model
+### 3. Certificate $5 quotation, tuition FREE, incorporation model
 
-- **New File**: `src/lib/certificateService.ts`
-  - Constants: `CERTIFICATE_FEE=5`, `INCORPORATION_MESSAGE` = "Certificate Incorporation entity registered 2025, no school built yet, tuition FREE, cert $5 paid".
-  - Functions: `checkEligibility`, `getOrCreateClaim`, `initiatePayment`, `processMockPayment` (2s delay, 95% success), `finalizeCertificateAfterPayment`.
-  - Mock payment currently — replace with Stripe/PayPal/MoMo in production (see TODO in code).
+- **File**: `src/lib/certificateService.ts`
+  - Constants: `CERTIFICATE_FEE=5`, `CERTIFICATE_DELIVERY_HOURS=48` and the incorporation message.
+  - `sendCertificateQuotationToAdmin()` creates a $5 quotation/request; `adminMarkCertificateSent()` records payment verification and manual delivery.
+  - No browser-side mock charge is performed.
 
-- **File**: `src/pages/CertificatePage.tsx` — Rebuilt:
-  - Banner: Certificate Incorporation 2025, no school built yet.
-  - Fee structure cards: Tuition $0 FREE (emerald), Certificate $5 (amber), Physical School not built yet (gray).
-  - Progress, eligibility.
-  - Certificate preview with incorporation note, Firestore cert number, tuition model.
-  - Name input stored in localStorage + Firestore claim.
-  - **Payment UI**: choose method (Card, PayPal, Mobile Money), Pay $5 button → `initiatePayment` + `finalizeCertificateAfterPayment` → marks Firestore certificate paid.
-  - Shows paid badge with paymentId, certificateNumber, Firestore verified.
-  - Download button only enabled after paid (enforces $5).
-  - Incorporation disclaimer everywhere.
+- **File**: `src/pages/CertificatePage.tsx`
+  - Eligible students choose Card, PayPal, or MoMo as a **preferred payment method** and send a $5 quotation to the admin queue.
+  - The claim and quotation record are written in one Firestore batch. Optional values are stripped before writing, fixing the prior `No document to update` chain.
+  - The UI states that the admin sends the certificate to the registered email within 48 hours after payment verification.
+  - A PDF/Cloudinary backup is available only after admin marks the certificate sent.
 
 - **File**: `src/utils/generateCertificate.ts`
   - PDF now includes: "SEEDWEL INVESTMENT LIMITED • CERTIFICATE INCORPORATION • EST. 2025 • NO SCHOOL BUILT YET", "TUITION FREE • CERTIFICATE $5 PAID", Firestore true DB note, role detection note, certificate number SWL-YYYYMMDD-XXXXX-XXXX.
@@ -81,7 +76,7 @@
   - New endpoints:
     - `GET /api/certificates/me` — own cert
     - `POST /api/certificates/claim` — create claim (tuition FREE)
-    - `POST /api/certificates/pay` — pay $5 (mock)
+    - `POST /api/certificates/pay` — create a pending $5 quotation for legacy API consumers (no mock charge)
     - `GET /api/certificates` (admin), `GET /api/certificate-payments` (admin)
   - Admin overview includes certificates + payments + incorporation note + true DB note.
   - Recommendations now include "Firestore true DB completed", "Certificate $5 model completed".
@@ -107,16 +102,16 @@
 
 1. Sign up free account → `/account` shows "Registered Student • FREE tuition", Firestore role = student, progress stored in Firestore `user_progress/{uid}`.
 2. Complete lessons (free) → progress bar updates in Firestore (real-time possible).
-3. Finish 28 lessons → `/certificate` unlocks, shows $5 payment modal, incorporation note.
-4. Pay $5 (card/PayPal/MoMo mock) → Firestore `certificates/{uid}` paid=true, generates PDF with incorporation note, cert number, tuition FREE / $5 paid. The PDF is also uploaded to Cloudinary (cloud `dhad95cch`, unsigned preset `seedwel`, asset folder `samples/ecommerce`) and `cloudinaryUrl`/`cloudinaryPublicId` are stored on the claim so the student, admin portal, and public `/verify` page can open the hosted copy.
+3. Finish 28 lessons → `/certificate` unlocks and shows the $5 quotation form plus incorporation note.
+4. Choose a preferred method and send the quotation → Firestore atomically stores the certificate claim and pending `certificate_payments` request. Admin verifies payment, emails the certificate within 48 hours, then marks it sent. The student may create an optional Cloudinary-hosted backup after delivery.
 5. Create second account with admin email (allowlist) → auto-promoted to role=admin in Firestore, student dashboard shows admin tab with list of admins, true DB engine = Firestore.
-6. Go to `/admin` → Users tab toggle role (writes to Firestore), Certificates tab shows all $5 claims + revenue, True DB Console shows certificates tables, Seed Firestore button writes bundled content to Firestore.
+6. Go to `/admin` → Certificate Requests shows pending quotations; email the student manually, then use **Mark Certificate Sent**. The Certificates tab shows sent/queued status; True DB Console shows backup tables.
 7. Firestore console → users collection → role field controls admin, certificates collection holds $5 claims.
 
 ## Next production steps
 
-- Replace mock payment with real Stripe Checkout: create Checkout Session for $5 USD, webhook confirms, then `markCertificatePaid`.
-- Add PayPal SDK + Mobile Money API for Zambia.
+- Optional: add Stripe Checkout, PayPal, or Mobile Money collection while retaining the admin verification and manual delivery queue.
+- Connect an approved transactional email provider if automatic mail delivery is required; until then the admin mail workflow is explicit.
 - Deploy `firestore.rules` via `firebase deploy`.
 - Optional: set `DATABASE_URL` for Postgres backup, but Firestore remains true DB.
 

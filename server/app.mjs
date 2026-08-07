@@ -196,7 +196,7 @@ app.get("/api/comments", async (req, res) => {
 /* ---------------------------- leaderboard (public) ---------------------------- */
 app.get("/api/leaderboard", async (_req, res) => json(res, 200, await (await store()).leaderboard()));
 
-/* ------------------------------ certificates — $5 paid, tuition FREE ------------------------------ */
+/* ------------------------------ certificates — $5 quotation, tuition FREE, admin delivery ------------------------------ */
 app.get("/api/certificates/me", requireUser, async (req, res) => {
   try {
     const s = await store();
@@ -245,10 +245,19 @@ app.post("/api/certificates/claim", requireUser, async (req, res) => {
 });
 
 app.post("/api/certificates/pay", requireUser, async (req, res) => {
+  // Legacy API route retained for integrations. It now creates a quotation for
+  // manual admin verification; it never simulates a charge or marks a
+  // certificate paid/issued by itself.
   const { paymentMethod = "card" } = req.body || {};
   const s = await store();
   try {
+    const existing = await (s.getCertificateByUid?.(req.user.uid) || s.getCertificate?.(req.user.uid));
+    if (!existing) {
+      return json(res, 409, { error: "Create a certificate claim before sending a payment quotation." });
+    }
+
     const paymentId = `pay_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`;
+    const quotationNumber = `QTE-${new Date().toISOString().slice(0, 10).replace(/-/g, "")}-${Math.random().toString(36).slice(2, 7).toUpperCase()}`;
     const payment = {
       id: paymentId,
       uid: req.user.uid,
@@ -261,29 +270,24 @@ app.post("/api/certificates/pay", requireUser, async (req, res) => {
       method: paymentMethod,
       certificateClaimId: req.user.uid,
       certificate_claim_id: req.user.uid,
+      quotationNumber,
+      requestType: "certificate_quotation",
+      deliveryWindowHours: 48,
       createdAt: new Date().toISOString(),
       created_at: new Date().toISOString(),
     };
     await s.addCertificatePayment?.(payment);
 
-    // Simulate processing delay
-    await new Promise((r) => setTimeout(r, 500));
-
-    const txnId = `txn_${paymentMethod}_${Date.now()}`;
-    await s.confirmCertificatePayment?.(paymentId, "succeeded");
-    await s.markCertificatePaid?.(req.user.uid, txnId, paymentMethod);
-
-    // also mark in certificates table if needed
-    const finalCert = await s.getCertificateByUid?.(req.user.uid);
-
-    json(res, 200, {
+    json(res, 202, {
       success: true,
-      paid: true,
+      status: "pending_admin",
       feeUsd: CERT_FEE,
       tuitionModel: "FREE",
-      paymentId: txnId,
-      certificate: finalCert,
-      message: `Certificate paid $${CERT_FEE} USD — tuition remains FREE. Incorporation verified.`,
+      paymentId,
+      quotationNumber,
+      deliveryWindowHours: 48,
+      certificate: existing,
+      message: `Payment quotation sent to admin. After payment is verified, the certificate will be sent within 48 hours.`,
     });
   } catch (e) {
     json(res, 500, { error: errMsg(e) });
@@ -450,11 +454,11 @@ app.get("/api/admin/recommendations", requireAdmin, async (_req, res) => {
       {
         id: "rec-stripe-integration",
         category: "Payment & Monetization",
-        title: "Integrate Stripe Checkout for $5 certificate fee (production)",
-        priority: "High",
+        title: "Optional: integrate payment providers for the $5 certificate quotation",
+        priority: "Medium",
         actionType: "Upgrade",
-        description: "Currently mock payment simulates success (95% rate). In production, replace processMockPayment with Stripe Checkout Session for $5 USD, PayPal SDK, and Mobile Money API for Zambia. Firestore payments collection stores records.",
-        impact: "Real revenue from certificate claims while tuition free.",
+        description: "The active workflow sends a payment quotation to the admin, who verifies payment and sends the certificate within 48 hours. If automated collection is needed later, add Stripe Checkout, PayPal SDK, or Mobile Money while keeping the admin delivery queue as the issuance control.",
+        impact: "Adds payment convenience without bypassing manual certificate delivery.",
         status: "Recommended",
       },
     ],

@@ -26,12 +26,14 @@ import { fetchLessons, fetchProgress } from "../lib/api";
 import {
   getCertificateStatus,
   createOrUpdateCertificateClaim,
-  setCertificatePendingApproval,
   updateCertificateCloudinary,
+  isCertificateIssued,
+  isCertificateAwaitingAdmin,
+  CERTIFICATE_DELIVERY_WINDOW_HOURS,
   type CertificateClaim,
 } from "../lib/firestoreDb";
 import {
-  initiatePayment,
+  sendCertificateQuotationToAdmin,
   CERTIFICATE_FEE,
   INCORPORATION_MESSAGE,
   type PaymentIntent,
@@ -81,9 +83,9 @@ export default function CertificatePage() {
           const cert = await getCertificateStatus(uid);
           if (cert) {
             setClaim(cert);
-            if (cert.paid) {
+            if (isCertificateIssued(cert)) {
               setPayStatus("paid");
-            } else if (cert.paymentStatus === "pending") {
+            } else if (isCertificateAwaitingAdmin(cert)) {
               setPayStatus("pending");
             }
           }
@@ -122,37 +124,39 @@ export default function CertificatePage() {
   };
 
   /**
-   * Student initiates payment. This creates a payment record with "pending" status
-   * and sets the certificate to await admin approval.
-   * No automatic processing — admin must approve.
+   * Sends a $5 payment quotation/request to the admin queue. This is not a
+   * browser-side card charge: the administrator verifies payment and sends the
+   * certificate to the registered email within 48 hours.
    */
   const handlePay = async () => {
-    if (!uid || !email) return;
+    if (!uid || !email || !eligible) return;
     setError("");
     setPaying(true);
-    setPayStatus("pending");
     try {
-      const { intent, paymentRecordId } = await initiatePayment({
+      // Always persist the full claim first. The following quotation write is
+      // an atomic Firestore batch, so certificates/{uid} is never updateDoc'd
+      // before it exists.
+      const ensuredClaim = await createOrUpdateCertificateClaim({
         uid,
         email,
-        method: paymentMethod,
-        claimId: claim?.id,
+        nameOnCertificate: name || profile?.name || user?.displayName || email.split("@")[0],
+        completed: completed.length,
+        total,
       });
-      setPaymentIntent(intent);
-
-      // Mark certificate as awaiting admin approval
-      await setCertificatePendingApproval({
-        uid,
-        paymentId: paymentRecordId,
+      const submitted = await sendCertificateQuotationToAdmin({
+        claim: ensuredClaim,
         method: paymentMethod,
       });
+      setPaymentIntent(submitted.intent);
+      setClaim(submitted.claim);
+      setPayStatus("pending");
 
-      // Refresh claim status
+      // Read back the server value when available (e.g. server timestamps).
       const updatedClaim = await getCertificateStatus(uid);
       if (updatedClaim) setClaim(updatedClaim);
     } catch (e) {
       setPayStatus("failed");
-      setError(e instanceof Error ? e.message : "Payment initiation failed. Try again.");
+      setError(e instanceof Error ? e.message : "Could not send your quotation to the admin. Please try again.");
     } finally {
       setPaying(false);
     }
@@ -160,8 +164,8 @@ export default function CertificatePage() {
 
   const download = async () => {
     if (!eligible || !name.trim()) return;
-    if (claim && !claim.paid) {
-      setError(`Certificate fee $${CERTIFICATE_FEE} USD must be paid and approved before download. Tuition is free, certificate is paid.`);
+    if (!isCertificateIssued(claim)) {
+      setError(`Your certificate request is with the admin. After payment is verified, the admin will send your certificate within ${CERTIFICATE_DELIVERY_WINDOW_HOURS} hours and mark it as sent here.`);
       return;
     }
     setGenerating(true);
@@ -194,16 +198,6 @@ export default function CertificatePage() {
         });
       }
 
-      // 3. update issuedAt if needed
-      if (uid) {
-        await createOrUpdateCertificateClaim({
-          uid,
-          email,
-          nameOnCertificate: name,
-          completed: completed.length,
-          total,
-        });
-      }
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to generate certificate.");
     } finally {
@@ -211,8 +205,8 @@ export default function CertificatePage() {
     }
   };
 
-  const isPaid = claim?.paid || payStatus === "paid";
-  const isPending = claim?.paymentStatus === "pending" || payStatus === "pending";
+  const isIssued = isCertificateIssued(claim) || payStatus === "paid";
+  const isPending = isCertificateAwaitingAdmin(claim) || payStatus === "pending";
 
   return (
     <div className="min-h-screen bg-gray-950 text-white">
@@ -336,7 +330,7 @@ export default function CertificatePage() {
                       <DollarSign className="w-4 h-4" /> Certificate Claim
                     </div>
                     <div className="text-2xl font-black text-white mt-1">${CERTIFICATE_FEE}</div>
-                    <div className="text-xs text-amber-200/60 mt-1">One-time fee for verified PDF, registry entry, anti-forgery ID. Admin approval required.</div>
+                    <div className="text-xs text-amber-200/60 mt-1">Send the payment quotation to admin; after verification, the certificate is sent within 48 hours.</div>
                   </div>
                   <div className="rounded-xl bg-gray-800/60 border border-gray-700 p-4">
                     <div className="text-gray-300 font-bold">Physical School</div>
@@ -346,33 +340,38 @@ export default function CertificatePage() {
                 </div>
               </div>
 
-              {/* Payment + name + download */}
+              {/* Certificate quotation + manual admin delivery */}
               <div className="bg-gray-900/60 border border-gray-800 rounded-2xl p-8">
                 <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Name on certificate</label>
                 <input
                   value={name}
                   onChange={(e) => handleName(e.target.value)}
+                  disabled={isPending || isIssued}
                   placeholder="Enter the name to appear on your certificate"
-                  className="w-full bg-gray-950/70 border border-gray-800 rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-amber-500/50 transition-colors mb-6"
+                  className="w-full bg-gray-950/70 border border-gray-800 rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-amber-500/50 transition-colors mb-6 disabled:opacity-60 disabled:cursor-not-allowed"
                 />
 
-                {isPaid ? (
+                {isIssued ? (
                   <>
-                    {/* PAID — Certificate Unlocked */}
+                    {/* ISSUED — admin sent the certificate */}
                     <div className="mb-6 rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-4 flex items-start gap-3">
                       <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
                       <div>
-                        <div className="text-emerald-300 font-bold text-sm">Paid & Approved — Certificate Unlocked</div>
+                        <div className="text-emerald-300 font-bold text-sm">Certificate Sent by Admin</div>
                         <div className="text-emerald-200/60 text-xs mt-1">
-                          Payment ID: <code className="font-mono text-emerald-300">{claim?.paymentId || paymentIntent?.id}</code> • Certificate:{" "}
+                          Your payment was verified and the administrator marked your certificate as sent to <b>{email}</b>. You can keep the PDF below as a backup copy.
+                        </div>
+                        <div className="text-emerald-200/50 text-[11px] mt-2">
+                          Quotation: <code className="font-mono text-emerald-300">{claim?.quotationNumber || "legacy-issued"}</code> • Payment: {" "}
+                          <code className="font-mono text-emerald-300">{claim?.paymentId || paymentIntent?.id}</code> • Certificate: {" "}
                           <Link to={`/verify/${claim?.certificateNumber || claim?.id}`} className="font-mono text-amber-300 underline hover:text-amber-400">
                             {claim?.certificateNumber}
-                          </Link>{" "}
-                          • Method: {claim?.paymentMethod || paymentMethod}
+                          </Link>
                         </div>
+                        {claim?.deliveryNote && <div className="text-[11px] text-emerald-200/50 mt-1">Admin note: {claim.deliveryNote}</div>}
                         <div className="mt-2">
                           <Link to={`/verify/${claim?.certificateNumber || claim?.id}`} className="inline-flex items-center gap-1.5 text-xs text-emerald-400 font-bold hover:underline">
-                            <ShieldCheck className="w-3.5 h-3.5" /> View Public Anti-Forgery Registry
+                            <ShieldCheck className="w-3.5 h-3.5" /> View Anti-Forgery Registry
                           </Link>
                         </div>
                       </div>
@@ -380,18 +379,16 @@ export default function CertificatePage() {
 
                     {error && <p className="text-rose-400 text-sm mb-4">{error}</p>}
 
-                    {/* Cloudinary-hosted certificate copy */}
+                    {/* Optional Cloudinary-hosted backup */}
                     <div className="mb-6">
                       {claim?.cloudinaryUrl ? (
                         <div className="rounded-xl border border-sky-500/30 bg-sky-500/10 p-4 flex items-start gap-3">
                           <Award className="w-5 h-5 text-sky-400 shrink-0 mt-0.5" />
                           <div className="min-w-0">
-                            <div className="text-sky-300 font-bold text-sm">Certificate Hosted on Cloudinary</div>
-                            <p className="text-sky-200/60 text-xs mt-1 break-all">
-                              {claim.cloudinaryUrl}
-                            </p>
+                            <div className="text-sky-300 font-bold text-sm">Hosted Backup Copy</div>
+                            <p className="text-sky-200/60 text-xs mt-1 break-all">{claim.cloudinaryUrl}</p>
                             <p className="text-[11px] text-sky-200/40 mt-1">
-                              Asset folder: <code className="text-sky-300/80">{CLOUDINARY_ASSET_FOLDER}</code> • Public ID:{" "}
+                              Asset folder: <code className="text-sky-300/80">{CLOUDINARY_ASSET_FOLDER}</code> • Public ID: {" "}
                               <code className="text-sky-300/80">{claim.cloudinaryPublicId || "—"}</code>
                             </p>
                             <div className="flex flex-wrap gap-3 mt-3">
@@ -422,17 +419,15 @@ export default function CertificatePage() {
                       ) : cloudinaryState.status === "uploading" ? (
                         <div className="rounded-xl border border-sky-500/30 bg-sky-500/5 p-4 flex items-center gap-3">
                           <Loader2 className="w-4 h-4 text-sky-400 animate-spin" />
-                          <span className="text-xs text-sky-300 font-semibold">
-                            Uploading hosted copy to Cloudinary ({CLOUDINARY_ASSET_FOLDER})…
-                          </span>
+                          <span className="text-xs text-sky-300 font-semibold">Uploading your issued backup copy to Cloudinary ({CLOUDINARY_ASSET_FOLDER})…</span>
                         </div>
                       ) : cloudinaryState.status === "failed" ? (
                         <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-3 text-xs text-amber-300">
-                          Could not host the PDF on Cloudinary (download still worked): {cloudinaryState.message}
+                          Could not host the backup PDF on Cloudinary (the download still worked): {cloudinaryState.message}
                         </div>
                       ) : (
                         <p className="text-[11px] text-gray-500">
-                          When you generate your PDF it will also be hosted on Cloudinary so you can share a permanent link with employers.
+                          After the admin sends your certificate, you can generate an optional personal backup PDF here.
                         </p>
                       )}
                     </div>
@@ -443,35 +438,36 @@ export default function CertificatePage() {
                       className="w-full inline-flex items-center justify-center gap-3 bg-gradient-to-r from-amber-500 to-yellow-500 text-gray-900 font-bold px-8 py-4 rounded-xl hover:from-amber-400 hover:to-yellow-400 transition-all disabled:opacity-40 shadow-lg shadow-amber-500/20"
                     >
                       {generating ? <Loader2 className="w-5 h-5 animate-spin" /> : <Download className="w-5 h-5" />}
-                      {generating ? "Generating PDF..." : "Download Certificate (PDF)"}
+                      {generating ? "Generating backup PDF..." : "Download Issued Certificate Backup (PDF)"}
                     </button>
                   </>
                 ) : isPending ? (
                   <>
-                    {/* PENDING — Awaiting Admin Approval */}
+                    {/* PENDING — quotation in the admin queue */}
                     <div className="mb-6 rounded-xl border border-amber-500/30 bg-amber-500/10 p-4 flex items-start gap-3">
                       <Clock className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
                       <div>
-                        <div className="text-amber-300 font-bold text-sm">Payment Submitted — Awaiting Admin Approval</div>
+                        <div className="text-amber-300 font-bold text-sm">Payment Quotation Sent to Admin</div>
                         <div className="text-amber-200/60 text-xs mt-1">
-                          Your payment of ${CERTIFICATE_FEE} USD via {claim?.paymentMethod || paymentMethod} has been submitted and is awaiting admin approval.
-                          Once approved, your certificate will be unlocked for download.
+                          Your $${CERTIFICATE_FEE} USD certificate quotation and preferred payment method ({claim?.paymentMethod || paymentMethod}) are now in the admin queue. After payment is verified, the admin will send your certificate to <b>{email}</b> within ${CERTIFICATE_DELIVERY_WINDOW_HOURS} hours.
                         </div>
                         <div className="text-amber-200/40 text-[11px] mt-2">
-                          Payment ID: <code className="font-mono text-amber-300/70">{claim?.paymentId || paymentIntent?.id}</code>
+                          Quotation reference: {" "}
+                          <code className="font-mono text-amber-300/70">{claim?.quotationNumber || paymentIntent?.quotationNumber || claim?.paymentId || paymentIntent?.id}</code>
                         </div>
                       </div>
                     </div>
                     <div className="rounded-xl bg-gray-950/60 border border-gray-800 p-4 text-center">
-                      <p className="text-gray-400 text-sm">Your certificate will be available for download once an administrator approves your payment.</p>
-                      <p className="text-gray-500 text-xs mt-2">You will be notified when your payment has been reviewed.</p>
+                      <p className="text-gray-400 text-sm">No card is charged on this page. The administrator will verify the payment through the selected method and send the certificate manually.</p>
+                      <p className="text-gray-500 text-xs mt-2">This page will update when the certificate has been marked as sent.</p>
                     </div>
                   </>
                 ) : (
                   <>
-                    {/* IDLE — Ready to pay */}
+                    {/* IDLE — submit a quotation, not a simulated charge */}
                     <div className="mb-6">
-                      <div className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Choose payment method — ${CERTIFICATE_FEE} USD</div>
+                      <div className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Preferred payment method for your $${CERTIFICATE_FEE} quotation</div>
+                      <p className="text-[11px] text-gray-500 mb-3">Choosing a method does not charge you here. It tells the admin how you intend to pay.</p>
                       <div className="grid grid-cols-3 gap-3">
                         {[
                           { id: "card", label: "Card", icon: CreditCard },
@@ -480,7 +476,7 @@ export default function CertificatePage() {
                         ].map((m) => (
                           <button
                             key={m.id}
-                            onClick={() => setPaymentMethod(m.id as any)}
+                            onClick={() => setPaymentMethod(m.id as PaymentMethod)}
                             className={`flex flex-col items-center gap-2 rounded-xl border p-4 text-xs font-bold transition-all ${
                               paymentMethod === m.id
                                 ? "bg-amber-500/15 border-amber-500/40 text-amber-300"
@@ -494,9 +490,7 @@ export default function CertificatePage() {
                       </div>
                     </div>
 
-                    {error && (
-                      <div className="mb-4 rounded-xl border border-rose-500/30 bg-rose-500/10 p-3 text-xs text-rose-300">{error}</div>
-                    )}
+                    {error && <div className="mb-4 rounded-xl border border-rose-500/30 bg-rose-500/10 p-3 text-xs text-rose-300">{error}</div>}
 
                     <button
                       onClick={handlePay}
@@ -505,16 +499,16 @@ export default function CertificatePage() {
                     >
                       {paying ? (
                         <>
-                          <Loader2 className="w-5 h-5 animate-spin" /> Submitting Payment...
+                          <Loader2 className="w-5 h-5 animate-spin" /> Sending Quotation…
                         </>
                       ) : (
                         <>
-                          <ShieldCheck className="w-5 h-5" /> Submit ${CERTIFICATE_FEE} USD Payment for Approval
+                          <ShieldCheck className="w-5 h-5" /> Send $${CERTIFICATE_FEE} Certificate Quotation to Admin
                         </>
                       )}
                     </button>
                     <p className="text-[11px] text-gray-500 mt-3 text-center">
-                      Payment will be reviewed by an administrator before your certificate is issued. Tuition stays FREE — certificate fee covers verification & incorporation registry.
+                      The request is recorded in the admin queue. Once payment is verified, the admin will send your certificate to your registered email within ${CERTIFICATE_DELIVERY_WINDOW_HOURS} hours.
                     </p>
                   </>
                 )}

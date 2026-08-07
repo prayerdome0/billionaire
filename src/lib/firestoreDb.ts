@@ -54,6 +54,10 @@ export interface FirestoreUser {
   displayRole?: string;
 }
 
+export type CertificatePaymentMethod = "card" | "paypal" | "mobile_money" | "manual";
+export type CertificateDeliveryStatus = "not_requested" | "awaiting_admin" | "sent";
+export type CertificateClaimStatus = "eligible" | "quotation_requested" | "issued" | "claimed" | "revoked";
+
 export interface CertificateClaim {
   id: string; // doc id (usually uid)
   uid: string;
@@ -65,17 +69,29 @@ export interface CertificateClaim {
   tuitionModel: "FREE";
   feeUsd: number;
   paid: boolean;
+  /** pending = quotation is in the admin queue; paid = payment verified by admin. */
   paymentStatus: "unpaid" | "pending" | "paid" | "refunded";
   paymentId?: string;
-  paymentMethod?: "card" | "paypal" | "mobile_money" | "manual";
+  paymentMethod?: CertificatePaymentMethod;
   paymentAt?: any;
   certificateNumber: string;
   incorporationNote: string;
   claimedAt?: any;
   issuedAt?: any;
-  status: "eligible" | "claimed" | "revoked";
+  status: CertificateClaimStatus;
   approvedBy?: string;
-  /** Cloudinary-hosted PDF copy (secure URL) — set after student generates their certificate. */
+  /** Student sends a $5 quotation; the administrator manually sends the certificate within 48 hours. */
+  quotationNumber?: string;
+  quotationRequestedAt?: any;
+  deliveryDueAt?: any;
+  deliveryStatus?: CertificateDeliveryStatus;
+  deliveryMethod?: "email" | "manual";
+  deliveredAt?: any;
+  deliveredBy?: string;
+  deliveryNote?: string;
+  lastPaymentRejectionReason?: string;
+  lastPaymentRejectedAt?: any;
+  /** Cloudinary-hosted PDF copy (secure URL) — optional backup after delivery. */
   cloudinaryUrl?: string;
   cloudinaryPublicId?: string;
   cloudinaryUploadedAt?: any;
@@ -88,10 +104,20 @@ export interface PaymentRecord {
   amountUsd: number;
   currency: string;
   purpose: "certificate_fee";
+  /** pending = an admin needs to verify the quotation/payment and send the certificate. */
   status: "pending" | "succeeded" | "failed";
-  method?: string;
+  method?: CertificatePaymentMethod | string;
   certificateClaimId?: string;
+  requestType?: "certificate_quotation";
+  quotationNumber?: string;
+  deliveryWindowHours?: number;
+  requestMessage?: string;
   createdAt: any;
+  approvedBy?: string;
+  approvedAt?: any;
+  sentAt?: any;
+  rejectionReason?: string;
+  rejectedAt?: any;
 }
 
 export interface ProgressDoc {
@@ -120,6 +146,17 @@ function nowTs() {
   return Timestamp.now();
 }
 
+/**
+ * Firestore rejects `undefined` fields by default. The former certificate
+ * claim builder included optional fields with undefined values, swallowed that
+ * create failure, and then tried updateDoc on a document that was never made.
+ * Remove only top-level undefined values (all certificate records are flat)
+ * before every certificate/payment write.
+ */
+function withoutUndefined<T extends Record<string, any>>(data: T): T {
+  return Object.fromEntries(Object.entries(data).filter(([, value]) => value !== undefined)) as T;
+}
+
 export function certificateIncorporationNote(): string {
   return (
     "Seedwel Investment Limited operates as a CERTIFICATE INCORPORATION entity registered 2025. " +
@@ -128,6 +165,8 @@ export function certificateIncorporationNote(): string {
   );
 }
 
+export const CERTIFICATE_DELIVERY_WINDOW_HOURS = 48;
+
 export function genCertificateNumber(name: string): string {
   const date = new Date().toISOString().slice(0, 10).replace(/-/g, "");
   const hash = Math.abs(
@@ -135,6 +174,26 @@ export function genCertificateNumber(name: string): string {
   );
   const rand = Math.floor(Math.random() * 9000) + 1000;
   return `SWL-${date}-${(hash % 100000).toString().padStart(5, "0")}-${rand}`;
+}
+
+export function genQuotationNumber(): string {
+  const date = new Date().toISOString().slice(0, 10).replace(/-/g, "");
+  const rand = Math.random().toString(36).slice(2, 7).toUpperCase();
+  return `QTE-${date}-${rand}`;
+}
+
+/**
+ * Legacy paid claims pre-date delivery tracking. Treat those as issued so
+ * existing students do not lose access while new requests use `deliveryStatus`.
+ */
+export function isCertificateIssued(claim: CertificateClaim | null | undefined): boolean {
+  if (!claim) return false;
+  if (claim.deliveryStatus === "sent" || claim.status === "issued") return true;
+  return !claim.deliveryStatus && !!claim.paid;
+}
+
+export function isCertificateAwaitingAdmin(claim: CertificateClaim | null | undefined): boolean {
+  return !!claim && (claim.deliveryStatus === "awaiting_admin" || claim.paymentStatus === "pending" || claim.status === "quotation_requested");
 }
 
 // ---------- Content: fetch with Firestore first, fallback to bundled JSON ----------
@@ -288,17 +347,23 @@ export function subscribeToProgress(uid: string, callback: (ids: string[]) => vo
   }
 }
 
-// ---------- Certificates — $5 PAID, tuition FREE ----------
+// ---------- Certificates — $5 paid, quotation sent to admin, manual delivery ----------
 export async function getCertificateStatus(uid: string): Promise<CertificateClaim | null> {
   try {
     const snap = await getDoc(doc(db, "certificates", uid));
-    if (snap.exists()) return snap.data() as CertificateClaim;
+    if (snap.exists()) return { id: snap.id, ...snap.data() } as CertificateClaim;
   } catch (e) {
     console.warn("[firestore] getCertificateStatus failed", e);
   }
   return null;
 }
 
+/**
+ * Creates the certificate claim when needed and keeps progress/name details in
+ * sync. Unlike the former implementation, a failed create is surfaced to the
+ * caller instead of returning an in-memory claim that does not exist in
+ * Firestore; that was the source of `No document to update` on the next step.
+ */
 export async function createOrUpdateCertificateClaim(params: {
   uid: string;
   email: string;
@@ -310,10 +375,25 @@ export async function createOrUpdateCertificateClaim(params: {
   const pct = total ? Math.round((completed / total) * 100) : 0;
   const ref = doc(db, "certificates", uid);
   let existing: CertificateClaim | null = null;
+
   try {
     const snap = await getDoc(ref);
-    if (snap.exists()) existing = snap.data() as CertificateClaim;
-  } catch {}
+    if (snap.exists()) existing = { id: snap.id, ...snap.data() } as CertificateClaim;
+  } catch (e) {
+    // A later setDoc can still succeed from Firestore's local cache. Log this
+    // diagnostic, but never pretend the resulting claim has been persisted.
+    console.warn("[firestore] read certificate claim before save failed", e);
+  }
+
+  const alreadyIssued = isCertificateIssued(existing);
+  const awaitingAdmin = isCertificateAwaitingAdmin(existing);
+  const status: CertificateClaimStatus = alreadyIssued
+    ? "issued"
+    : awaitingAdmin
+      ? "quotation_requested"
+      : existing?.status === "revoked"
+        ? "revoked"
+        : "eligible";
 
   const claim: CertificateClaim = {
     id: uid,
@@ -325,32 +405,136 @@ export async function createOrUpdateCertificateClaim(params: {
     percentage: pct,
     tuitionModel: "FREE",
     feeUsd: CERTIFICATE_FEE_USD,
-    paid: existing?.paid || false,
+    paid: !!existing?.paid,
     paymentStatus: existing?.paymentStatus || "unpaid",
     paymentId: existing?.paymentId,
     paymentMethod: existing?.paymentMethod,
-    certificateNumber: existing?.certificateNumber || genCertificateNumber(nameOnCertificate),
+    paymentAt: existing?.paymentAt,
+    certificateNumber: existing?.certificateNumber || genCertificateNumber(nameOnCertificate || email),
     incorporationNote: certificateIncorporationNote(),
-    status: pct >= 100 ? (existing?.paid ? "claimed" : "eligible") : "eligible",
+    status,
     claimedAt: existing?.claimedAt || serverTimestamp(),
     issuedAt: existing?.issuedAt,
-    // Preserve the Cloudinary-hosted copy across claim updates
+    approvedBy: existing?.approvedBy,
+    quotationNumber: existing?.quotationNumber,
+    quotationRequestedAt: existing?.quotationRequestedAt,
+    deliveryDueAt: existing?.deliveryDueAt,
+    deliveryStatus: alreadyIssued ? "sent" : awaitingAdmin ? "awaiting_admin" : "not_requested",
+    deliveryMethod: existing?.deliveryMethod,
+    deliveredAt: existing?.deliveredAt,
+    deliveredBy: existing?.deliveredBy,
+    deliveryNote: existing?.deliveryNote,
+    lastPaymentRejectionReason: existing?.lastPaymentRejectionReason,
+    lastPaymentRejectedAt: existing?.lastPaymentRejectedAt,
+    // Preserve the Cloudinary-hosted copy across claim updates.
     cloudinaryUrl: existing?.cloudinaryUrl,
     cloudinaryPublicId: existing?.cloudinaryPublicId,
     cloudinaryUploadedAt: existing?.cloudinaryUploadedAt,
   };
 
   try {
-    await setDoc(ref, { ...claim, claimedAt: existing?.claimedAt || serverTimestamp() }, { merge: true });
+    // setDoc with merge is intentionally used here: it creates a claim when it
+    // does not exist and therefore cannot produce Firestore's update-not-found
+    // error for certificates/{uid}.
+    await setDoc(ref, withoutUndefined(claim) as any, { merge: true });
+    return claim;
   } catch (e) {
-    console.warn("[firestore] createOrUpdateCertificateClaim failed", e);
+    console.error("[firestore] createOrUpdateCertificateClaim failed", e);
+    const detail = e instanceof Error ? e.message : "unknown Firestore error";
+    throw new Error(`Could not save your certificate request. Please try again. (${detail})`);
   }
-  return claim;
 }
 
 /**
- * Stores the Cloudinary-hosted copy of the certificate PDF on the Firestore
- * certificate claim (`certificates/{uid}`). Best-effort: never throws.
+ * Atomically creates the admin-queue payment quotation and updates (or creates)
+ * the certificate claim. Keeping both writes in one batch removes the race
+ * where the UI used to call updateDoc before certificates/{uid} existed.
+ */
+export async function submitCertificateQuotation(params: {
+  claim: CertificateClaim;
+  method: CertificatePaymentMethod;
+}): Promise<{ claim: CertificateClaim; payment: PaymentRecord }> {
+  const { claim, method } = params;
+  if (!claim?.uid || !claim.email) throw new Error("A signed-in student and certificate claim are required.");
+  if (claim.totalLessons < 1 || claim.completedLessons < claim.totalLessons) {
+    throw new Error("Complete all lessons before sending a certificate quotation.");
+  }
+  if (isCertificateIssued(claim)) {
+    throw new Error("This certificate has already been issued.");
+  }
+  if (isCertificateAwaitingAdmin(claim)) {
+    throw new Error("Your certificate quotation is already with the admin.");
+  }
+
+  const id = `pay_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+  const quotationNumber = genQuotationNumber();
+  const requestedAt = Timestamp.now();
+  const deliveryDueAt = Timestamp.fromDate(new Date(Date.now() + CERTIFICATE_DELIVERY_WINDOW_HOURS * 60 * 60 * 1000));
+  const certificateRef = doc(db, "certificates", claim.uid);
+  const paymentRef = doc(db, "certificate_payments", id);
+
+  const updatedClaim: CertificateClaim = {
+    ...claim,
+    id: claim.uid,
+    uid: claim.uid,
+    email: claim.email,
+    tuitionModel: "FREE",
+    feeUsd: CERTIFICATE_FEE_USD,
+    paid: false,
+    paymentStatus: "pending",
+    paymentId: id,
+    paymentMethod: method,
+    status: "quotation_requested",
+    claimedAt: claim.claimedAt || serverTimestamp(),
+    quotationNumber,
+    quotationRequestedAt: serverTimestamp() as any,
+    deliveryDueAt,
+    deliveryStatus: "awaiting_admin",
+    deliveryMethod: "email",
+    // A retry after an admin rejection starts a fresh request.
+    lastPaymentRejectionReason: undefined,
+    lastPaymentRejectedAt: undefined,
+  };
+
+  const payment: PaymentRecord = {
+    id,
+    uid: claim.uid,
+    email: claim.email,
+    amountUsd: CERTIFICATE_FEE_USD,
+    currency: "USD",
+    purpose: "certificate_fee",
+    status: "pending",
+    method,
+    certificateClaimId: claim.id || claim.uid,
+    requestType: "certificate_quotation",
+    quotationNumber,
+    deliveryWindowHours: CERTIFICATE_DELIVERY_WINDOW_HOURS,
+    requestMessage: `Student requested a certificate. Verify the $${CERTIFICATE_FEE_USD} payment and send the certificate within ${CERTIFICATE_DELIVERY_WINDOW_HOURS} hours.`,
+    createdAt: serverTimestamp(),
+  };
+
+  const batch = writeBatch(db);
+  batch.set(certificateRef, withoutUndefined(updatedClaim) as any, { merge: true });
+  batch.set(paymentRef, withoutUndefined(payment) as any);
+
+  try {
+    await batch.commit();
+  } catch (e) {
+    console.error("[firestore] submitCertificateQuotation failed", e);
+    const detail = e instanceof Error ? e.message : "unknown Firestore error";
+    throw new Error(`Could not send the quotation to the admin. Please try again. (${detail})`);
+  }
+
+  return {
+    claim: { ...updatedClaim, quotationRequestedAt: requestedAt, deliveryDueAt },
+    payment: { ...payment, createdAt: requestedAt },
+  };
+}
+
+/**
+ * Stores a hosted backup PDF only after a claim exists. `setDoc(..., merge)`
+ * prevents the raw Firestore "No document to update" error if an old/deleted
+ * claim is encountered.
  */
 export async function updateCertificateCloudinary(params: {
   uid: string;
@@ -358,129 +542,181 @@ export async function updateCertificateCloudinary(params: {
   cloudinaryPublicId: string;
 }): Promise<void> {
   try {
-    await updateDoc(doc(db, "certificates", params.uid), {
-      cloudinaryUrl: params.cloudinaryUrl,
-      cloudinaryPublicId: params.cloudinaryPublicId,
-      cloudinaryUploadedAt: serverTimestamp() as any,
-    } as any);
+    const ref = doc(db, "certificates", params.uid);
+    const snap = await getDoc(ref);
+    if (!snap.exists()) {
+      console.warn("[firestore] skipped Cloudinary update because the certificate claim no longer exists");
+      return;
+    }
+    await setDoc(
+      ref,
+      {
+        cloudinaryUrl: params.cloudinaryUrl,
+        cloudinaryPublicId: params.cloudinaryPublicId,
+        cloudinaryUploadedAt: serverTimestamp(),
+      } as any,
+      { merge: true }
+    );
   } catch (e) {
     console.warn("[firestore] updateCertificateCloudinary failed", e);
   }
 }
 
+/**
+ * Legacy helper retained for callers that only need to mark payment verified.
+ * It deliberately does not mark a certificate delivered; the student still
+ * waits for an administrator to send it.
+ */
 export async function markCertificatePaid(params: {
   uid: string;
   paymentId: string;
   method: CertificateClaim["paymentMethod"];
 }): Promise<CertificateClaim | null> {
   const ref = doc(db, "certificates", params.uid);
-  try {
-    const snap = await getDoc(ref);
-    if (!snap.exists()) return null;
-    const data = snap.data() as CertificateClaim;
-    const updated: Partial<CertificateClaim> = {
-      paid: true,
-      paymentStatus: "paid",
-      paymentId: params.paymentId,
-      paymentMethod: params.method,
-      paymentAt: serverTimestamp() as any,
-      status: "claimed",
-      issuedAt: serverTimestamp() as any,
-    };
-    await updateDoc(ref, updated as any);
-    return { ...data, ...updated } as CertificateClaim;
-  } catch (e) {
-    console.error("[firestore] markCertificatePaid failed", e);
-    throw e;
-  }
+  const snap = await getDoc(ref);
+  if (!snap.exists()) return null;
+
+  const data = { id: snap.id, ...snap.data() } as CertificateClaim;
+  const updated: Partial<CertificateClaim> = {
+    paid: true,
+    paymentStatus: "paid",
+    paymentId: params.paymentId,
+    paymentMethod: params.method,
+    paymentAt: serverTimestamp() as any,
+    status: isCertificateIssued(data) ? "issued" : "quotation_requested",
+    deliveryStatus: isCertificateIssued(data) ? "sent" : "awaiting_admin",
+  };
+  await setDoc(ref, withoutUndefined(updated) as any, { merge: true });
+  return { ...data, ...updated } as CertificateClaim;
 }
 
 /**
- * Admin approves a payment. Updates payment record to "succeeded",
- * marks certificate as paid, and records who approved it.
+ * Records the final manual step: payment is verified and the administrator has
+ * sent the certificate to the student's registered email. The portal records
+ * that delivery; it does not falsely claim to send email on its own.
  */
+export async function markCertificateSentByAdmin(params: {
+  uid: string;
+  paymentId: string;
+  method: CertificateClaim["paymentMethod"];
+  adminUid?: string;
+  deliveryNote?: string;
+}): Promise<CertificateClaim | null> {
+  const paymentRef = doc(db, "certificate_payments", params.paymentId);
+  const certificateRef = doc(db, "certificates", params.uid);
+  const [paymentSnap, certificateSnap] = await Promise.all([getDoc(paymentRef), getDoc(certificateRef)]);
+
+  if (!paymentSnap.exists()) {
+    throw new Error("This certificate quotation no longer exists. Ask the student to submit a new request.");
+  }
+  if (!certificateSnap.exists()) {
+    throw new Error("The student's certificate claim is missing. Ask the student to submit a new quotation before sending the certificate.");
+  }
+
+  const data = { id: certificateSnap.id, ...certificateSnap.data() } as CertificateClaim;
+  const adminUid = params.adminUid || "admin";
+  const updated: Partial<CertificateClaim> = {
+    paid: true,
+    paymentStatus: "paid",
+    paymentId: params.paymentId,
+    paymentMethod: params.method || data.paymentMethod || "manual",
+    paymentAt: serverTimestamp() as any,
+    status: "issued",
+    issuedAt: serverTimestamp() as any,
+    approvedBy: adminUid,
+    deliveryStatus: "sent",
+    deliveryMethod: "email",
+    deliveredAt: serverTimestamp() as any,
+    deliveredBy: adminUid,
+    deliveryNote: params.deliveryNote?.trim() || data.deliveryNote,
+  };
+
+  const batch = writeBatch(db);
+  batch.set(
+    paymentRef,
+    {
+      status: "succeeded",
+      approvedBy: adminUid,
+      approvedAt: serverTimestamp(),
+      sentAt: serverTimestamp(),
+    } as any,
+    { merge: true }
+  );
+  batch.set(certificateRef, withoutUndefined(updated) as any, { merge: true });
+
+  try {
+    await batch.commit();
+  } catch (e) {
+    console.error("[firestore] markCertificateSentByAdmin failed", e);
+    const detail = e instanceof Error ? e.message : "unknown Firestore error";
+    throw new Error(`Could not record certificate delivery. (${detail})`);
+  }
+
+  return { ...data, ...updated } as CertificateClaim;
+}
+
+/** Backwards-compatible alias; approval now means payment verified + certificate sent. */
 export async function approvePaymentByAdmin(params: {
   uid: string;
   paymentId: string;
   method: CertificateClaim["paymentMethod"];
   adminUid?: string;
 }): Promise<CertificateClaim | null> {
-  // 1. Update payment record to succeeded
-  try {
-    await updateDoc(doc(db, "certificate_payments", params.paymentId), {
-      status: "succeeded",
-      approvedBy: params.adminUid || "admin",
-      approvedAt: serverTimestamp(),
-    } as any);
-  } catch (e) {
-    console.error("[firestore] approvePaymentByAdmin: update payment failed", e);
-    throw e;
-  }
-
-  // 2. Mark certificate as paid
-  const ref = doc(db, "certificates", params.uid);
-  try {
-    const snap = await getDoc(ref);
-    if (!snap.exists()) return null;
-    const data = snap.data() as CertificateClaim;
-    const updated: Partial<CertificateClaim> = {
-      paid: true,
-      paymentStatus: "paid",
-      paymentId: params.paymentId,
-      paymentMethod: params.method,
-      paymentAt: serverTimestamp() as any,
-      status: "claimed",
-      issuedAt: serverTimestamp() as any,
-      approvedBy: params.adminUid || "admin",
-    };
-    await updateDoc(ref, updated as any);
-    return { ...data, ...updated } as CertificateClaim;
-  } catch (e) {
-    console.error("[firestore] approvePaymentByAdmin: mark cert paid failed", e);
-    throw e;
-  }
+  return markCertificateSentByAdmin(params);
 }
 
 /**
- * Admin rejects a payment. Updates payment record to "failed".
- * Certificate claim reverts to "eligible" so student can try again.
+ * Admin rejects a quotation and makes the student eligible to submit a fresh
+ * payment request. Missing records produce a clear message instead of an
+ * updateDoc "No document" exception.
  */
 export async function rejectPaymentByAdmin(params: {
   uid: string;
   paymentId: string;
   reason?: string;
 }): Promise<void> {
-  // 1. Update payment record to failed
-  try {
-    await updateDoc(doc(db, "certificate_payments", params.paymentId), {
-      status: "failed",
-      rejectedAt: serverTimestamp(),
-      rejectionReason: params.reason || "Rejected by admin",
-    } as any);
-  } catch (e) {
-    console.error("[firestore] rejectPaymentByAdmin: update payment failed", e);
-    throw e;
+  const paymentRef = doc(db, "certificate_payments", params.paymentId);
+  const certificateRef = doc(db, "certificates", params.uid);
+  const [paymentSnap, certificateSnap] = await Promise.all([getDoc(paymentRef), getDoc(certificateRef)]);
+
+  if (!paymentSnap.exists()) {
+    throw new Error("This certificate quotation no longer exists.");
+  }
+  if (!certificateSnap.exists()) {
+    throw new Error("The certificate claim is missing, so this quotation cannot be rejected safely.");
   }
 
-  // 2. Revert certificate claim to eligible (so student can retry)
-  const ref = doc(db, "certificates", params.uid);
-  try {
-    const snap = await getDoc(ref);
-    if (!snap.exists()) return;
-    await updateDoc(ref, {
+  const reason = params.reason?.trim() || "Payment could not be verified by admin";
+  const batch = writeBatch(db);
+  batch.set(
+    paymentRef,
+    {
+      status: "failed",
+      rejectedAt: serverTimestamp(),
+      rejectionReason: reason,
+    } as any,
+    { merge: true }
+  );
+  batch.set(
+    certificateRef,
+    {
       paid: false,
       paymentStatus: "unpaid",
       status: "eligible",
-    } as any);
-  } catch (e) {
-    console.error("[firestore] rejectPaymentByAdmin: revert cert failed", e);
-    throw e;
-  }
+      deliveryStatus: "not_requested",
+      lastPaymentRejectionReason: reason,
+      lastPaymentRejectedAt: serverTimestamp(),
+    } as any,
+    { merge: true }
+  );
+  await batch.commit();
 }
 
 /**
- * Mark a certificate claim as awaiting admin approval.
- * Called when student initiates payment.
+ * Compatibility helper for legacy callers. New code uses
+ * submitCertificateQuotation(), which creates the claim and payment record in
+ * one atomic batch. This function validates the document before merging so it
+ * can never throw Firestore's raw update-not-found error.
  */
 export async function setCertificatePendingApproval(params: {
   uid: string;
@@ -488,33 +724,51 @@ export async function setCertificatePendingApproval(params: {
   method: CertificateClaim["paymentMethod"];
 }): Promise<void> {
   const ref = doc(db, "certificates", params.uid);
-  try {
-    await updateDoc(ref, {
+  const snap = await getDoc(ref);
+  if (!snap.exists()) {
+    throw new Error("Certificate claim not found. Create the certificate quotation before marking it pending.");
+  }
+  await setDoc(
+    ref,
+    withoutUndefined({
       paymentStatus: "pending",
       paymentId: params.paymentId,
       paymentMethod: params.method,
-      status: "eligible",
-    } as any);
-  } catch (e) {
-    console.error("[firestore] setCertificatePendingApproval failed", e);
-    throw e;
-  }
+      status: "quotation_requested",
+      deliveryStatus: "awaiting_admin",
+      quotationRequestedAt: serverTimestamp(),
+      deliveryDueAt: Timestamp.fromDate(new Date(Date.now() + CERTIFICATE_DELIVERY_WINDOW_HOURS * 60 * 60 * 1000)),
+    }) as any,
+    { merge: true }
+  );
+}
+
+function timestampMillis(value: any): number {
+  if (!value) return 0;
+  if (typeof value.toMillis === "function") return value.toMillis();
+  if (typeof value.seconds === "number") return value.seconds * 1000;
+  const parsed = new Date(value).getTime();
+  return Number.isFinite(parsed) ? parsed : 0;
 }
 
 /**
- * List all pending payments (for admin review).
+ * List admin-queue quotations without a compound Firestore index. Sorting is
+ * done in the client, which avoids a silent empty queue when no composite
+ * index exists for status + createdAt.
  */
 export async function listPendingPaymentsFirestore(): Promise<PaymentRecord[]> {
   try {
-    const snap = await getDocs(
-      query(col.payments, where("status", "==", "pending"), orderBy("createdAt", "desc"), limit(100))
-    );
-    return snap.docs.map((d) => ({ id: d.id, ...d.data() } as PaymentRecord));
-  } catch {
+    const snap = await getDocs(query(col.payments, where("status", "==", "pending"), limit(100)));
+    return snap.docs
+      .map((d) => ({ id: d.id, ...d.data() } as PaymentRecord))
+      .sort((a, b) => timestampMillis(b.createdAt) - timestampMillis(a.createdAt));
+  } catch (e) {
+    console.warn("[firestore] list pending certificate quotations failed", e);
     return [];
   }
 }
 
+/** Legacy standalone payment-record writer. New student flow uses the atomic quotation batch above. */
 export async function createPaymentRecord(params: { uid: string; email: string; method: string; certificateClaimId?: string }): Promise<PaymentRecord> {
   const id = `pay_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
   const record: PaymentRecord = {
@@ -527,31 +781,30 @@ export async function createPaymentRecord(params: { uid: string; email: string; 
     status: "pending",
     method: params.method,
     certificateClaimId: params.certificateClaimId,
+    requestType: "certificate_quotation",
+    quotationNumber: genQuotationNumber(),
+    deliveryWindowHours: CERTIFICATE_DELIVERY_WINDOW_HOURS,
     createdAt: serverTimestamp(),
   };
-  try {
-    await setDoc(doc(db, "certificate_payments", id), record as any);
-  } catch (e) {
-    console.warn("[firestore] createPaymentRecord failed", e);
-  }
+  await setDoc(doc(db, "certificate_payments", id), withoutUndefined(record) as any);
   return record;
 }
 
 export async function confirmPaymentRecord(paymentId: string, success: boolean): Promise<void> {
-  try {
-    await updateDoc(doc(db, "certificate_payments", paymentId), {
-      status: success ? "succeeded" : "failed",
-    } as any);
-  } catch (e) {
-    console.warn("[firestore] confirmPaymentRecord failed", e);
-  }
+  const ref = doc(db, "certificate_payments", paymentId);
+  const snap = await getDoc(ref);
+  if (!snap.exists()) throw new Error("Certificate payment record not found.");
+  await setDoc(ref, { status: success ? "succeeded" : "failed" } as any, { merge: true });
 }
 
 export async function listCertificatesFirestore(): Promise<CertificateClaim[]> {
   try {
-    const snap = await getDocs(query(col.certificates, orderBy("claimedAt", "desc"), limit(200)));
-    return snap.docs.map((d) => d.data() as CertificateClaim);
-  } catch {
+    const snap = await getDocs(query(col.certificates, limit(200)));
+    return snap.docs
+      .map((d) => ({ id: d.id, ...d.data() } as CertificateClaim))
+      .sort((a, b) => timestampMillis(b.claimedAt) - timestampMillis(a.claimedAt));
+  } catch (e) {
+    console.warn("[firestore] list certificate claims failed", e);
     return [];
   }
 }
@@ -561,7 +814,8 @@ export async function getCertificateByNumberFirestore(certNumber: string): Promi
     const q = query(col.certificates, where("certificateNumber", "==", certNumber.trim()));
     const snap = await getDocs(q);
     if (!snap.empty) {
-      return snap.docs[0].data() as CertificateClaim;
+      const found = snap.docs[0];
+      return { id: found.id, ...found.data() } as CertificateClaim;
     }
   } catch (e) {
     console.warn("[firestore] getCertificateByNumber failed", e);
