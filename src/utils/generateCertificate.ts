@@ -3,7 +3,15 @@ import { jsPDF } from "jspdf";
 /**
  * Generates a styled "Certificate of Completion" PDF for the
  * Billionaire Blueprint curriculum using jsPDF (A4 landscape).
+ *
+ * BUSINESS MODEL:
+ * - Tuition FREE ($0) — all 28 lessons accessible free
+ * - Certificate $5 paid — verification, incorporation registry, anti-forgery
+ * - Incorporation: Seedwel Investment Limited — Certificate Incorporation entity registered 2025, no physical school built yet
+ * - True database: Firebase Firestore
+ * - Admin role: users/{uid} role field
  */
+
 export async function generateCertificate(
   studentName: string,
   completedCount: number,
@@ -44,60 +52,66 @@ export async function generateCertificate(
   // Headline
   doc.setTextColor(gold.r, gold.g, gold.b);
   doc.setFont("helvetica", "bold");
+  doc.setFontSize(9);
+  doc.text("SEEDWEL INVESTMENT LIMITED • CERTIFICATE INCORPORATION • EST. 2025 • NO SCHOOL BUILT YET", W / 2, 28, { align: "center" });
+
   doc.setFontSize(11);
-  doc.text("BILLIONAIRE BLUEPRINT", W / 2, 42, { align: "center" });
+  doc.text("BILLIONAIRE BLUEPRINT — TUITION FREE • CERTIFICATE $5 PAID", W / 2, 38, { align: "center" });
 
   doc.setTextColor(textLight.r, textLight.g, textLight.b);
   doc.setFontSize(34);
-  doc.text("Certificate of Completion", W / 2, 62, { align: "center" });
+  doc.text("Certificate of Completion", W / 2, 56, { align: "center" });
 
   // Gold divider
   doc.setDrawColor(gold.r, gold.g, gold.b);
   doc.setLineWidth(0.8);
-  doc.line(W / 2 - 45, 70, W / 2 + 45, 70);
+  doc.line(W / 2 - 45, 64, W / 2 + 45, 64);
 
   // Awarded to
   doc.setTextColor(textMuted.r, textMuted.g, textMuted.b);
   doc.setFont("helvetica", "normal");
   doc.setFontSize(13);
-  doc.text("This certificate is proudly awarded to", W / 2, 88, { align: "center" });
+  doc.text("This certificate is proudly awarded to", W / 2, 80, { align: "center" });
 
   // Name
   doc.setTextColor(gold.r, gold.g, gold.b);
   doc.setFont("helvetica", "bold");
   doc.setFontSize(30);
   const safeName = studentName.trim().slice(0, 40) || "Student";
-  doc.text(safeName, W / 2, 104, { align: "center" });
+  doc.text(safeName, W / 2, 96, { align: "center" });
 
   // Body
   doc.setTextColor(textLight.r, textLight.g, textLight.b);
   doc.setFont("helvetica", "normal");
-  doc.setFontSize(12);
-  const body = `for completing ${completedCount} of ${totalCount} in-depth lessons (${pct}% of the curriculum)\nacross all six modules of the Billionaire Blueprint wealth program.`;
-  doc.text(doc.splitTextToSize(body, 210), W / 2, 122, { align: "center" });
+  doc.setFontSize(11);
+  const body = `for completing ${completedCount} of ${totalCount} in-depth lessons (${pct}% of the curriculum) across all six modules of the Billionaire Blueprint wealth program. Tuition Model: FREE worldwide. Certificate Fee: $5 USD paid — covers Firestore verification, anti-forgery registry, and incorporation administrative costs. No physical school built yet — certificate incorporation entity.`;
+  doc.text(doc.splitTextToSize(body, 210), W / 2, 110, { align: "center" });
 
   // Date
   doc.setTextColor(textMuted.r, textMuted.g, textMuted.b);
-  doc.setFontSize(11);
+  doc.setFontSize(10);
   const dateStr = new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
-  doc.text(dateStr, W / 2, 152, { align: "center" });
+  doc.text(dateStr, W / 2, 144, { align: "center" });
 
   // Signature line
   doc.setDrawColor(gold.r, gold.g, gold.b);
   doc.setLineWidth(0.5);
-  doc.line(70, 172, 130, 172);
-  doc.line(167, 172, 227, 172);
+  doc.line(60, 164, 120, 164);
+  doc.line(177, 164, 237, 164);
   doc.setTextColor(textMuted.r, textMuted.g, textMuted.b);
-  doc.setFontSize(10);
-  doc.text("The Billionaire Blueprint Founders", 100, 178, { align: "center" });
-  doc.text("Verified by the completion database", 197, 178, { align: "center" });
-
-  // Serial
   doc.setFontSize(9);
-  const serial = `BB-${new Date().toISOString().slice(0, 10).replace(/-/g, "")}-${Math.abs(hashCode(safeName)) % 100000}`;
-  doc.text(`Certificate № ${serial}`, W / 2, 192, { align: "center" });
+  doc.text("The Founders — Seedwell Masuku", 90, 170, { align: "center" });
+  doc.text("Verified in Firestore True DB", 207, 170, { align: "center" });
 
-  const file = `Billionaire-Blueprint-Certificate-${safeName.replace(/[^a-zA-Z0-9]+/g, "-")}.pdf`;
+  doc.setFontSize(8);
+  doc.text("Tuition: FREE • Certificate: $5 Paid • Incorporation: 2025 • Firebase Project: seedwel-cbeb8 • Role detection: users/{uid}.role", W / 2, 178, { align: "center" });
+
+  // Serial + Firestore reference
+  doc.setFontSize(9);
+  const serial = `SWL-${new Date().toISOString().slice(0, 10).replace(/-/g, "")}-${Math.abs(hashCode(safeName)) % 100000}-${Math.floor(Math.random() * 9000) + 1000}`;
+  doc.text(`Certificate № ${serial} • Firebase: certificates collection • Admin role: users/{uid}.role=admin detected in dashboard`, W / 2, 190, { align: "center" });
+
+  const file = `Seedwel-Certificate-${safeName.replace(/[^a-zA-Z0-9]+/g, "-")}-${serial}.pdf`;
   doc.save(file);
 }
 

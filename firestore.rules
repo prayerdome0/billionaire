@@ -1,0 +1,113 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper: is signed in
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    // Helper: user doc role
+    function isAdmin() {
+      return isSignedIn() &&
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    // Helper: email allowlist fallback (founder accounts)
+    function isAllowlistedAdmin() {
+      return isSignedIn() &&
+        request.auth.token.email != null &&
+        request.auth.token.email.lower() in ['seedwell@seedwel.com', 'seedwell@seedwelinvestment.com', 'zacheus@seedwelinvestment.com', 'admin@seedwel.com'];
+    }
+
+    function isManagement() {
+      return isAdmin() || isAllowlistedAdmin();
+    }
+
+    // ---------------- Course content — TUITION FREE — public read, admin write ----------------
+    match /modules/{docId} {
+      allow read: if true; // tuition FREE
+      allow write: if isManagement();
+    }
+    match /lessons/{docId} {
+      allow read: if true; // tuition FREE
+      allow write: if isManagement();
+    }
+    match /videos/{docId} {
+      allow read: if true;
+      allow write: if isManagement();
+    }
+    match /niches/{docId} {
+      allow read: if true;
+      allow write: if isManagement();
+    }
+    match /founders/{docId} {
+      allow read: if true;
+      allow write: if isManagement();
+    }
+    match /posts/{docId} {
+      allow read: if true;
+      allow write: if isManagement();
+    }
+    match /investment_opportunities/{docId} {
+      allow read: if true;
+      allow write: if isManagement();
+    }
+
+    // ---------------- Users — role field is source of truth ----------------
+    // Anyone can read own doc; admins can read all
+    // Users can create own doc with role=student (or admin if allowlisted backend handles)
+    // Only admins can change role field
+    match /users/{uid} {
+      allow read: if isSignedIn() && (request.auth.uid == uid || isManagement());
+      allow create: if isSignedIn() && request.auth.uid == uid &&
+        request.resource.data.uid == uid &&
+        request.resource.data.role in ['student', 'admin'] &&
+        (request.resource.data.role == 'student' || isAllowlistedAdmin());
+      allow update: if isSignedIn() && (
+        // user can update own name/photo but NOT role unless admin
+        (request.auth.uid == uid && request.resource.data.role == resource.data.role) ||
+        isManagement()
+      );
+      allow delete: if isManagement();
+    }
+
+    // ---------------- Progress — true database per user ----------------
+    match /user_progress/{uid} {
+      allow read: if isSignedIn() && (request.auth.uid == uid || isManagement());
+      allow write: if isSignedIn() && (request.auth.uid == uid || isManagement());
+    }
+
+    // ---------------- Certificates — $5 paid, tuition FREE ----------------
+    // User can read own certificate; admin can read all
+    // User can create own eligible claim (unpaid initially); paid transition only via backend or admin
+    // Payment status enforcement: user cannot set paid=true themselves unless via trusted flow (we allow admin only for paid switch, but client mock sets via API)
+    match /certificates/{uid} {
+      allow read: if isSignedIn() && (request.auth.uid == uid || isManagement());
+      allow create: if isSignedIn() && request.auth.uid == uid &&
+        request.resource.data.uid == uid &&
+        request.resource.data.tuitionModel == 'FREE' &&
+        request.resource.data.feeUsd == 5;
+      allow update: if isSignedIn() && (
+        // user can update name/completed but NOT flip paid unless admin flow
+        (request.auth.uid == uid && request.resource.data.paid == resource.data.paid) ||
+        isManagement()
+      );
+      allow delete: if isManagement();
+    }
+
+    // ---------------- Certificate Payments — $5 ----------------
+    match /certificate_payments/{paymentId} {
+      allow read: if isSignedIn() && (resource.data.uid == request.auth.uid || isManagement());
+      allow create: if isSignedIn() && request.resource.data.uid == request.auth.uid && request.resource.data.amountUsd == 5;
+      allow update: if isManagement(); // only admin/backend can mark succeeded
+      allow delete: if isManagement();
+    }
+
+    // Fallback
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

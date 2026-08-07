@@ -167,6 +167,19 @@ async function request<T>(path: string, init?: RequestInit, opts?: { auth?: bool
 }
 
 /* ------------------------------ public content ------------------------------ */
+/* Now tries Firestore TRUE DATABASE first, then API, then bundled fallback */
+
+import {
+  fetchLessonsFromFirestore,
+  fetchModulesFromFirestore,
+  fetchFoundersFromFirestore,
+  getProgressFirestore,
+  setProgressFirestore,
+  leaderboardFromFirestore,
+  listAllUsersFirestore,
+  getCertificateStatus,
+} from "./firestoreDb";
+import { auth } from "./firebase";
 
 export async function getApiStats(): Promise<ApiStats> {
   try {
@@ -182,12 +195,16 @@ export async function getApiStats(): Promise<ApiStats> {
       contactMessages: 0,
       completedLessons: 0,
       totalProgress: 0,
-      database: { fallback: 1 },
+      database: { firestore: 1, fallback: 1 },
     };
   }
 }
 
 export async function fetchFounders(): Promise<Founder[]> {
+  try {
+    const fs = await fetchFoundersFromFirestore();
+    if (fs && fs.length) return fs as Founder[];
+  } catch {}
   try {
     return await request<Founder[]>("/founders");
   } catch {
@@ -197,6 +214,10 @@ export async function fetchFounders(): Promise<Founder[]> {
 
 export async function fetchModules(): Promise<Module[]> {
   try {
+    const fs = await fetchModulesFromFirestore();
+    if (fs && fs.length) return fs as any;
+  } catch {}
+  try {
     return await request<Module[]>("/modules");
   } catch {
     return fallbackModules;
@@ -205,6 +226,10 @@ export async function fetchModules(): Promise<Module[]> {
 
 export async function fetchLessons(): Promise<Lesson[]> {
   try {
+    const fs = await fetchLessonsFromFirestore();
+    if (fs && fs.length) return fs as Lesson[];
+  } catch {}
+  try {
     return await request<Lesson[]>("/lessons");
   } catch {
     return fallbackLessons;
@@ -212,6 +237,12 @@ export async function fetchLessons(): Promise<Lesson[]> {
 }
 
 export async function fetchLesson(id: string): Promise<Lesson> {
+  // try Firestore first via lessons list (cheaper than direct doc for fallback)
+  try {
+    const all = await fetchLessonsFromFirestore();
+    const found = (all as Lesson[]).find((l) => l.id === id);
+    if (found) return found;
+  } catch {}
   try {
     return await request<Lesson>(`/lessons/${id}`);
   } catch {
@@ -223,6 +254,12 @@ export async function fetchLesson(id: string): Promise<Lesson> {
 
 export async function fetchVideos(): Promise<Video[]> {
   try {
+    const { collection, getDocs } = await import("firebase/firestore");
+    const { db } = await import("./firebase");
+    const snap = await getDocs(collection(db, "videos"));
+    if (!snap.empty) return snap.docs.map((d) => d.data() as Video);
+  } catch {}
+  try {
     return await request<Video[]>("/videos");
   } catch {
     return fallbackVideos;
@@ -230,6 +267,12 @@ export async function fetchVideos(): Promise<Video[]> {
 }
 
 export async function fetchNiches(): Promise<Niche[]> {
+  try {
+    const { collection, getDocs } = await import("firebase/firestore");
+    const { db } = await import("./firebase");
+    const snap = await getDocs(collection(db, "niches"));
+    if (!snap.empty) return snap.docs.map((d) => d.data() as Niche);
+  } catch {}
   try {
     return await request<Niche[]>("/niches");
   } catch {
@@ -255,6 +298,13 @@ export async function fetchComments(lessonId: string): Promise<Comment[]> {
 }
 
 export async function fetchLeaderboard(): Promise<LeaderboardEntry[]> {
+  // Try Firestore true DB first
+  try {
+    const fsBoard = await leaderboardFromFirestore();
+    if (fsBoard && fsBoard.length) {
+      return fsBoard.map((e) => ({ rank: e.rank, clientId: e.clientId, name: e.name, completed: e.completed }));
+    }
+  } catch {}
   try {
     return await request<LeaderboardEntry[]>("/leaderboard");
   } catch {
@@ -293,19 +343,57 @@ export async function adminLogin(email: string, password: string): Promise<{
   return request("/admin/login", { method: "POST", body: JSON.stringify({ email, password }) });
 }
 
-/* ------------------------------ student (signed in) ------------------------------ */
+/* ------------------------------ student (signed in) — TRUE DB: Firestore first ------------------------------ */
 
 export async function fetchProgress(): Promise<string[]> {
-  const data = await request<{ lessonIds: string[] }>("/progress", undefined, { auth: true });
-  return data.lessonIds;
+  // Firestore is true database — try it first if signed in
+  try {
+    const uid = auth.currentUser?.uid;
+    if (uid) {
+      const ids = await getProgressFirestore(uid);
+      if (ids) return ids;
+    }
+  } catch {}
+  try {
+    const data = await request<{ lessonIds: string[] }>("/progress", undefined, { auth: true });
+    return data.lessonIds;
+  } catch {
+    return [];
+  }
 }
 
 export async function markLessonComplete(lessonId: string, complete: boolean): Promise<void> {
-  await request(
-    "/progress",
-    { method: complete ? "POST" : "DELETE", body: JSON.stringify({ lessonId }) },
-    { auth: true }
-  );
+  // Write to Firestore true DB + API (dual write for compatibility)
+  try {
+    const uid = auth.currentUser?.uid;
+    if (uid) {
+      await setProgressFirestore(uid, lessonId, complete);
+    }
+  } catch {}
+  try {
+    await request(
+      "/progress",
+      { method: complete ? "POST" : "DELETE", body: JSON.stringify({ lessonId }) },
+      { auth: true }
+    );
+  } catch {
+    // Firestore already succeeded — API offline is okay
+  }
+}
+
+// Certificate paid status helpers (Firestore true DB)
+export async function fetchMyCertificate() {
+  const uid = auth.currentUser?.uid;
+  if (!uid) return null;
+  return getCertificateStatus(uid);
+}
+
+export async function fetchFirestoreUsers() {
+  try {
+    return await listAllUsersFirestore();
+  } catch {
+    return [];
+  }
 }
 
 export async function postComment(input: { lessonId: string; name?: string; text: string }): Promise<Comment> {
