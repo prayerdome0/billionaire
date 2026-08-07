@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { CheckCircle, Loader2, Mail, Send, MapPin, Phone, Globe } from "lucide-react";
+import { CheckCircle, Loader2, Mail, Send, MapPin, Phone } from "lucide-react";
 import { subscribeNewsletter } from "../lib/api";
 
 export default function Footer() {
@@ -54,6 +54,7 @@ export default function Footer() {
             <Link to="/courses" className="hover:text-amber-400 transition-colors">Courses</Link>
             <Link to="/services" className="hover:text-amber-400 transition-colors">Services</Link>
             <Link to="/certificates" className="hover:text-amber-400 transition-colors">Certificates</Link>
+            <Link to="/inspiration" className="hover:text-amber-400 transition-colors">Inspiration</Link>
             <Link to="/careers" className="hover:text-amber-400 transition-colors">Careers</Link>
             <Link to="/investment" className="hover:text-amber-400 transition-colors text-emerald-400">Investment</Link>
             <Link to="/partnerships" className="hover:text-amber-400 transition-colors">Partnerships</Link>

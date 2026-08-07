@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { useParams, Link, useSearchParams } from "react-router-dom";
-import { ShieldCheck, Search, Loader2, Award, Calendar, BookOpen, AlertCircle, FileText, CheckCircle2 } from "lucide-react";
+import { useParams, useSearchParams } from "react-router-dom";
+import { ShieldCheck, Search, Loader2, Award, BookOpen, AlertCircle, FileText, CheckCircle2, CloudUpload, ExternalLink } from "lucide-react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { getCertificateByNumberFirestore } from "../lib/firestoreDb";
@@ -181,6 +181,30 @@ export default function CertificateVerifyPage() {
                 </div>
               </div>
             </div>
+
+            {result.cloudinaryUrl && (
+              <div className="mt-4 rounded-2xl border border-sky-500/30 bg-sky-500/10 p-5 flex flex-col md:flex-row md:items-center gap-4">
+                <div className="w-11 h-11 rounded-xl bg-sky-500/15 border border-sky-500/30 flex items-center justify-center text-sky-400 shrink-0">
+                  <CloudUpload className="w-6 h-6" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="text-sm font-bold text-sky-300">Hosted Certificate PDF — Cloudinary</div>
+                  <p className="text-[11px] text-sky-200/50 break-all mt-0.5">{result.cloudinaryUrl}</p>
+                  <p className="text-[10px] text-sky-200/40 mt-1">
+                    Asset folder: <code className="text-sky-300/70">samples/ecommerce</code> • Public ID:{" "}
+                    <code className="text-sky-300/70">{result.cloudinaryPublicId || "—"}</code>
+                  </p>
+                </div>
+                <a
+                  href={result.cloudinaryUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-2 rounded-xl bg-sky-500/15 border border-sky-500/40 text-sky-300 hover:bg-sky-500/25 px-5 py-2.5 text-xs font-bold transition-all shrink-0"
+                >
+                  <ExternalLink className="w-4 h-4" /> Open Verified PDF
+                </a>
+              </div>
+            )}
 
             <div className="mt-8 pt-6 border-t border-gray-800/80 bg-gray-950/20 rounded-xl">
               <span className="text-[10px] uppercase text-amber-400 font-bold tracking-wider block mb-1">

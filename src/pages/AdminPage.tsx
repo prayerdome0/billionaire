@@ -7,7 +7,6 @@ import {
   RefreshCw,
   Building2,
   Cpu,
-  TrendingUp,
   Briefcase,
   Sparkles,
   CheckCircle2,
@@ -19,7 +18,6 @@ import {
   PlusCircle,
   Clock,
   ExternalLink,
-  ChevronRight,
   Loader2,
   FileEdit,
   Trash2,
@@ -43,7 +41,6 @@ import {
   fetchAdminRecommendations,
   fetchAdminUsers,
   setAdminUserRole,
-  deleteAdminUser,
   fetchAdminDatabase,
   fetchAdminTable,
   deleteAdminRecord,
@@ -897,6 +894,16 @@ export default function AdminPage() {
                     <div className="text-sm font-bold text-white truncate">{c.nameOnCertificate}</div>
                     <div className="text-[11px] text-gray-400 truncate">{c.email} • {c.certificateNumber}</div>
                     <div className="text-[10px] text-gray-600 font-mono">{c.completedLessons}/{c.totalLessons} • {c.percentage}% • {c.paymentStatus} • Firestore</div>
+                    {c.cloudinaryUrl && (
+                      <a
+                        href={c.cloudinaryUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex items-center gap-1 text-[10px] text-sky-400 font-semibold hover:underline mt-1"
+                      >
+                        <ExternalLink className="w-3 h-3" /> Cloudinary PDF (samples/ecommerce)
+                      </a>
+                    )}
                   </div>
                   <span className={`rounded-full px-3 py-1 text-[11px] font-black ${c.paid ? "bg-emerald-500/20 border border-emerald-500/40 text-emerald-300" : "bg-amber-500/20 border border-amber-500/40 text-amber-300"}`}>
                     {c.paid ? `PAID $${c.feeUsd}` : `$${c.feeUsd} UNPAID`}

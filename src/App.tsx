@@ -13,6 +13,7 @@ import LessonsPage from "./pages/LessonsPage";
 import LessonDetailPage from "./pages/LessonDetailPage";
 import VideosPage from "./pages/VideosPage";
 import FoundersPage from "./pages/FoundersPage";
+import SuccessStoriesPage from "./pages/SuccessStoriesPage";
 import BlogPage from "./pages/BlogPage";
 import BlogPostPage from "./pages/BlogPostPage";
 import CertificatePage from "./pages/CertificatePage";
@@ -52,6 +53,7 @@ export default function App() {
         <Route path="/lessons" element={<LessonsPage />} />
         <Route path="/videos" element={<VideosPage />} />
         <Route path="/founders" element={<FoundersPage />} />
+        <Route path="/inspiration" element={<SuccessStoriesPage />} />
         <Route path="/invest" element={<InvestPage />} />
         <Route path="/blog" element={<BlogPage />} />
         <Route path="/blog/:slug" element={<BlogPostPage />} />

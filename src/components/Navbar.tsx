@@ -8,7 +8,6 @@ import {
   LayoutDashboard,
   LogIn,
   LogOut,
-  Loader2,
   UserPlus,
   Home,
   GraduationCap,
@@ -32,6 +31,7 @@ const mainNav = [
   { to: "/courses", label: "Courses" },
   { to: "/services", label: "Services" },
   { to: "/certificates", label: "Certificates" },
+  { to: "/inspiration", label: "Inspiration" },
   { to: "/careers", label: "Careers" },
   { to: "/investment", label: "Investment" },
   { to: "/partnerships", label: "Partnerships" },
@@ -51,6 +51,7 @@ const companyItems = [
   { to: "/investment", label: "Investment", desc: "Opportunities", icon: TrendingUp },
   { to: "/partnerships", label: "Partnerships", desc: "Work with us", icon: Handshake },
   { to: "/founders", label: "Our People", desc: "Leadership", icon: Users },
+  { to: "/inspiration", label: "Inspiration", desc: "Success stories & motivation", icon: Award },
   { to: "/contact", label: "Contact", desc: "Get in touch", icon: Phone },
 ];
 

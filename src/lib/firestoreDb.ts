@@ -28,7 +28,6 @@ import {
   getDocs,
   setDoc,
   updateDoc,
-  deleteDoc,
   query,
   where,
   orderBy,
@@ -75,6 +74,11 @@ export interface CertificateClaim {
   claimedAt?: any;
   issuedAt?: any;
   status: "eligible" | "claimed" | "revoked";
+  approvedBy?: string;
+  /** Cloudinary-hosted PDF copy (secure URL) — set after student generates their certificate. */
+  cloudinaryUrl?: string;
+  cloudinaryPublicId?: string;
+  cloudinaryUploadedAt?: any;
 }
 
 export interface PaymentRecord {
@@ -330,6 +334,10 @@ export async function createOrUpdateCertificateClaim(params: {
     status: pct >= 100 ? (existing?.paid ? "claimed" : "eligible") : "eligible",
     claimedAt: existing?.claimedAt || serverTimestamp(),
     issuedAt: existing?.issuedAt,
+    // Preserve the Cloudinary-hosted copy across claim updates
+    cloudinaryUrl: existing?.cloudinaryUrl,
+    cloudinaryPublicId: existing?.cloudinaryPublicId,
+    cloudinaryUploadedAt: existing?.cloudinaryUploadedAt,
   };
 
   try {
@@ -338,6 +346,26 @@ export async function createOrUpdateCertificateClaim(params: {
     console.warn("[firestore] createOrUpdateCertificateClaim failed", e);
   }
   return claim;
+}
+
+/**
+ * Stores the Cloudinary-hosted copy of the certificate PDF on the Firestore
+ * certificate claim (`certificates/{uid}`). Best-effort: never throws.
+ */
+export async function updateCertificateCloudinary(params: {
+  uid: string;
+  cloudinaryUrl: string;
+  cloudinaryPublicId: string;
+}): Promise<void> {
+  try {
+    await updateDoc(doc(db, "certificates", params.uid), {
+      cloudinaryUrl: params.cloudinaryUrl,
+      cloudinaryPublicId: params.cloudinaryPublicId,
+      cloudinaryUploadedAt: serverTimestamp() as any,
+    } as any);
+  } catch (e) {
+    console.warn("[firestore] updateCertificateCloudinary failed", e);
+  }
 }
 
 export async function markCertificatePaid(params: {

@@ -56,7 +56,29 @@ A full-stack wealth-education and investor platform for **Seedwel Investment Lim
 - Payment methods: card (Stripe-like), PayPal, Mobile Money — currently mock (95% success, 1.8s delay) — replace `processMockPayment` in `certificateService.ts` with Stripe Checkout in production
 - On payment success: `markCertificatePaid` updates Firestore `certificates/{uid}` paid=true, paymentId, status=claimed, plus `certificate_payments` record
 - PDF generation includes: certificate number `SWL-YYYYMMDD-XXXXX-XXXX`, incorporation note, tuition FREE / $5 paid, Firestore verified, admin role detection note
+- **Cloudinary hosting**: after generating, the PDF is uploaded to Cloudinary (cloud `dhad95cch`, unsigned preset `seedwel`, asset folder `samples/ecommerce`) and the secure URL + public ID are stored on the Firestore claim as `cloudinaryUrl` / `cloudinaryPublicId`. The student sees a "Certificate Hosted on Cloudinary" panel with a share link, the public `/verify` page shows an "Open Verified PDF" button, and the Admin → Certificates tab links to the hosted copy.
 - Admin portal → Certificates tab shows all claims, paid/unpaid, revenue = paidCount * $5
+
+## Cloudinary — Certificate PDF Hosting
+
+Configured in `src/lib/cloudinary.ts` (env-overridable):
+
+| Setting | Value |
+|---------|-------|
+| Cloud name | `dhad95cch` (`VITE_CLOUDINARY_CLOUD_NAME`) |
+| Upload preset | `seedwel` — **Unsigned** signing mode (`VITE_CLOUDINARY_UPLOAD_PRESET`) |
+| Asset folder | `samples/ecommerce` (set inside the preset — applied automatically) |
+| Server env (optional) | `CLOUDINARY_URL=cloudinary://<api_key>:<api_secret>@dhad95cch` for signed server-side operations |
+
+Unsigned mode means the student's browser can upload the certificate PDF directly with zero secrets exposed. If the upload fails the download still works — Cloudinary is best-effort.
+
+## Inspiration Wall — Success Stories & Motivation
+
+- `src/data/content.json` → `successStories` (13 successful people with real photos in `public/images/success/`, quotes, and words of encouragement — Dangote, Masiyiwa, Elumelu, Mo Abudu, Oprah, Buffett, Gates, Jack Ma, Blakely, Rihanna, Maathai, Musk, Kamkwamba)
+- Home page: "Wall of Inspiration" section (photo cards + animated quote marquee) and a video masterclass preview strip
+- `/inspiration` page: full 13-icon grid, scrolling quote ticker, stats, and a **Daily Motivation Boost** randomizer
+- Video library grew from 7 → **18 masterclasses** (all YouTube IDs verified live) — Steve Jobs Stanford, Simon Sinek, Dan Pink, Angela Duckworth, Sir Ken Robinson, Warren Buffett ×2, Oprah Harvard, Denzel Washington, Strive Masiyiwa, Tony Elumelu + the original 7
+- Animations added: scroll-reveal (`<Reveal>` component + IntersectionObserver), infinite marquee ticker, floating/glow/gradient-shift effects, hover lifts — all disabled under `prefers-reduced-motion`
 
 ## Quick start (local) — TRUE DB
 
@@ -95,7 +117,7 @@ user_progress/{uid}: { uid, lessonIds: string[], updatedAt }
 lessons/{id}: { id, moduleId, number, title, ... , seededAt }
 modules/{id}: { id, number, title, gradient, lessonCount, seededAt }
 videos/{id}, niches/{id}, founders/{id}, posts/{slug}
-certificates/{uid}: { id=uid, uid, email, nameOnCertificate, completed, total, pct, tuitionModel="FREE", feeUsd=5, paid:boolean, paymentStatus, paymentId, certificateNumber, incorporationNote, status, claimedAt, issuedAt }
+certificates/{uid}: { id=uid, uid, email, nameOnCertificate, completed, total, pct, tuitionModel="FREE", feeUsd=5, paid:boolean, paymentStatus, paymentId, certificateNumber, incorporationNote, status, claimedAt, issuedAt, cloudinaryUrl?, cloudinaryPublicId?, cloudinaryUploadedAt? }
 certificate_payments/{id}: { id, uid, email, amountUsd=5, currency="USD", purpose="certificate_fee", status, method, certificateClaimId, createdAt }
 ```
 

@@ -3,11 +3,9 @@ import {
   ArrowRight,
   Award,
   Building2,
-  CheckCircle,
   GraduationCap,
   Handshake,
   Lightbulb,
-  Target,
   TrendingUp,
   Users,
 } from "lucide-react";

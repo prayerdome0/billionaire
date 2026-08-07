@@ -108,7 +108,7 @@
 1. Sign up free account → `/account` shows "Registered Student • FREE tuition", Firestore role = student, progress stored in Firestore `user_progress/{uid}`.
 2. Complete lessons (free) → progress bar updates in Firestore (real-time possible).
 3. Finish 28 lessons → `/certificate` unlocks, shows $5 payment modal, incorporation note.
-4. Pay $5 (card/PayPal/MoMo mock) → Firestore `certificates/{uid}` paid=true, generates PDF with incorporation note, cert number, tuition FREE / $5 paid.
+4. Pay $5 (card/PayPal/MoMo mock) → Firestore `certificates/{uid}` paid=true, generates PDF with incorporation note, cert number, tuition FREE / $5 paid. The PDF is also uploaded to Cloudinary (cloud `dhad95cch`, unsigned preset `seedwel`, asset folder `samples/ecommerce`) and `cloudinaryUrl`/`cloudinaryPublicId` are stored on the claim so the student, admin portal, and public `/verify` page can open the hosted copy.
 5. Create second account with admin email (allowlist) → auto-promoted to role=admin in Firestore, student dashboard shows admin tab with list of admins, true DB engine = Firestore.
 6. Go to `/admin` → Users tab toggle role (writes to Firestore), Certificates tab shows all $5 claims + revenue, True DB Console shows certificates tables, Seed Firestore button writes bundled content to Firestore.
 7. Firestore console → users collection → role field controls admin, certificates collection holds $5 claims.

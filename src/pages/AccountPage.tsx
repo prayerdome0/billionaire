@@ -103,7 +103,6 @@ export default function AccountPage() {
 
   const pct = useMemo(() => (lessons.length ? Math.round((completed.size / lessons.length) * 100) : 0), [completed, lessons]);
   const nextLesson = useMemo(() => lessons.find((l) => !completed.has(l.id)), [lessons, completed]);
-  const myRank = useMemo(() => board.find((e) => email && e.name === profile?.name), [board, email, profile]);
   const isPaidCert = !!cert?.paid;
 
   return (
