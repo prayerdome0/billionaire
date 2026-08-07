@@ -10,6 +10,7 @@ import SearchPage from "./pages/SearchPage";
 import BlogPage from "./pages/BlogPage";
 import BlogPostPage from "./pages/BlogPostPage";
 import CertificatePage from "./pages/CertificatePage";
+import CertificateVerifyPage from "./pages/CertificateVerifyPage";
 import AdminPage from "./pages/AdminPage";
 import AuthPage from "./pages/AuthPage";
 import AccountPage from "./pages/AccountPage";
@@ -39,6 +40,8 @@ export default function App() {
         <Route path="/blog" element={<BlogPage />} />
         <Route path="/blog/:slug" element={<BlogPostPage />} />
         <Route path="/search" element={<SearchPage />} />
+        <Route path="/verify" element={<CertificateVerifyPage />} />
+        <Route path="/verify/:certNumber" element={<CertificateVerifyPage />} />
         <Route path="/auth" element={<AuthPage />} />
 
         {/* Registered students only — the course itself */}

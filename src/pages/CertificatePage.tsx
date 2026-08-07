@@ -365,7 +365,15 @@ export default function CertificatePage() {
                         <div className="text-emerald-300 font-bold text-sm">Paid — Certificate Unlocked</div>
                         <div className="text-emerald-200/60 text-xs mt-1">
                           Payment ID: <code className="font-mono text-emerald-300">{claim?.paymentId || paymentIntent?.id}</code> • Certificate:{" "}
-                          <code className="font-mono text-amber-300">{claim?.certificateNumber}</code> • Method: {claim?.paymentMethod || paymentMethod} • Firestore verified.
+                          <Link to={`/verify/${claim?.certificateNumber || claim?.id}`} className="font-mono text-amber-300 underline hover:text-amber-400">
+                            {claim?.certificateNumber}
+                          </Link>{" "}
+                          • Method: {claim?.paymentMethod || paymentMethod} • Firestore verified.
+                        </div>
+                        <div className="mt-2">
+                          <Link to={`/verify/${claim?.certificateNumber || claim?.id}`} className="inline-flex items-center gap-1.5 text-xs text-emerald-400 font-bold hover:underline">
+                            <ShieldCheck className="w-3.5 h-3.5" /> View Public Anti-Forgery Registry
+                          </Link>
                         </div>
                       </div>
                     </div>

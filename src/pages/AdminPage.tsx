@@ -118,10 +118,10 @@ const FALLBACK_TABLE_KEY: Record<string, string> = {
 };
 
 export default function AdminPage() {
-  const { user, loading: authLoading, isAdmin, profile, firestoreUser, sessionKind, signIn, devAdminSignIn, logout } = useAuth();
-  const signedIn = !!user || sessionKind === "dev";
+  const { user, loading: authLoading, isAdmin, profile, firestoreUser, sessionKind, signIn, logout } = useAuth();
+  const signedIn = !!user;
 
-  const [email, setEmail] = useState("seedwell@seedwel.com");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState("");
   const [loginLoading, setLoginLoading] = useState(false);
@@ -259,19 +259,6 @@ export default function AdminPage() {
       await signIn(email, password);
     } catch (err) {
       setLoginError(authErrorMessage(err));
-    } finally {
-      setLoginLoading(false);
-    }
-  };
-
-  const handleDevLogin = async () => {
-    setLoginError("");
-    setNotAdmin(false);
-    setLoginLoading(true);
-    try {
-      await devAdminSignIn("seed@admin", "122023");
-    } catch (err) {
-      setLoginError(err instanceof Error ? err.message : "Development login failed");
     } finally {
       setLoginLoading(false);
     }

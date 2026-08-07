@@ -408,6 +408,19 @@ export async function listCertificatesFirestore(): Promise<CertificateClaim[]> {
   }
 }
 
+export async function getCertificateByNumberFirestore(certNumber: string): Promise<CertificateClaim | null> {
+  try {
+    const q = query(col.certificates, where("certificateNumber", "==", certNumber.trim()));
+    const snap = await getDocs(q);
+    if (!snap.empty) {
+      return snap.docs[0].data() as CertificateClaim;
+    }
+  } catch (e) {
+    console.warn("[firestore] getCertificateByNumber failed", e);
+  }
+  return null;
+}
+
 // ---------- Seed content to Firestore (admin utility) ----------
 export async function seedFirestoreFromBundledContent(): Promise<{ seeded: number }> {
   const batch = writeBatch(db);

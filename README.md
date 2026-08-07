@@ -79,7 +79,7 @@ Firestore persistence enabled offline — works even if API offline.
    - `DATABASE_URL` for Postgres OR KV env vars
 3. Set `ADMIN_EMAILS` env to extend allowlist — they auto-get role=admin in Firestore on first sign-in
 4. Deploy `firestore.rules` via Firebase Console or CLI
-5. Production: dev admin login (`seed@admin` / `122023`) hard-disabled, Firebase role only
+5. Production: manual/dev admin login is removed, Firebase role is the only way
 
 ## API Tiers (updated)
 

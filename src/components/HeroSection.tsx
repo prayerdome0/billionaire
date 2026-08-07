@@ -75,7 +75,7 @@ export default function HeroSection() {
         </p>
 
         <p className="text-sm text-gray-400 max-w-2xl mx-auto mb-10">
-          Officially registered last year (2025). High-yield school construction projects in Zambia, AI developer incubators, and full executive admin portal (<code className="text-amber-400 font-mono">seed@admin</code>).
+          Officially registered last year (2025). High-yield school construction projects in Zambia, AI developer incubators, and full executive admin portal (available for authorized roles).
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
