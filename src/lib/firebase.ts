@@ -6,6 +6,7 @@
 // credentials are ever exposed to clients.
 import { initializeApp, getApps, type FirebaseApp } from "firebase/app";
 import { getAuth, type Auth } from "firebase/auth";
+import { getFirestore, type Firestore } from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "AIzaSyCRliF-XdpgdNRyLvIrLEeCIBf_CF3E0nU",
@@ -19,6 +20,10 @@ const firebaseConfig = {
 
 export const app: FirebaseApp = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
 export const auth: Auth = getAuth(app);
+
+/** Cloud Firestore — the TRUE database: course catalog, user roles, the
+ *  Seedwel Certificate Incorporation registry. See firestore.rules. */
+export const db: Firestore = getFirestore(app);
 
 /** Analytics is optional and browser-only; never crash the app if it fails. */
 let analyticsStarted = false;

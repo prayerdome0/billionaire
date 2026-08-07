@@ -105,10 +105,14 @@ export default function Footer() {
             © {new Date().getFullYear()} Seedwel Investment Limited (Registered 2025). Founder Mr. Seedwell Khayalethu Masuku • Zambia Country Director Zacheus Simbaya.
           </p>
           <p className="text-gray-600 text-xs mt-1">
-            Open for investors in school building, AI business, and software developers.
+            Open for investors in future school building (no school built yet), AI business, and software developers.
+          </p>
+          <p className="text-gray-600 text-xs mt-1">
+            Billionaire Blueprint is a tuition-free certification program of the Seedwel Certificate Incorporation —
+            lessons cost nothing; the official certificate carries a one-time $5 issuance fee.
           </p>
           <p className="text-gray-700 text-xs mt-2">
-            Powered by a SQLite database &amp; REST API —{" "}
+            Powered by Firebase Authentication + Firestore (the true course, role &amp; certificate database) and a REST API —{" "}
             <Link to="/api-docs" className="text-amber-500/80 hover:text-amber-400">
               explore the live API
             </Link>{" "}

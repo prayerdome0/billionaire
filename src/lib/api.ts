@@ -14,8 +14,22 @@ import {
   type Niche,
   type Video,
 } from "../data/content";
+import { fetchCourseCollection, fetchCourseDoc, withTimeout, type CourseCollection } from "./firestore";
 
 export type { Founder, Lesson, Module, Niche, Video };
+
+/* ---- Firebase Firestore is the TRUE course database. Content fetchers try
+   Firestore first, then the REST API, then the bundled curriculum — in that
+   order, so the site never breaks, even fully offline. ---- */
+
+async function tryFirestore<T>(col: CourseCollection): Promise<T[] | null> {
+  try {
+    const rows = await withTimeout(fetchCourseCollection<T>(col), 7000, null);
+    return rows && rows.length ? (rows as T[]) : null;
+  } catch {
+    return null;
+  }
+}
 
 export interface ApiStats {
   founders: number;
@@ -188,6 +202,8 @@ export async function getApiStats(): Promise<ApiStats> {
 }
 
 export async function fetchFounders(): Promise<Founder[]> {
+  const fs = await tryFirestore<Founder>("founders");
+  if (fs) return fs;
   try {
     return await request<Founder[]>("/founders");
   } catch {
@@ -196,6 +212,8 @@ export async function fetchFounders(): Promise<Founder[]> {
 }
 
 export async function fetchModules(): Promise<Module[]> {
+  const fs = await tryFirestore<Module>("modules");
+  if (fs) return fs;
   try {
     return await request<Module[]>("/modules");
   } catch {
@@ -204,6 +222,8 @@ export async function fetchModules(): Promise<Module[]> {
 }
 
 export async function fetchLessons(): Promise<Lesson[]> {
+  const fs = await tryFirestore<Lesson>("lessons");
+  if (fs) return fs;
   try {
     return await request<Lesson[]>("/lessons");
   } catch {
@@ -212,6 +232,12 @@ export async function fetchLessons(): Promise<Lesson[]> {
 }
 
 export async function fetchLesson(id: string): Promise<Lesson> {
+  try {
+    const doc = await withTimeout(fetchCourseDoc<Lesson>("lessons", id), 7000, null);
+    if (doc) return doc;
+  } catch {
+    /* fall through to the REST API */
+  }
   try {
     return await request<Lesson>(`/lessons/${id}`);
   } catch {
@@ -222,6 +248,8 @@ export async function fetchLesson(id: string): Promise<Lesson> {
 }
 
 export async function fetchVideos(): Promise<Video[]> {
+  const fs = await tryFirestore<Video>("videos");
+  if (fs) return fs;
   try {
     return await request<Video[]>("/videos");
   } catch {
@@ -230,6 +258,8 @@ export async function fetchVideos(): Promise<Video[]> {
 }
 
 export async function fetchNiches(): Promise<Niche[]> {
+  const fs = await tryFirestore<Niche>("niches");
+  if (fs) return fs;
   try {
     return await request<Niche[]>("/niches");
   } catch {

@@ -30,10 +30,22 @@ import {
   Save,
   RotateCcw,
   GraduationCap,
+  DollarSign,
+  CloudUpload,
+  Flame,
 } from "lucide-react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { useAuth, authErrorMessage, ADMIN_EMAILS } from "../lib/auth";
+import {
+  CERT_PRICE_USD,
+  adminSetCertificateStatus,
+  courseContentCounts,
+  listCertificates,
+  publishCourseContent,
+  setFirebaseRole,
+  type CertificateRecord,
+} from "../lib/firestore";
 import {
   fetchAdminOverview,
   fetchAdminRecommendations,
@@ -56,7 +68,7 @@ import {
 } from "../lib/api";
 import { cn } from "../utils/cn";
 
-type Tab = "overview" | "users" | "content" | "inbox" | "database" | "advisor";
+type Tab = "overview" | "users" | "content" | "inbox" | "certificates" | "database" | "advisor";
 
 const RESOURCE_META: Record<ContentResource, { label: string; idField: string; titleOf: (r: any) => string; template: Record<string, unknown> }> = {
   lessons: {
@@ -136,6 +148,14 @@ export default function AdminPage() {
   const [reseedBusy, setReseedBusy] = useState(false);
   const [toast, setToast] = useState("");
 
+  /* Firebase: certificate registry + Firestore course database */
+  const [certs, setCerts] = useState<CertificateRecord[] | null>(null);
+  const [certsError, setCertsError] = useState("");
+  const [certBusyUid, setCertBusyUid] = useState("");
+  const [fsCounts, setFsCounts] = useState<Record<string, number> | null>(null);
+  const [fsPublishMsg, setFsPublishMsg] = useState("");
+  const [fsPublishing, setFsPublishing] = useState(false);
+
   const showToast = (msg: string) => {
     setToast(msg);
     window.setTimeout(() => setToast(""), 3000);
@@ -173,6 +193,48 @@ export default function AdminPage() {
     }
   }, []);
 
+  /* Firebase Firestore course-database counts (best-effort). */
+  const loadFsCounts = useCallback(async () => {
+    try {
+      setFsCounts(await courseContentCounts());
+    } catch {
+      setFsCounts(null);
+    }
+  }, []);
+
+  /* Firebase certificate registry — the $5 paid claims. */
+  const loadCerts = useCallback(async () => {
+    setCertsError("");
+    try {
+      setCerts(await listCertificates());
+    } catch (err) {
+      setCerts(null);
+      setCertsError(err instanceof Error ? err.message : "Could not load the Firebase certificate registry.");
+    }
+  }, []);
+
+  const handlePublishToFirestore = useCallback(async () => {
+    if (
+      !window.confirm(
+        "Publish the FULL bundled curriculum (modules, lessons, videos, niches, founders, posts) to the Firebase Firestore course database? Existing Firestore records with the same IDs are replaced."
+      )
+    )
+      return;
+    setFsPublishing(true);
+    setFsPublishMsg("Starting…");
+    try {
+      const written = await publishCourseContent((m) => setFsPublishMsg(m));
+      setFsPublishMsg(`Done — ${Object.values(written).reduce((a, b) => a + b, 0)} documents are live in Firestore.`);
+      showToast("Course database published to Firestore");
+      loadFsCounts();
+    } catch (err) {
+      setFsPublishMsg(err instanceof Error ? err.message : "Publish failed.");
+      showToast("Firestore publish failed");
+    } finally {
+      setFsPublishing(false);
+    }
+  }, [loadFsCounts]);
+
   const loadTable = useCallback(async (table: string) => {
     setTableLoading(true);
     setOpenTable(table);
@@ -200,19 +262,23 @@ export default function AdminPage() {
     if (isAdmin) {
       loadOverview();
       loadDb();
+      loadCerts();
+      loadFsCounts();
     }
-  }, [isAdmin, loadOverview, loadDb]);
+  }, [isAdmin, loadOverview, loadDb, loadCerts, loadFsCounts]);
 
   useEffect(() => {
     if (isAdmin && activeTab === "content") loadResource(resource);
   }, [isAdmin, activeTab, resource, loadResource]);
 
   useEffect(() => {
+    if (isAdmin && activeTab === "certificates") loadCerts();
     if (isAdmin && (activeTab === "users" || activeTab === "database")) {
       loadUsers();
       loadDb();
+      if (activeTab === "database") loadFsCounts();
     }
-  }, [isAdmin, activeTab, loadUsers, loadDb]);
+  }, [isAdmin, activeTab, loadUsers, loadDb, loadCerts, loadFsCounts]);
 
   /* ---------------- actions ---------------- */
   const handleLogin = async (e: React.FormEvent) => {
@@ -488,6 +554,7 @@ export default function AdminPage() {
     { id: "overview", label: "Overview", icon: Building2 },
     { id: "users", label: "Registered Users", icon: Users, badge: users.length || overview?.users?.length || 0 },
     { id: "content", label: "Content Manager", icon: FileEdit },
+    { id: "certificates", label: "Certificates", icon: Award, badge: certs?.filter((c) => c.status === "pending_payment").length || 0 },
     { id: "inbox", label: "Inbox & Deal Flow", icon: Inbox, badge: (overview?.investorInquiries.length || 0) + (overview?.messages.length || 0) },
     { id: "database", label: "Database Console", icon: Database },
     { id: "advisor", label: "Upgrade Advisor", icon: Sparkles },
@@ -595,9 +662,9 @@ export default function AdminPage() {
                     <span className="text-amber-400 text-xs font-bold uppercase tracking-wider">Official Corporate Profile</span>
                     <h2 className="text-3xl font-black text-white mt-1">Seedwel Investment Limited</h2>
                     <p className="text-gray-400 text-sm mt-2 max-w-2xl">
-                      Officially registered in 2025. Institutional-grade investment platform open for
-                      investors in educational infrastructure (school building), artificial intelligence
-                      solutions & developers, and the strategic wealth curriculum.
+                      Officially registered in 2025. A tuition-free certification program issued under the
+                      Seedwel Certificate Incorporation — plus open investment opportunities in future school
+                      building (no school built yet) and AI business & developers.
                     </p>
                   </div>
                 </div>
@@ -618,9 +685,9 @@ export default function AdminPage() {
               <div className="grid md:grid-cols-3 gap-4 mt-6 border-t border-gray-800/80 pt-6">
                 {(
                   [
-                    [Building2, "School Building", "15 STEM & AI Schools in Zambia"],
+                    [Building2, "School Building (Planned)", "No school built yet — raising construction investors"],
                     [Cpu, "AI Business & Developers", "SaaS Incubator & Developer Academy"],
-                    [TrendingUp, "Wealth Curriculum", "28 Lessons & 7 Masterclasses"],
+                    [TrendingUp, "Certification Program", "Tuition-free course · $5 certificate registry"],
                   ] as [React.ElementType, string, string][]
                 ).map(([Icon, title, sub], i) => (
                   <div key={i} className="flex items-center gap-3">
@@ -645,6 +712,7 @@ export default function AdminPage() {
                     ["Registered Users", users.length || overview?.users?.length || 0, Users],
                     ["Curriculum Lessons", overview?.stats.lessons ?? 28, Award],
                     ["Investor Inquiries", overview?.investorInquiries.length ?? 0, Briefcase],
+                    ["Certificate Revenue ($)", (certs ?? []).filter((c) => c.status === "paid" || c.status === "claimed").length * CERT_PRICE_USD, DollarSign],
                     ["Contact Messages", overview?.messages.length ?? 0, MessageSquare],
                   ] as [string, number, React.ElementType][]
                 ).map(([label, val, Icon], idx) => (
@@ -764,8 +832,27 @@ export default function AdminPage() {
                       <button
                         onClick={async () => {
                           const nextRole = u.role === "admin" ? "student" : "admin";
-                          await setAdminUserRole(u.uid, nextRole);
-                          showToast(`${u.name || u.email} is now ${nextRole}`);
+                          try {
+                            await setAdminUserRole(u.uid, nextRole);
+                          } catch (err) {
+                            showToast(err instanceof Error ? err.message : "Role change failed");
+                            return;
+                          }
+                          let fsSynced = true;
+                          try {
+                            await setFirebaseRole(
+                              { uid: u.uid, email: u.email, name: u.name },
+                              nextRole,
+                              profile?.email || user?.email || "admin-console"
+                            );
+                          } catch {
+                            fsSynced = false;
+                          }
+                          showToast(
+                            fsSynced
+                              ? `${u.name || u.email} is now ${nextRole} — role stored in Firebase`
+                              : `${u.name || u.email} is now ${nextRole} (server DB only — Firebase sync failed)`
+                          );
                           loadUsers();
                         }}
                         className={cn(
@@ -976,9 +1063,208 @@ export default function AdminPage() {
           </div>
         )}
 
+        {/* ==================== CERTIFICATES ($5 REGISTRY, FIREBASE) ==================== */}
+        {activeTab === "certificates" && (
+          <div className="space-y-6">
+            <div className="rounded-3xl bg-gray-900/60 border border-gray-800 p-8">
+              <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+                <div>
+                  <h2 className="text-2xl font-black text-white">Certificate Registry</h2>
+                  <p className="text-gray-400 text-sm mt-1">
+                    Seedwel Certificate Incorporation — tuition is free; every certificate carries a one-time $
+                    {CERT_PRICE_USD} issuance fee. Live from Firebase Firestore.
+                  </p>
+                </div>
+                <button onClick={loadCerts} className="flex items-center gap-2 rounded-xl bg-gray-800 hover:bg-gray-700 px-4 py-2 text-xs font-semibold text-gray-300">
+                  <RefreshCw className="w-3.5 h-3.5" /> Refresh
+                </button>
+              </div>
+
+              {/* Revenue summary */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                {(
+                  [
+                    ["Claims Registered", (certs ?? []).length, Award],
+                    ["Paid / Claimed", (certs ?? []).filter((c) => c.status === "paid" || c.status === "claimed").length, CheckCircle2],
+                    ["Pending Approval", (certs ?? []).filter((c) => c.status === "pending_payment").length, Clock],
+                    [`Revenue ($${CERT_PRICE_USD} each)`, (certs ?? []).filter((c) => c.status === "paid" || c.status === "claimed").length * CERT_PRICE_USD, DollarSign],
+                  ] as [string, number, React.ElementType][]
+                ).map(([label, val, Icon], i) => (
+                  <div key={i} className="bg-gray-950/80 border border-gray-800 rounded-2xl p-4">
+                    <div className="flex items-center justify-between text-gray-400 text-[11px] font-semibold">
+                      <span>{label}</span>
+                      <Icon className="w-4 h-4 text-amber-400" />
+                    </div>
+                    <div className="text-2xl font-black text-white mt-1.5">{val}</div>
+                  </div>
+                ))}
+              </div>
+
+              {certsError && (
+                <div className="rounded-xl border border-rose-500/30 bg-rose-500/10 p-4 text-xs text-rose-300 mb-6">
+                  <p className="font-bold mb-1">Could not read the Firebase registry:</p>
+                  <p>{certsError}</p>
+                  <p className="mt-2 text-rose-200/70">
+                    Sign in with a Firebase admin account (dev sessions can't read the registry) and publish{" "}
+                    <code className="font-mono">firestore.rules</code> from the repo root in the Firebase Console.
+                  </p>
+                </div>
+              )}
+
+              {certs === null && !certsError && (
+                <div className="flex items-center gap-2 text-gray-500 text-sm py-8 justify-center">
+                  <Loader2 className="w-4 h-4 animate-spin" /> Loading the Firebase registry…
+                </div>
+              )}
+              {certs !== null && certs.length === 0 && !certsError && (
+                <p className="text-gray-500 text-sm text-center py-10 border border-dashed border-gray-800 rounded-2xl">
+                  No certificate claims yet — they appear here the moment a student starts the $5 claim on the Certificate page.
+                </p>
+              )}
+
+              <div className="space-y-3">
+                {(certs ?? []).map((c) => (
+                  <div key={c.uid} className="rounded-2xl bg-gray-950/80 border border-gray-800 p-4 flex flex-wrap items-center gap-4">
+                    <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center text-gray-950 font-black text-sm shrink-0">
+                      {(c.name || c.email || "?").charAt(0).toUpperCase()}
+                    </div>
+                    <div className="flex-1 min-w-[220px]">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="text-sm font-bold text-white">{c.name || "Unnamed"}</span>
+                        <span
+                          className={cn(
+                            "rounded-full px-2 py-0.5 text-[10px] font-black uppercase tracking-wider border",
+                            c.status === "claimed"
+                              ? "bg-emerald-500/15 border-emerald-500/30 text-emerald-300"
+                              : c.status === "paid"
+                                ? "bg-sky-500/15 border-sky-500/30 text-sky-300"
+                                : "bg-amber-500/15 border-amber-500/30 text-amber-300"
+                          )}
+                        >
+                          {c.status === "claimed" ? "claimed" : c.status === "paid" ? "paid" : "pending payment"}
+                        </span>
+                        <code className="text-[10px] font-mono text-amber-400/90">{c.serial}</code>
+                      </div>
+                      <div className="text-xs text-gray-400 mt-0.5">{c.email}</div>
+                      <div className="text-[10px] text-gray-600 mt-0.5">
+                        ${c.amountUsd} · {c.method}{c.cardLast4 ? ` •••• ${c.cardLast4}` : ""} · {c.completed}/{c.total} lessons · registered{" "}
+                        {new Date(c.created_at).toLocaleDateString()}
+                        {c.note ? ` · ${c.note}` : ""}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {c.status === "pending_payment" ? (
+                        <button
+                          onClick={async () => {
+                            setCertBusyUid(c.uid);
+                            try {
+                              await adminSetCertificateStatus(c.uid, "paid");
+                              showToast(`Approved ${c.serial} — download unlocked for the student`);
+                              loadCerts();
+                            } catch (err) {
+                              showToast(err instanceof Error ? err.message : "Approval failed");
+                            } finally {
+                              setCertBusyUid("");
+                            }
+                          }}
+                          disabled={certBusyUid === c.uid}
+                          className="flex items-center gap-1.5 rounded-xl bg-emerald-500/15 border border-emerald-500/40 text-emerald-300 hover:bg-emerald-500/25 px-3 py-2 text-xs font-bold transition-all disabled:opacity-60"
+                        >
+                          {certBusyUid === c.uid ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <CheckCircle2 className="w-3.5 h-3.5" />}
+                          Approve ${CERT_PRICE_USD} Payment
+                        </button>
+                      ) : (
+                        <button
+                          onClick={async () => {
+                            if (!window.confirm(`Move ${c.serial} back to pending payment? The student loses download access.`)) return;
+                            setCertBusyUid(c.uid);
+                            try {
+                              await adminSetCertificateStatus(c.uid, "pending_payment");
+                              showToast(`${c.serial} moved back to pending`);
+                              loadCerts();
+                            } catch (err) {
+                              showToast(err instanceof Error ? err.message : "Update failed");
+                            } finally {
+                              setCertBusyUid("");
+                            }
+                          }}
+                          disabled={certBusyUid === c.uid}
+                          className="flex items-center gap-1.5 rounded-xl bg-gray-800 hover:bg-gray-700 text-gray-300 px-3 py-2 text-xs font-bold transition-all disabled:opacity-60"
+                        >
+                          {certBusyUid === c.uid ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <RotateCcw className="w-3.5 h-3.5" />}
+                          Back to Pending
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* ==================== DATABASE CONSOLE ==================== */}
         {activeTab === "database" && (
           <div className="space-y-6">
+            {/* Firebase Firestore — the TRUE course database */}
+            <div className="rounded-3xl bg-gradient-to-br from-orange-500/10 via-gray-900/80 to-gray-950 border border-orange-500/30 p-6">
+              <div className="flex flex-wrap items-start justify-between gap-4">
+                <div className="flex items-start gap-4">
+                  <span className="w-12 h-12 rounded-2xl bg-orange-500/15 border border-orange-500/40 flex items-center justify-center shrink-0">
+                    <Flame className="w-6 h-6 text-orange-400" />
+                  </span>
+                  <div>
+                    <h2 className="text-xl font-black text-white">Firebase Firestore — True Course Database</h2>
+                    <p className="text-gray-400 text-xs mt-1 max-w-2xl">
+                      Project <code className="text-amber-400 font-mono">seedwel-cbeb8</code>. The public site reads
+                      modules, lessons, videos, niches, founders & posts from Firestore first (roles and the $5
+                      certificate registry live here too). Publish the bundled curriculum once to go live, then edit
+                      in the Firebase Console or the Content Manager.
+                    </p>
+                  </div>
+                </div>
+                <div className="flex flex-col items-end gap-2">
+                  <button
+                    onClick={handlePublishToFirestore}
+                    disabled={fsPublishing}
+                    className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 text-gray-950 font-black px-4 py-2.5 text-xs hover:from-orange-400 hover:to-amber-400 transition-all disabled:opacity-60"
+                  >
+                    {fsPublishing ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <CloudUpload className="w-3.5 h-3.5" />}
+                    {fsPublishing ? "Publishing…" : "Publish Curriculum to Firestore"}
+                  </button>
+                  {fsPublishMsg && <p className="text-[10px] text-orange-200/80 max-w-[260px] text-right">{fsPublishMsg}</p>}
+                </div>
+              </div>
+              <div className="flex flex-wrap gap-2 mt-4">
+                {(["modules", "lessons", "videos", "niches", "founders", "posts"] as const).map((col) => (
+                  <span
+                    key={col}
+                    className="flex items-center gap-2 rounded-xl bg-gray-950/80 border border-gray-800 px-3 py-1.5 text-[11px] font-mono text-gray-400"
+                  >
+                    <Database className="w-3 h-3 text-orange-400/70" />
+                    {col}
+                    <span
+                      className={cn(
+                        "rounded-full px-1.5 py-0.5 text-[10px] font-black",
+                        fsCounts && fsCounts[col] > 0 ? "bg-emerald-500/20 text-emerald-300" : "bg-gray-800 text-gray-500"
+                      )}
+                    >
+                      {fsCounts === null ? "…" : fsCounts[col] >= 0 ? fsCounts[col] : "blocked"}
+                    </span>
+                  </span>
+                ))}
+                <button onClick={loadFsCounts} className="rounded-xl bg-gray-800 hover:bg-gray-700 px-2.5 py-1.5 text-gray-300" aria-label="Refresh Firestore counts">
+                  <RefreshCw className="w-3 h-3" />
+                </button>
+              </div>
+              {fsCounts && Object.values(fsCounts).every((n) => n <= 0) && (
+                <p className="text-[11px] text-orange-200/70 mt-3">
+                  Firestore is empty (or rules block reads). Click <b>Publish Curriculum to Firestore</b> to seed the true
+                  database — remember to publish <code className="font-mono">firestore.rules</code> from the repo root first.
+                </p>
+              )}
+            </div>
+
             <div className="rounded-3xl bg-gray-900/60 border border-gray-800 p-8">
               <div className="flex flex-wrap items-start justify-between gap-4 mb-6">
                 <div className="flex items-start gap-4">
