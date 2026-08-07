@@ -79,29 +79,57 @@ service cloud.firestore {
       allow write: if isSignedIn() && (request.auth.uid == uid || isManagement());
     }
 
-    // ---------------- Certificates — $5 paid, tuition FREE ----------------
-    // User can read own certificate; admin can read all
-    // User can create own eligible claim (unpaid initially); paid transition only via backend or admin
-    // Payment status enforcement: user cannot set paid=true themselves unless via trusted flow (we allow admin only for paid switch, but client mock sets via API)
+    // ---------------- Certificates — $5 quotation, admin sends within 48h ----------------
+    // A student can create/update their own unpaid claim and submit a quotation.
+    // Only management can mark payment paid or deliveryStatus=sent.
     match /certificates/{uid} {
       allow read: if isSignedIn() && (request.auth.uid == uid || isManagement());
-      allow create: if isSignedIn() && request.auth.uid == uid &&
+      allow create: if isManagement() || (
+        isSignedIn() && request.auth.uid == uid &&
         request.resource.data.uid == uid &&
         request.resource.data.tuitionModel == 'FREE' &&
-        request.resource.data.feeUsd == 5;
-      allow update: if isSignedIn() && (
-        // user can update name/completed but NOT flip paid unless admin flow
-        (request.auth.uid == uid && request.resource.data.paid == resource.data.paid) ||
-        isManagement()
+        request.resource.data.feeUsd == 5 &&
+        request.resource.data.paid == false &&
+        request.resource.data.paymentStatus in ['unpaid', 'pending'] &&
+        request.resource.data.deliveryStatus in ['not_requested', 'awaiting_admin']
+      );
+      allow update: if isManagement() || (
+        isSignedIn() && request.auth.uid == uid && request.resource.data.uid == resource.data.uid && (
+          // Student may update course/name details and submit a pending quotation,
+          // but may never mark a certificate as paid, issued, or sent.
+          (
+            resource.data.paid == false &&
+            request.resource.data.paid == false &&
+            request.resource.data.paymentStatus in ['unpaid', 'pending'] &&
+            request.resource.data.deliveryStatus in ['not_requested', 'awaiting_admin'] &&
+            request.resource.data.status in ['eligible', 'quotation_requested'] &&
+            request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+              'id', 'email', 'nameOnCertificate', 'completedLessons', 'totalLessons', 'percentage',
+              'certificateNumber', 'incorporationNote', 'claimedAt',
+              'paymentStatus', 'paymentId', 'paymentMethod', 'status',
+              'quotationNumber', 'quotationRequestedAt', 'deliveryDueAt', 'deliveryStatus', 'deliveryMethod'
+            ])
+          ) ||
+          // An issued student can add only their optional hosted backup PDF.
+          (
+            request.resource.data.paid == resource.data.paid &&
+            request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+              'cloudinaryUrl', 'cloudinaryPublicId', 'cloudinaryUploadedAt'
+            ])
+          )
+        )
       );
       allow delete: if isManagement();
     }
 
-    // ---------------- Certificate Payments — $5 ----------------
+    // ---------------- Certificate payment quotations — $5 ----------------
     match /certificate_payments/{paymentId} {
       allow read: if isSignedIn() && (resource.data.uid == request.auth.uid || isManagement());
-      allow create: if isSignedIn() && request.resource.data.uid == request.auth.uid && request.resource.data.amountUsd == 5;
-      allow update: if isManagement(); // only admin/backend can mark succeeded
+      allow create: if isSignedIn() && request.resource.data.uid == request.auth.uid &&
+        request.resource.data.amountUsd == 5 &&
+        request.resource.data.purpose == 'certificate_fee' &&
+        request.resource.data.status == 'pending';
+      allow update: if isManagement(); // only admin can verify/decline and record delivery
       allow delete: if isManagement();
     }
 

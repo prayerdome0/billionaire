@@ -3,7 +3,7 @@ import { useParams, useSearchParams } from "react-router-dom";
 import { ShieldCheck, Search, Loader2, Award, BookOpen, AlertCircle, FileText, CheckCircle2, CloudUpload, ExternalLink } from "lucide-react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import { getCertificateByNumberFirestore } from "../lib/firestoreDb";
+import { getCertificateByNumberFirestore, isCertificateIssued, isCertificateAwaitingAdmin } from "../lib/firestoreDb";
 import { formatIncorporationDisclaimer } from "../lib/certificateService";
 
 export default function CertificateVerifyPage() {
@@ -37,10 +37,12 @@ export default function CertificateVerifyPage() {
     try {
       const claim = await getCertificateByNumberFirestore(target);
       if (claim) {
-        if (claim.paid || claim.paymentStatus === "paid") {
+        if (isCertificateIssued(claim)) {
           setResult(claim);
+        } else if (isCertificateAwaitingAdmin(claim)) {
+          setError("This certificate request is still with the administrator. The certificate can be verified after payment is confirmed and the administrator sends it.");
         } else {
-          setError("This certificate registry exists, but is unpaid/unclaimed. Completed certificates must be verified with payment of the $5 registry fee.");
+          setError("This certificate registry exists, but has not been issued yet. Completed certificates are verified only after the $5 registry payment is confirmed and the certificate is sent by admin.");
         }
       } else {
         setError("No official certificate registry found matching that certificate number. Please verify the spelling and formatting (e.g. SWL-YYYYMMDD-XXXXX).");

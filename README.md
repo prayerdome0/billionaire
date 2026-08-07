@@ -1,14 +1,14 @@
 # Seedwel Investment Limited — Billionaire Blueprint & Investor Platform (TRUE DATABASE: Firebase Firestore)
 
 A full-stack wealth-education and investor platform for **Seedwel Investment Limited**
-(registered 2025, **Certificate Incorporation — no physical school built yet**): React + Vite + Tailwind frontend, Node/Express REST API, and **Firebase Firestore as TRUE DATABASE** — with tuition FREE, certificate $5 paid, admin role stored as `role` field in Firestore `users/{uid}`, detected in student dashboard.
+(registered 2025, **Certificate Incorporation — no physical school built yet**): React + Vite + Tailwind frontend, Node/Express REST API, and **Firebase Firestore as TRUE DATABASE** — with tuition FREE, a $5 certificate payment quotation sent to admin, and manual certificate delivery within 48 hours, with admin role stored as `role` field in Firestore `users/{uid}`, detected in student dashboard.
 
 ## Business Model — Crystal Clear
 
 | Item | Model |
 |------|-------|
 | **Tuition** | **FREE ($0)** — all 28 lessons, quizzes, videos, progress tracking FREE worldwide |
-| **Certificate** | **$5 USD paid** — one-time fee for verified PDF, anti-forgery registry, incorporation admin, Firestore verification |
+| **Certificate** | **$5 USD payment quotation** — student sends the request to admin; after payment verification, admin sends the verified certificate within 48 hours |
 | **Physical School** | **NOT BUILT YET** — we operate as Certificate Incorporation entity registered 2025 |
 | **True Database** | **Firebase Firestore** — `lessons`, `modules`, `videos`, `niches`, `founders`, `posts`, `users` (with `role`), `user_progress`, `certificates`, `certificate_payments` |
 | **Admin Role** | Signed as `role: "admin"` in Firestore `users/{uid}` doc — detected in student dashboard (AccountPage) shows admin tab who is assigned admin |
@@ -19,8 +19,8 @@ A full-stack wealth-education and investor platform for **Seedwel Investment Lim
 | ---- | ------- |
 | Public site (tuition FREE) | Home (niches, principles), Founders (real photos Seedwell Masuku & Zacheus Simbaya), Blog, Videos, Search, Invest, Certificate info ($5) |
 | Registered students (FREE) | Full 28-lesson course, quizzes, comments, progress stored in Firestore `user_progress/{uid}`, leaderboard, student dashboard `/account` with admin tab detection |
-| Certificates ($5 paid) | `/certificate` — tuition free page, progress lock, $5 payment modal (card/PayPal/MoMo), paid unlock, PDF generation with incorporation note, stored in Firestore `certificates/{uid}` |
-| Admin (management only, role=admin) | Overview metrics, Registered Users (Firestore role toggle — grant/revoke admin in Firestore true DB), Certificates ($5 claims, paid/unpaid, revenue), Content Manager (CRUD lessons etc -> writes to Firestore + backup DB), Inbox & Deal Flow, True DB Console (browse every table incl certificates/payments, seed Firestore), Advisor (new: Firestore true DB completed, certificate $5 model completed) |
+| Certificates ($5 quotation) | `/certificate` — tuition-free page, progress lock, student sends a $5 quotation/preferred method to admin; admin verifies payment and sends the certificate within 48 hours. Delivery status is stored in Firestore `certificates/{uid}` |
+| Admin (management only, role=admin) | Overview metrics, Registered Users (Firestore role toggle — grant/revoke admin in Firestore true DB), Certificate Requests (verify payment, email certificate, mark sent), Content Manager, Inbox & Deal Flow, and True DB Console |
 
 ## Authentication & Roles — TRUE DATABASE
 
@@ -49,15 +49,14 @@ A full-stack wealth-education and investor platform for **Seedwel Investment Lim
 4. Deploy `firestore.rules` from repo: `firebase deploy --only firestore:rules`
 5. Done — new users get `role: student`, allowlisted emails auto-promote to `admin` and appear in student dashboard admin tab.
 
-## Certificate $5 Paid Flow
+## Certificate $5 Quotation & 48-Hour Delivery Flow
 
-- Student completes 28 lessons (progress in Firestore)
-- `/certificate` page shows: tuition FREE banner, incorporation note (no school built yet), progress, certificate preview
-- Payment methods: card (Stripe-like), PayPal, Mobile Money — currently mock (95% success, 1.8s delay) — replace `processMockPayment` in `certificateService.ts` with Stripe Checkout in production
-- On payment success: `markCertificatePaid` updates Firestore `certificates/{uid}` paid=true, paymentId, status=claimed, plus `certificate_payments` record
-- PDF generation includes: certificate number `SWL-YYYYMMDD-XXXXX-XXXX`, incorporation note, tuition FREE / $5 paid, Firestore verified, admin role detection note
-- **Cloudinary hosting**: after generating, the PDF is uploaded to Cloudinary (cloud `dhad95cch`, unsigned preset `seedwel`, asset folder `samples/ecommerce`) and the secure URL + public ID are stored on the Firestore claim as `cloudinaryUrl` / `cloudinaryPublicId`. The student sees a "Certificate Hosted on Cloudinary" panel with a share link, the public `/verify` page shows an "Open Verified PDF" button, and the Admin → Certificates tab links to the hosted copy.
-- Admin portal → Certificates tab shows all claims, paid/unpaid, revenue = paidCount * $5
+- Student completes all 28 lessons (progress in Firestore).
+- On `/certificate`, the student chooses a preferred payment method and sends a **$5 payment quotation / certificate request** to the admin. This does not simulate or process a card charge.
+- One atomic Firestore batch creates/updates `certificates/{uid}` and `certificate_payments/{id}` so the request cannot fail with “No document to update.”
+- Admin → **Certificate Requests** shows the quotation, registered email, and 48-hour delivery target. After manually verifying payment and sending the certificate through the official email channel, the admin marks it sent.
+- The student sees delivery status in their dashboard and can create an optional PDF backup only after the admin marks the certificate sent.
+- **Cloudinary hosting** remains an optional backup after delivery; its URL/public ID are stored on the Firestore claim. The public verification view accepts issued/sent certificates only.
 
 ## Cloudinary — Certificate PDF Hosting
 
@@ -117,8 +116,8 @@ user_progress/{uid}: { uid, lessonIds: string[], updatedAt }
 lessons/{id}: { id, moduleId, number, title, ... , seededAt }
 modules/{id}: { id, number, title, gradient, lessonCount, seededAt }
 videos/{id}, niches/{id}, founders/{id}, posts/{slug}
-certificates/{uid}: { id=uid, uid, email, nameOnCertificate, completed, total, pct, tuitionModel="FREE", feeUsd=5, paid:boolean, paymentStatus, paymentId, certificateNumber, incorporationNote, status, claimedAt, issuedAt, cloudinaryUrl?, cloudinaryPublicId?, cloudinaryUploadedAt? }
-certificate_payments/{id}: { id, uid, email, amountUsd=5, currency="USD", purpose="certificate_fee", status, method, certificateClaimId, createdAt }
+certificates/{uid}: { id=uid, uid, email, nameOnCertificate, completedLessons, totalLessons, percentage, tuitionModel="FREE", feeUsd=5, paid:boolean, paymentStatus, paymentId, paymentMethod, certificateNumber, quotationNumber?, quotationRequestedAt?, deliveryDueAt?, deliveryStatus="not_requested"|"awaiting_admin"|"sent", deliveredAt?, deliveredBy?, status, cloudinaryUrl? }
+certificate_payments/{id}: { id, uid, email, amountUsd=5, currency="USD", purpose="certificate_fee", status="pending"|"succeeded"|"failed", method, requestType="certificate_quotation", quotationNumber, deliveryWindowHours=48, certificateClaimId, createdAt }
 ```
 
 Admin detection in student dashboard: `subscribeToAdmins()` → `onSnapshot(query(users, where(role=="admin")))` → list in AccountPage.
@@ -128,6 +127,6 @@ Admin detection in student dashboard: `subscribeToAdmins()` → `onSnapshot(quer
 - Frontend: React 19, Router 7, Tailwind 4, Firebase JS SDK (Auth + Firestore true DB + offline persistence), lucide-react, jsPDF
 - Backend: Express 5, Node 22, Vercel serverless, Firebase ID-token verification, SQLite/Postgres/Memory backup + certificate tables
 - True DB: Firebase Firestore project `seedwel-cbeb8` — course DB, roles, progress, $5 cert claims
-- Business: Tuition FREE, certificate $5 paid, certificate incorporation 2025, no school built yet
+- Business: Tuition FREE, $5 certificate payment quotation, admin sends certificate within 48 hours after payment verification, certificate incorporation 2025, no school built yet
 
 > Educational purposes. Tuition model: FREE. Certificate incorporation. No physical school built yet.

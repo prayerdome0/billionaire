@@ -1,50 +1,55 @@
 /**
- * Certificate Service — $5 paid claim, tuition FREE, incorporation model
+ * Certificate service — student quotation request + manual admin delivery.
  *
- * Business rules (from user):
+ * Business rules:
  * - Tuition is FREE for everyone.
- * - Certificate is $5 to claim (paid) — verification, anti-forgery, incorporation admin fee.
- * - We have NOT built any physical school; we are a Certificate Incorporation entity registered 2025.
- * - Admin role is stored in Firebase users/{uid} with role field.
- * - Admin must APPROVE each payment before certificate is issued.
- *
- * Payment flow:
- * 1. Student initiates payment → payment record created with status "pending"
- * 2. Certificate claim status set to "pending_approval"
- * 3. Admin reviews and approves/rejects
- * 4. On approve → payment status "succeeded", certificate marked paid
- * 5. On reject → payment status "failed", certificate stays eligible
+ * - A verified certificate costs $5 USD.
+ * - The student sends a payment quotation/request to the admin; this page does
+ *   not charge a card or pretend that a payment processor has run.
+ * - After verifying payment, an administrator sends the certificate to the
+ *   student's registered email within 48 hours and records that delivery.
  */
 
 import { CERTIFICATE_FEE_USD } from "./firebase";
 import {
   getCertificateStatus,
   createOrUpdateCertificateClaim,
-  createPaymentRecord,
-  approvePaymentByAdmin,
+  submitCertificateQuotation,
+  markCertificateSentByAdmin,
   rejectPaymentByAdmin,
   certificateIncorporationNote,
   genCertificateNumber,
+  CERTIFICATE_DELIVERY_WINDOW_HOURS,
   type CertificateClaim,
 } from "./firestoreDb";
 
 export const CERTIFICATE_FEE = CERTIFICATE_FEE_USD;
 export const TUITION_FREE = true;
+export const CERTIFICATE_DELIVERY_HOURS = CERTIFICATE_DELIVERY_WINDOW_HOURS;
 export const INCORPORATION_MESSAGE =
   "Seedwel Investment Limited is a Certificate Incorporation entity registered in 2025. " +
   "We have NOT built any physical school structure yet. " +
   "We provide educational curriculum FREE of charge (tuition = $0). " +
   "Official certificate issuance, verification registry, and incorporation administrative handling is a paid service at $5 per certificate. " +
-  "All payments require admin approval before the certificate is issued.";
+  "Students send a payment quotation to the admin; after payment is verified, the admin sends the certificate within 48 hours.";
 
+export type CertificatePaymentMethod = "card" | "paypal" | "mobile_money" | "manual";
+
+/**
+ * Kept as a compact UI-friendly representation of the submitted quotation.
+ * `pending` means the request is with the administrator; it does NOT mean a
+ * card charge was completed in the browser.
+ */
 export interface PaymentIntent {
   id: string;
   amount: number;
   currency: string;
   description: string;
   status: "requires_payment" | "pending" | "processing" | "succeeded" | "failed";
-  paymentMethod: "card" | "paypal" | "mobile_money" | "manual";
+  paymentMethod: CertificatePaymentMethod;
   created: number;
+  quotationNumber?: string;
+  deliveryWindowHours?: number;
 }
 
 export async function checkEligibility(completed: number, total: number): Promise<{ eligible: boolean; pct: number; remaining: number }> {
@@ -65,68 +70,87 @@ export async function getOrCreateClaim(uid: string, email: string, name: string,
 }
 
 /**
- * Student initiates a payment. Creates a payment record with "pending" status
- * and updates the certificate claim to "awaiting_approval".
- * No automatic processing — admin must approve.
+ * Sends the student's $5 payment quotation and certificate request to the
+ * Firestore admin queue. The certificate claim and payment-request record are
+ * written in one Firestore batch, so we never call updateDoc on a missing
+ * certificates/{uid} document.
+ */
+export async function sendCertificateQuotationToAdmin(params: {
+  claim: CertificateClaim;
+  method: CertificatePaymentMethod;
+}): Promise<{ intent: PaymentIntent; paymentRecordId: string; claim: CertificateClaim }> {
+  const submitted = await submitCertificateQuotation({
+    claim: params.claim,
+    method: params.method,
+  });
+
+  const intent: PaymentIntent = {
+    id: submitted.payment.id,
+    amount: CERTIFICATE_FEE,
+    currency: "USD",
+    description: `Seedwel Certificate — $${CERTIFICATE_FEE} USD payment quotation and delivery request`,
+    status: "pending",
+    paymentMethod: params.method,
+    created: Date.now(),
+    quotationNumber: submitted.payment.quotationNumber,
+    deliveryWindowHours: submitted.payment.deliveryWindowHours || CERTIFICATE_DELIVERY_WINDOW_HOURS,
+  };
+
+  return { intent, paymentRecordId: submitted.payment.id, claim: submitted.claim };
+}
+
+/**
+ * Backwards-compatible alias for earlier callers. It now submits a quotation
+ * to the admin rather than simulating a charge in the browser.
  */
 export async function initiatePayment(params: {
   uid: string;
   email: string;
-  method: PaymentIntent["paymentMethod"];
+  method: CertificatePaymentMethod;
   claimId?: string;
-}): Promise<{ intent: PaymentIntent; paymentRecordId: string }> {
-  const record = await createPaymentRecord({
-    uid: params.uid,
-    email: params.email,
-    method: params.method,
-    certificateClaimId: params.claimId,
-  });
-
-  const intent: PaymentIntent = {
-    id: record.id,
-    amount: CERTIFICATE_FEE,
-    currency: "USD",
-    description: `Seedwel Certificate - Incorporation Fee $${CERTIFICATE_FEE} - Verification & Issuance`,
-    status: "pending",
-    paymentMethod: params.method,
-    created: Date.now(),
-  };
-
-  return { intent, paymentRecordId: record.id };
+}): Promise<{ intent: PaymentIntent; paymentRecordId: string; claim: CertificateClaim }> {
+  const claim = await getCertificateStatus(params.uid);
+  if (!claim) {
+    throw new Error("Your certificate request is not ready yet. Please save the certificate name and try again.");
+  }
+  return sendCertificateQuotationToAdmin({ claim, method: params.method });
 }
 
 /**
- * Admin approves a payment. Updates payment record to "succeeded" and
- * marks the certificate claim as paid.
+ * Admin confirms that payment was verified and that the certificate was sent
+ * through the official delivery channel. This records delivery; email itself
+ * is deliberately handled by the administrator's mail service.
  */
+export async function adminMarkCertificateSent(params: {
+  uid: string;
+  paymentId: string;
+  method: CertificatePaymentMethod;
+  adminUid?: string;
+  deliveryNote?: string;
+}): Promise<CertificateClaim | null> {
+  return markCertificateSentByAdmin(params);
+}
+
+/** Backwards-compatible name for existing integrations. */
 export async function adminApprovePayment(params: {
   uid: string;
   paymentId: string;
-  method: PaymentIntent["paymentMethod"];
+  method: CertificatePaymentMethod;
   adminUid?: string;
 }): Promise<CertificateClaim | null> {
-  return approvePaymentByAdmin({
-    uid: params.uid,
-    paymentId: params.paymentId,
-    method: params.method,
-    adminUid: params.adminUid,
-  });
+  return adminMarkCertificateSent(params);
 }
 
 /**
- * Admin rejects a payment. Updates payment record to "failed".
- * Certificate claim stays eligible so student can try again.
+ * Admin rejects a payment quotation. The claim returns to an eligible state so
+ * the student can submit another request.
  */
 export async function adminRejectPayment(params: {
   uid: string;
   paymentId: string;
   reason?: string;
 }): Promise<void> {
-  return rejectPaymentByAdmin({
-    uid: params.uid,
-    paymentId: params.paymentId,
-    reason: params.reason,
-  });
+  return rejectPaymentByAdmin(params);
 }
 
 export function formatIncorporationDisclaimer(): string {
