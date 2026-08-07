@@ -19,6 +19,7 @@ import {
   type User,
 } from "firebase/auth";
 import { auth, initAnalytics } from "./firebase";
+import { ensureUserProfile, type FsUserProfile } from "./firestore";
 import {
   adminLogin as apiAdminLogin,
   setAuthTokenProvider,
@@ -47,6 +48,8 @@ interface AuthContextValue {
   /** Server-confirmed profile (from /api/auth/me) for the active session. */
   profile: AuthMe["user"] | null;
   isAdmin: boolean;
+  /** Role as stored in Firebase (users/{uid}.role) — the true role database. */
+  fsRole: "admin" | "student" | null;
   sessionKind: "firebase" | "dev" | null;
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (name: string, email: string, password: string) => Promise<void>;
@@ -64,6 +67,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<AuthMe["user"] | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [fsRole, setFsRole] = useState<"admin" | "student" | null>(null);
   const [sessionKind, setSessionKind] = useState<"firebase" | "dev" | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -86,6 +90,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setProfile(me?.user ?? null);
     setIsAdmin(!!me?.isAdmin);
     setSessionKind(me ? kind : null);
+    if (!me) setFsRole(null);
   }, []);
 
   // Restore a dev-preview session when there is no Firebase user.
@@ -109,21 +114,43 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const unsub = onAuthStateChanged(auth, async (u) => {
       setUser(u);
       if (u) {
+        const emailLower = (u.email || "").toLowerCase();
+        // Firebase (Firestore) is the TRUE role database: upsert users/{uid}
+        // and read the stored role. Founder emails are auto-promoted there.
+        const fsProfile: FsUserProfile | null = await ensureUserProfile({
+          uid: u.uid,
+          email: u.email || "",
+          name: u.displayName || "",
+          photoUrl: u.photoURL || "",
+        });
+        const fsIsAdmin = fsProfile?.role === "admin" || ADMIN_EMAILS.includes(emailLower);
+        setFsRole(fsProfile?.role ?? (ADMIN_EMAILS.includes(emailLower) ? "admin" : "student"));
         try {
           const me = await syncAuthMe();
-          applyMe(me, "firebase");
+          applyMe(
+            {
+              ...me,
+              isAdmin: me.isAdmin || fsIsAdmin,
+              user: {
+                ...me.user,
+                name: me.user.name || fsProfile?.name || "",
+                role: me.isAdmin || fsIsAdmin ? "admin" : me.user.role,
+              },
+            },
+            "firebase"
+          );
         } catch {
-          // Offline API — still grant UI admin hint by email allowlist.
+          // Offline API — fall back to the Firebase role + email allowlist.
           applyMe(
             {
               user: {
                 uid: u.uid,
                 email: u.email || "",
-                name: u.displayName || "",
-                photoUrl: u.photoURL || "",
-                role: ADMIN_EMAILS.includes((u.email || "").toLowerCase()) ? "admin" : "student",
+                name: u.displayName || fsProfile?.name || "",
+                photoUrl: u.photoURL || fsProfile?.photoUrl || "",
+                role: fsIsAdmin ? "admin" : "student",
               },
-              isAdmin: ADMIN_EMAILS.includes((u.email || "").toLowerCase()),
+              isAdmin: fsIsAdmin,
               adminEmails: ADMIN_EMAILS,
             },
             "firebase"
@@ -194,6 +221,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       loading,
       profile,
       isAdmin,
+      fsRole,
       sessionKind,
       signIn,
       signUp,
@@ -203,7 +231,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       refreshProfile,
       getIdToken,
     }),
-    [user, loading, profile, isAdmin, sessionKind, signIn, signUp, resetPassword, devAdminSignIn, logout, refreshProfile, getIdToken]
+    [user, loading, profile, isAdmin, fsRole, sessionKind, signIn, signUp, resetPassword, devAdminSignIn, logout, refreshProfile, getIdToken]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

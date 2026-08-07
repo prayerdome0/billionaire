@@ -97,7 +97,7 @@ export default function LessonsPage() {
         eyebrow="Curriculum"
         title="The Complete"
         highlight="Billionaire Curriculum"
-        description="28 in-depth lessons across 6 modules. Each lesson includes full written content, key takeaways, action steps, and a quiz — reserved for registered students, with progress saved to your account."
+        description="28 in-depth lessons across 6 modules — 100% tuition-free (we're a certification program, not a school). Each lesson includes full written content, key takeaways, action steps, and a quiz, reserved for registered students with progress saved to your account. The only fee in the entire program is the one-time $5 certificate issuance when you finish."
       >
         <div className="mt-10 max-w-xl mx-auto">
           {loading || authLoading ? (
@@ -264,8 +264,8 @@ export default function LessonsPage() {
               </h2>
               <p className="text-gray-400 max-w-md mx-auto mb-6">
                 {done === total && total > 0
-                  ? "Complete all 28 lessons. Congratulations — claim your official certificate now."
-                  : `Complete all ${total} lessons${signedIn ? ` (${total - done} remaining)` : ""} to unlock your official certificate of completion.`}
+                  ? "Congratulations! Claim your official certificate now — a one-time $5 issuance fee, recorded in the Seedwel Certificate Incorporation registry."
+                  : `Complete all ${total} lessons${signedIn ? ` (${total - done} remaining)` : ""} to become eligible for the official certificate (one-time $5 issuance fee — tuition stays free).`}
               </p>
               <Link
                 to="/certificate"

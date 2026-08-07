@@ -1,0 +1,101 @@
+rules_version = '2';
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Seedwel Investment Limited — Billionaire Blueprint
+// Firebase Firestore security rules (project: seedwel-cbeb8)
+//
+// Data model enforced here:
+//   • COURSE DATABASE (modules/lessons/videos/niches/founders/posts)
+//     → readable by everyone; writable by ADMINS only.
+//   • users/{uid}     → profile + role ("admin" | "student"). The admin role is
+//     assigned IN FIREBASE: founder allowlist auto-promotes, or an existing
+//     admin grants it (mirrored to admins/{uid} for the student dashboard).
+//   • certificates/{uid} → the Seedwel Certificate Incorporation registry.
+//     Tuition is FREE; claiming a certificate costs a one-time $5 issuance fee
+//     (status: pending_payment → paid → claimed), verifiable by serial.
+//
+// Publish: Firebase Console → Firestore Database → Rules → paste → Publish.
+// ─────────────────────────────────────────────────────────────────────────────
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    // Founder & management accounts — always admin.
+    function allowlisted() {
+      return signedIn()
+        && request.auth.token.email in [
+          "seedwell@seedwel.com",
+          "seedwell@seedwelinvestment.com",
+          "zacheus@seedwelinvestment.com",
+          "admin@seedwel.com"
+        ];
+    }
+
+    // Admin = founder allowlist OR role: "admin" stored in users/{uid}.
+    function isAdmin() {
+      return allowlisted()
+        || (signedIn()
+            && exists(/databases/$(database)/documents/users/$(request.auth.uid))
+            && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "admin");
+    }
+
+    /* ---------------- Course database: public read, admin write ---------------- */
+    match /modules/{id}  { allow read: if true; allow write: if isAdmin(); }
+    match /lessons/{id}  { allow read: if true; allow write: if isAdmin(); }
+    match /videos/{id}   { allow read: if true; allow write: if isAdmin(); }
+    match /niches/{id}   { allow read: if true; allow write: if isAdmin(); }
+    match /founders/{id} { allow read: if true; allow write: if isAdmin(); }
+    match /posts/{id}    { allow read: if true; allow write: if isAdmin(); }
+
+    /* ---------------- Assigned admins (student dashboard reads this) ---------------- */
+    match /admins/{uid} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    /* ---------------- User profiles & roles ---------------- */
+    match /users/{uid} {
+      allow read: if signedIn() && (request.auth.uid == uid || isAdmin());
+      // A user may create their own profile — but may only claim the admin role
+      // when their email is on the founder allowlist.
+      allow create: if signedIn() && request.auth.uid == uid
+        && (request.resource.data.role == "student" || allowlisted());
+      // Owners can update their profile but NOT self-assign roles;
+      // only existing admins can change roles.
+      allow update: if signedIn() && (
+        isAdmin()
+        || (request.auth.uid == uid
+            && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(["role"])
+                || request.resource.data.role == resource.data.role))
+      );
+      allow delete: if isAdmin();
+    }
+
+    /* ---------------- Certificate registry ($5 claim; tuition free) ---------------- */
+    match /certificates/{uid} {
+      allow read: if signedIn() && (request.auth.uid == uid || isAdmin());
+      // Students open/renew their own order; amount is fixed at $5 USD.
+      allow create: if signedIn() && request.auth.uid == uid && request.resource.data.amountUsd == 5;
+      // Owners may move their order forward (pending → paid → claimed).
+      // Only admins may approve manual payments or roll a record back.
+      allow update: if signedIn() && (
+        isAdmin()
+        || (request.auth.uid == uid
+            && request.resource.data.amountUsd == 5
+            && request.resource.data.serial == resource.data.serial
+            && request.resource.data.status in ["pending_payment", "paid", "claimed"])
+      );
+      allow delete: if isAdmin();
+    }
+
+    /* ---------------- Serial counter ---------------- */
+    match /counters/{docId} {
+      allow read: if signedIn();
+      allow write: if signedIn();
+    }
+  }
+}

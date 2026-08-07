@@ -1,17 +1,42 @@
 # Seedwel Investment Limited — Billionaire Blueprint & Investor Platform
 
 A full-stack wealth-education and investor platform for **Seedwel Investment Limited**
-(registered 2025): a React + Vite + Tailwind frontend, a Node/Express REST API, and a
-real database — now with **Firebase Authentication**, a registered-only course, and a
-**management-only admin console** that controls the entire database and every private API.
+(registered 2025): a React + Vite + Tailwind frontend, a Node/Express REST API, and
+**Firebase as the true database** — Cloud Firestore holds the course catalog, the
+user **admin roles**, and the **Seedwel Certificate Incorporation** registry.
+
+**Program model:** tuition is **100% free** (this is a certification program — no school
+has been built). The only fee in the entire program is a **one-time $5 certificate
+issuance fee**, recorded permanently in the Firebase certificate registry with a unique
+serial number.
 
 ## What's inside
 
 | Area | Details |
 | ---- | ------- |
 | Public site | Home (niches, principles, steps, gallery), Founders (with the real photos of Mr. Seedwell Khayalethu Masuku & Zacheus Simbaya), Blog, Videos, Search, **Invest** (opportunities + deal-flow form) |
-| Registered students | Full 28-lesson course, quizzes, comments, account-bound progress, leaderboard, certificate PDF, personal dashboard (`/account`) |
-| Admin (management only) | Overview metrics, **Registered Users** management (grant/revoke admin), **Content Manager** (create/edit/delete lessons, videos, niches, founders, posts, modules — writes straight to the DB), **Inbox & Deal Flow** (messages, subscribers, investor inquiries), **Database Console** (browse every table, delete any record, restore default content), **Upgrade Advisor**, and the admin-only **API Explorer** |
+| Registered students | Full 28-lesson course (free tuition), quizzes, comments, account-bound progress, leaderboard, personal dashboard (`/account`) that **detects the admin tab** and lists **who is assigned admin** — straight from the Firebase `admins` registry |
+| Certificates ($5) | `GET /certificate` — 100% completion → pay **$5** (instant card checkout or manual payment approved by an admin) → download the official PDF with its `SCI-YYYY-000123` registry serial. Stored in Firestore `certificates/{uid}` |
+| Admin (management only) | Overview metrics incl. **certificate revenue**, **Registered Users** (grant/revoke admin — role written into **Firebase**, `users/{uid}.role` + `admins/{uid}` mirror), **Certificates** tab (approve $5 payments, revenue), **Content Manager**, **Inbox & Deal Flow**, **Database Console** (browse tables + **publish the curriculum to Firestore**), **Upgrade Advisor**, admin-only **API Explorer** |
+
+## Firebase data model (the true database)
+
+| Collection | Access | Contents |
+| ---------- | ------ | -------- |
+| `modules`, `lessons`, `videos`, `niches`, `founders`, `posts` | public read, admin write | the live course database — the site reads Firestore first, REST API as fallback |
+| `users/{uid}` | owner or admin | profile + **`role: "admin" \| "student"`** — founders auto-promote via the allowlist |
+| `admins/{uid}` | public read, admin write | mirror of assigned admins (powers the student dashboard "Assigned Administrators" card) |
+| `certificates/{uid}` | owner or admin | $5 claim: `pending_payment → paid → claimed`, serial, method, timestamps |
+| `counters/certificates` | signed-in | atomic serial allocation |
+
+Security is enforced by **`firestore.rules`** (repo root). Publish it from the Firebase
+Console (Firestore Database → Rules) or `firebase deploy --only firestore:rules`.
+
+> **Payment note:** the built-in $5 card checkout is a demo gateway (no card processor
+> keys in this repo) and manual payments are approved by an admin in **Admin →
+> Certificates**. For live charging, attach Stripe/PayPal and move payment finalization
+> to a server webhook or Cloud Function that sets `status: "paid"` (the Upgrade
+> Advisor tracks this as `rec-cert-stripe`).
 
 ## Authentication model (important)
 
@@ -20,10 +45,12 @@ real database — now with **Firebase Authentication**, a registered-only course
   locked until signed in. Progress/comments are bound to the user's Firebase `uid`.
 - The server **verifies Firebase ID tokens** against Google's public certificates
   (`server/firebaseAuth.mjs`) — no service-account key in the repo.
-- Admin rights = token email on the **allowlist** (defaults:
+- Admin rights = **a `role: "admin"` record in Firebase** (`users/{uid}.role`, assigned
+  from the admin UI and mirrored to the public `admins/{uid}` registry that the student
+  dashboard reads) **or** a token email on the **allowlist** (defaults:
   `seedwell@seedwel.com`, `seedwell@seedwelinvestment.com`, `zacheus@seedwelinvestment.com`,
   `admin@seedwel.com`; extend with the `ADMIN_EMAILS` env var, comma-separated) **or**
-  a `role: "admin"` record in the `users` table (toggleable in the admin UI).
+  a `role: "admin"` record in the REST server's `users` table (toggleable in the admin UI).
 - **Nothing sensitive is exposed**: the Firebase web config in `src/lib/firebase.ts` is a
   public identifier by design; all PII endpoints (`GET /api/contact`, `/api/newsletter`,
   `/api/investors`, `/api/database`) and everything under `/api/admin/*` return `401/403`
@@ -38,8 +65,12 @@ real database — now with **Firebase Authentication**, a registered-only course
    *Sign-in method* → enable **Email/Password**.
 2. In *Authentication → Users* → *Add user*, create the management accounts, e.g.
    `seedwell@seedwel.com` and `zacheus@seedwelinvestment.com` (any strong passwords).
-3. Done — those emails are on the admin allowlist, so they can sign in at `/admin`
-   immediately. Everyone else who registers becomes a student in the `users` table.
+3. Create **Cloud Firestore** (Build → Firestore Database) and publish the repo's
+   **`firestore.rules`** — course content becomes public-readable, role assignment is
+   admin-only, and the certificate registry is locked to owner + management.
+4. Sign in at `/admin`, open **Database Console → Publish Curriculum to Firestore**.
+   Done — the course database, admin roles and the $5 certificate registry now run
+   100% on Firebase. Everyone else who registers becomes a student.
 
 ## Quick start (local)
 
@@ -84,8 +115,8 @@ The SQLite database is created automatically at `data/billionaire.db` and seeded
 | `/auth` | public | Sign in / create account (Firebase), password reset |
 | `/lessons` | public | Curriculum outline + lock states + leaderboard (CTA to register) |
 | `/lessons/:id` | **registered** | Lesson detail: content, takeaways, action steps, quiz, comments |
-| `/certificate` | **registered** | Official PDF certificate at 100% completion |
-| `/account` | **registered** | Student dashboard: progress, ranks, next lesson, sign-out |
+| `/certificate` | **registered** | Official PDF certificate at 100% completion — **$5 claim** (tuition free), Firebase registry serial |
+| `/account` | **registered** | Student dashboard: progress, ranks, certificate status, **admin-tab detection + who's assigned admin**, sign-out |
 | `/videos` | public | 7 video masterclasses (YouTube embeds) |
 | `/founders` | public | Leadership, testimonials, contact + investor forms |
 | `/invest` | public | Investment opportunities + deal-flow inquiry form |
@@ -115,11 +146,16 @@ Everything is documented live in the admin API explorer (`/api-docs`). Summary:
 
 ## Stack
 
-- **Frontend:** React 19, React Router 7, Tailwind CSS 4, lucide-react, jsPDF, Firebase JS SDK
+- **Frontend:** React 19, React Router 7, Tailwind CSS 4, lucide-react, jsPDF, Firebase JS SDK (Auth + Firestore)
 - **Backend:** Express 5 on Node 22, deploys as a Vercel serverless function;
   Firebase ID-token verification with zero extra dependencies (`node:crypto` + Google certs)
-- **Database:** SQLite (`node:sqlite`) locally; Postgres or Vercel KV on Vercel — one
-  storage abstraction in `server/storage.mjs` with identical admin capabilities everywhere
-- **Content source of truth:** `src/data/content.json` (bundled seed; admin edits override it in the DB)
+- **True database:** **Cloud Firestore** — course catalog, user/admin roles, the $5
+  certificate registry (`src/lib/firestore.ts`, rules in `firestore.rules`). The REST server's
+  SQLite (`node:sqlite`) / Postgres / Vercel KV stores remain as resilient fallbacks
+  (`server/storage.mjs`); content fetchers try Firestore → REST API → bundled seed
+- **Content source of truth:** `src/data/content.json` (bundled seed; publish once to
+  Firestore, then admin edits/Firestore console edits are live immediately)
 
-> For educational purposes only. Not financial advice.
+> For educational purposes only. Not financial advice. Billionaire Blueprint is a
+> tuition-free certification program of the Seedwel Certificate Incorporation — no
+> school has been built; certificates carry a one-time $5 issuance fee.
