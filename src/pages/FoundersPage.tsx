@@ -221,9 +221,8 @@ function InvestorInquirySection() {
             className="inline-flex items-center gap-2 rounded-xl bg-gray-800/80 hover:bg-gray-700 border border-gray-700/80 px-4 py-2.5 text-xs font-bold text-amber-400 transition-all shadow-sm"
           >
             <ShieldCheck className="w-4 h-4" />
-            Admin Login (seed@admin)
+            Executive Admin Portal
           </Link>
-          <span className="text-gray-500 text-xs">Admin Auth • Password: 122023</span>
         </div>
       </div>
 

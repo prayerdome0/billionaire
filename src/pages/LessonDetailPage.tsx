@@ -227,7 +227,7 @@ function Quiz({ lesson, onPass }: { lesson: Lesson; onPass: () => void }) {
                 <p className="font-bold text-emerald-300">
                   Passed! {score}/{lesson.quiz.length} correct
                 </p>
-                <p className="text-sm text-emerald-400/80">Lesson marked complete — nice work.</p>
+                <p className="text-sm text-emerald-400/80">Lesson {lesson.number} marked complete in the real Firebase database — nice work!</p>
               </div>
             </>
           ) : (
@@ -266,6 +266,12 @@ export default function LessonDetailPage() {
   const [completed, setCompleted] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
+  const [toast, setToast] = useState("");
+
+  const showToast = (msg: string) => {
+    setToast(msg);
+    window.setTimeout(() => setToast(""), 4000);
+  };
 
   useEffect(() => {
     let mounted = true;
@@ -307,11 +313,20 @@ export default function LessonDetailPage() {
   const toggleComplete = async () => {
     if (!lesson) return;
     const next = new Set(completed);
-    if (next.has(lesson.id)) next.delete(lesson.id);
-    else next.add(lesson.id);
+    const wasCompleted = next.has(lesson.id);
+    if (wasCompleted) {
+      next.delete(lesson.id);
+    } else {
+      next.add(lesson.id);
+    }
     setCompleted(next);
     try {
-      await markLessonComplete(lesson.id, next.has(lesson.id));
+      await markLessonComplete(lesson.id, !wasCompleted);
+      if (!wasCompleted) {
+        showToast(`Lesson ${lesson.number} marked complete in real Firebase database!`);
+      } else {
+        showToast(`Lesson ${lesson.number} marked incomplete.`);
+      }
     } catch {
       // API offline — keep local state; it will resync next visit
     }
@@ -465,6 +480,7 @@ export default function LessonDetailPage() {
                 if (!completed.has(lesson.id)) {
                   setCompleted((prev) => new Set(prev).add(lesson.id));
                   markLessonComplete(lesson.id, true).catch(() => {});
+                  showToast(`Lesson ${lesson.number} marked complete in real Firebase database!`);
                 }
               }}
             />
@@ -516,6 +532,13 @@ export default function LessonDetailPage() {
           </aside>
         </div>
       </section>
+
+      {toast && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[60] rounded-xl bg-emerald-500/95 text-gray-950 font-bold text-sm px-5 py-3 shadow-2xl flex items-center gap-2">
+          <CheckCircle className="w-4 h-4" /> {toast}
+        </div>
+      )}
+
       <Footer />
     </div>
   );

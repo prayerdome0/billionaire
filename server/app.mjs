@@ -344,29 +344,9 @@ app.post("/api/investors", async (req, res) => {
 /* ===================================================================== */
 
 app.post("/api/admin/login", async (req, res) => {
-  if (!DEV_ADMIN_ENABLED) {
-    return json(res, 403, {
-      error: "Password login is disabled in production. Sign in with your Firebase admin account (role field in Firestore users/{uid}).",
-      code: "USE_FIREBASE",
-    });
-  }
-  const { email = "", password = "" } = req.body || {};
-  const cleanEmail = String(email).trim().toLowerCase();
-  const devPassword = process.env.DEV_ADMIN_PASSWORD || "122023";
-  const allowed = ["seed@admin", "seed@admin.com", ...adminAllowlist()];
-  if (!allowed.includes(cleanEmail) || String(password).trim() !== devPassword) {
-    return json(res, 401, { error: "Invalid credentials (development login)." });
-  }
-  const isZacheus = cleanEmail.includes("zacheus");
-  json(res, 200, {
-    success: true,
-    token: issueDevAdminToken(),
-    admin: {
-      name: isZacheus ? "Zacheus Simbaya" : devAdminUser.name,
-      role: isZacheus ? "Country Director — Zambia (development session)" : "Founder & CEO (development session)",
-      email: cleanEmail,
-      firestoreRole: "admin",
-    },
+  return json(res, 403, {
+    error: "Password login is disabled. Sign in with your Firebase admin account (role field in Firestore users/{uid}).",
+    code: "USE_FIREBASE",
   });
 });
 

@@ -24,7 +24,6 @@ import {
 import { auth, initAnalytics, db } from "./firebase";
 import { doc, getDoc, serverTimestamp, setDoc } from "firebase/firestore";
 import {
-  adminLogin as apiAdminLogin,
   setAuthTokenProvider,
   syncAuthMe,
   type AuthMe,
@@ -38,8 +37,6 @@ export const ADMIN_EMAILS = [
   "zacheus@seedwelinvestment.com",
   "admin@seedwel.com",
 ];
-
-const DEV_TOKEN_KEY = "seed_dev_admin_token";
 
 export interface SessionInfo {
   kind: "firebase" | "dev";
@@ -58,8 +55,6 @@ interface AuthContextValue {
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (name: string, email: string, password: string) => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
-  /** Development-preview admin login (rendered only in dev builds). */
-  devAdminSignIn: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   refreshProfile: () => Promise<void>;
   getIdToken: () => Promise<string | null>;
@@ -111,7 +106,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           return await auth.currentUser.getIdToken();
         } catch {}
       }
-      return localStorage.getItem(DEV_TOKEN_KEY);
+      return null;
     });
   }, []);
 
@@ -128,19 +123,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const restoreDevSession = useCallback(async () => {
-    const token = localStorage.getItem(DEV_TOKEN_KEY);
-    if (!token) {
-      await applyMe(null, null, null);
-      return;
-    }
-    try {
-      const me = await syncAuthMe();
-      await applyMe(me.isAdmin ? me : null, me.isAdmin ? "dev" : null, null);
-      if (!me.isAdmin) localStorage.removeItem(DEV_TOKEN_KEY);
-    } catch {
-      localStorage.removeItem(DEV_TOKEN_KEY);
-      await applyMe(null, null, null);
-    }
+    await applyMe(null, null, null);
   }, [applyMe]);
 
   useEffect(() => {
@@ -224,18 +207,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await sendPasswordResetEmail(auth, email.trim());
   }, []);
 
-  const devAdminSignIn = useCallback(
-    async (email: string, password: string) => {
-      const res = await apiAdminLogin(email, password);
-      localStorage.setItem(DEV_TOKEN_KEY, res.token);
-      const me = await syncAuthMe();
-      await applyMe(me, "dev", null);
-    },
-    [applyMe]
-  );
-
   const logout = useCallback(async () => {
-    localStorage.removeItem(DEV_TOKEN_KEY);
     setFirestoreUser(null);
     await applyMe(null, null, null);
     if (auth.currentUser) await signOut(auth);
@@ -249,7 +221,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return null;
       }
     }
-    return localStorage.getItem(DEV_TOKEN_KEY);
+    return null;
   }, []);
 
   const value = useMemo<AuthContextValue>(
@@ -263,12 +235,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       signIn,
       signUp,
       resetPassword,
-      devAdminSignIn,
       logout,
       refreshProfile,
       getIdToken,
     }),
-    [user, loading, profile, firestoreUser, isAdmin, sessionKind, signIn, signUp, resetPassword, devAdminSignIn, logout, refreshProfile, getIdToken]
+    [user, loading, profile, firestoreUser, isAdmin, sessionKind, signIn, signUp, resetPassword, logout, refreshProfile, getIdToken]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
