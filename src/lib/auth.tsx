@@ -1,5 +1,8 @@
-// Authentication context — Firebase email/password accounts, with the server
-// as the source of truth for admin rights (verified ID token + allowlist).
+// Authentication context — Firebase email/password + Firestore TRUE DATABASE for roles
+// - Users collection: users/{uid} has role field "admin" | "student" (source of truth for admin tabs)
+// - Admin tab detection: AccountPage (student dashboard) shows admin portal link when role=admin OR email allowlisted
+// - Tuition FREE, certificate $5 paid: reflected in certificate flow, not auth, but user sync happens here
+
 import {
   createContext,
   useCallback,
@@ -18,15 +21,17 @@ import {
   updateProfile,
   type User,
 } from "firebase/auth";
-import { auth, initAnalytics } from "./firebase";
+import { auth, initAnalytics, db } from "./firebase";
+import { doc, getDoc, serverTimestamp, setDoc } from "firebase/firestore";
 import {
   adminLogin as apiAdminLogin,
   setAuthTokenProvider,
   syncAuthMe,
   type AuthMe,
 } from "./api";
+import { ensureUserDoc, getUserRole, type FirestoreUser } from "./firestoreDb";
 
-/** Founder & management accounts (UI hint only — the SERVER enforces admin rights). */
+/** Founder & management accounts (UI hint + server allowlist fallback). */
 export const ADMIN_EMAILS = [
   "seedwell@seedwel.com",
   "seedwell@seedwelinvestment.com",
@@ -46,6 +51,8 @@ interface AuthContextValue {
   loading: boolean;
   /** Server-confirmed profile (from /api/auth/me) for the active session. */
   profile: AuthMe["user"] | null;
+  /** Firestore user doc with role field */
+  firestoreUser: FirestoreUser | null;
   isAdmin: boolean;
   sessionKind: "firebase" | "dev" | null;
   signIn: (email: string, password: string) => Promise<void>;
@@ -60,48 +67,79 @@ interface AuthContextValue {
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
+async function syncFirestoreUser(u: User) {
+  try {
+    // check email allowlist to auto-assign admin role in Firestore on first login
+    const isAllowlisted = ADMIN_EMAILS.includes((u.email || "").toLowerCase());
+    const existing = await getUserRole(u.uid);
+
+    // ensure doc exists with correct role
+    const fsUser = await ensureUserDoc({
+      uid: u.uid,
+      email: u.email || "",
+      name: u.displayName || (u.email || "Student").split("@")[0],
+      photoUrl: u.photoURL || "",
+      role: existing?.role || (isAllowlisted ? "admin" : "student"),
+    });
+
+    // if allowlisted but stored as student, promote to admin automatically once
+    if (isAllowlisted && fsUser.role !== "admin") {
+      await setDoc(doc(db, "users", u.uid), { role: "admin", isAdmin: true, lastSeen: serverTimestamp() } as any, { merge: true });
+      return { ...fsUser, role: "admin" as const, isAdmin: true };
+    }
+
+    return fsUser;
+  } catch (e) {
+    console.warn("[auth] firestore sync failed", e);
+    return null;
+  }
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<AuthMe["user"] | null>(null);
+  const [firestoreUser, setFirestoreUser] = useState<FirestoreUser | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [sessionKind, setSessionKind] = useState<"firebase" | "dev" | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     initAnalytics();
-    // The API client attaches this token automatically to authenticated calls.
     setAuthTokenProvider(async () => {
       if (auth.currentUser) {
         try {
           return await auth.currentUser.getIdToken();
-        } catch {
-          /* fall through to dev token */
-        }
+        } catch {}
       }
       return localStorage.getItem(DEV_TOKEN_KEY);
     });
   }, []);
 
-  const applyMe = useCallback((me: AuthMe | null, kind: "firebase" | "dev" | null) => {
+  const applyMe = useCallback(async (me: AuthMe | null, kind: "firebase" | "dev" | null, fsUser: FirestoreUser | null = null) => {
     setProfile(me?.user ?? null);
-    setIsAdmin(!!me?.isAdmin);
+    // admin = firestore role admin OR server said isAdmin OR email allowlist
+    const adminFromFs = fsUser?.role === "admin" || fsUser?.isAdmin;
+    const adminFromServer = !!me?.isAdmin;
+    const adminFromEmail = me?.user?.email ? ADMIN_EMAILS.includes(me.user.email.toLowerCase()) : false;
+    const admin = !!(adminFromFs || adminFromServer || adminFromEmail);
+    setIsAdmin(admin);
     setSessionKind(me ? kind : null);
+    if (fsUser) setFirestoreUser(fsUser);
   }, []);
 
-  // Restore a dev-preview session when there is no Firebase user.
   const restoreDevSession = useCallback(async () => {
     const token = localStorage.getItem(DEV_TOKEN_KEY);
     if (!token) {
-      applyMe(null, null);
+      await applyMe(null, null, null);
       return;
     }
     try {
       const me = await syncAuthMe();
-      applyMe(me.isAdmin ? me : null, me.isAdmin ? "dev" : null);
+      await applyMe(me.isAdmin ? me : null, me.isAdmin ? "dev" : null, null);
       if (!me.isAdmin) localStorage.removeItem(DEV_TOKEN_KEY);
     } catch {
       localStorage.removeItem(DEV_TOKEN_KEY);
-      applyMe(null, null);
+      await applyMe(null, null, null);
     }
   }, [applyMe]);
 
@@ -109,27 +147,39 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const unsub = onAuthStateChanged(auth, async (u) => {
       setUser(u);
       if (u) {
+        // Parallel: sync to Firestore TRUE DB + server
+        let fsUser: FirestoreUser | null = null;
+        let me: AuthMe | null = null;
+
         try {
-          const me = await syncAuthMe();
-          applyMe(me, "firebase");
+          fsUser = await syncFirestoreUser(u);
+        } catch {}
+
+        try {
+          me = await syncAuthMe();
         } catch {
-          // Offline API — still grant UI admin hint by email allowlist.
-          applyMe(
-            {
-              user: {
-                uid: u.uid,
-                email: u.email || "",
-                name: u.displayName || "",
-                photoUrl: u.photoURL || "",
-                role: ADMIN_EMAILS.includes((u.email || "").toLowerCase()) ? "admin" : "student",
-              },
-              isAdmin: ADMIN_EMAILS.includes((u.email || "").toLowerCase()),
-              adminEmails: ADMIN_EMAILS,
+          me = {
+            user: {
+              uid: u.uid,
+              email: u.email || "",
+              name: u.displayName || "",
+              photoUrl: u.photoURL || "",
+              role: (fsUser?.role as any) || (ADMIN_EMAILS.includes((u.email || "").toLowerCase()) ? "admin" : "student"),
             },
-            "firebase"
-          );
+            isAdmin: fsUser?.role === "admin" || ADMIN_EMAILS.includes((u.email || "").toLowerCase()),
+            adminEmails: ADMIN_EMAILS,
+          };
         }
+
+        // if firestore says admin, make sure profile reflects it even if server disagrees (offline)
+        if (fsUser?.role === "admin" && me) {
+          me = { ...me, isAdmin: true, user: { ...me.user, role: "admin" } };
+        }
+
+        setFirestoreUser(fsUser);
+        await applyMe(me, "firebase", fsUser);
       } else {
+        setFirestoreUser(null);
         await restoreDevSession();
       }
       setLoading(false);
@@ -140,11 +190,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const refreshProfile = useCallback(async () => {
     try {
       const me = await syncAuthMe();
-      applyMe(me, auth.currentUser ? "firebase" : "dev");
+      let fsUser: FirestoreUser | null = firestoreUser;
+      if (auth.currentUser) {
+        fsUser = await getUserRole(auth.currentUser.uid);
+        if (fsUser) setFirestoreUser(fsUser);
+      }
+      await applyMe(me, auth.currentUser ? "firebase" : "dev", fsUser);
     } catch {
-      /* keep existing profile */
+      /* keep existing */
     }
-  }, [applyMe]);
+  }, [applyMe, firestoreUser]);
 
   const signIn = useCallback(async (email: string, password: string) => {
     await signInWithEmailAndPassword(auth, email.trim(), password);
@@ -155,6 +210,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (name.trim()) {
       await updateProfile(cred.user, { displayName: name.trim() }).catch(() => {});
     }
+    // create firestore doc immediately with student role (unless allowlisted)
+    const isAllowlisted = ADMIN_EMAILS.includes(email.trim().toLowerCase());
+    await ensureUserDoc({
+      uid: cred.user.uid,
+      email: email.trim(),
+      name: name.trim() || email.split("@")[0],
+      role: isAllowlisted ? "admin" : "student",
+    }).catch(() => {});
   }, []);
 
   const resetPassword = useCallback(async (email: string) => {
@@ -166,14 +229,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const res = await apiAdminLogin(email, password);
       localStorage.setItem(DEV_TOKEN_KEY, res.token);
       const me = await syncAuthMe();
-      applyMe(me, "dev");
+      await applyMe(me, "dev", null);
     },
     [applyMe]
   );
 
   const logout = useCallback(async () => {
     localStorage.removeItem(DEV_TOKEN_KEY);
-    applyMe(null, null);
+    setFirestoreUser(null);
+    await applyMe(null, null, null);
     if (auth.currentUser) await signOut(auth);
   }, [applyMe]);
 
@@ -193,6 +257,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       user,
       loading,
       profile,
+      firestoreUser,
       isAdmin,
       sessionKind,
       signIn,
@@ -203,7 +268,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       refreshProfile,
       getIdToken,
     }),
-    [user, loading, profile, isAdmin, sessionKind, signIn, signUp, resetPassword, devAdminSignIn, logout, refreshProfile, getIdToken]
+    [user, loading, profile, firestoreUser, isAdmin, sessionKind, signIn, signUp, resetPassword, devAdminSignIn, logout, refreshProfile, getIdToken]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
@@ -215,7 +280,6 @@ export function useAuth(): AuthContextValue {
   return ctx;
 }
 
-/** Friendly message for Firebase auth error codes. */
 export function authErrorMessage(err: unknown): string {
   const code = (err as { code?: string })?.code || "";
   switch (code) {

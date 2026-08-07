@@ -158,10 +158,28 @@ class SqliteStore {
         uid TEXT PRIMARY KEY, email TEXT, name TEXT, photo_url TEXT,
         role TEXT NOT NULL DEFAULT 'student', created_at TEXT, last_seen TEXT
       );
+      CREATE TABLE IF NOT EXISTS certificates (
+        id TEXT PRIMARY KEY, uid TEXT NOT NULL, email TEXT, name_on_cert TEXT,
+        completed INTEGER, total INTEGER, pct INTEGER,
+        tuition_model TEXT DEFAULT 'FREE', fee_usd INTEGER DEFAULT 5,
+        paid INTEGER DEFAULT 0, payment_status TEXT DEFAULT 'unpaid',
+        payment_id TEXT, payment_method TEXT,
+        certificate_number TEXT, incorporation_note TEXT,
+        status TEXT DEFAULT 'eligible',
+        claimed_at TEXT, issued_at TEXT, payment_at TEXT
+      );
+      CREATE TABLE IF NOT EXISTS certificate_payments (
+        id TEXT PRIMARY KEY, uid TEXT NOT NULL, email TEXT,
+        amount_usd INTEGER DEFAULT 5, currency TEXT DEFAULT 'USD',
+        purpose TEXT DEFAULT 'certificate_fee', status TEXT DEFAULT 'pending',
+        method TEXT, certificate_claim_id TEXT, created_at TEXT
+      );
       CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
       CREATE INDEX IF NOT EXISTS idx_comments_lesson ON comments(lesson_id);
       CREATE INDEX IF NOT EXISTS idx_progress_client ON lesson_progress(client_id);
       CREATE INDEX IF NOT EXISTS idx_inquiries_email ON investor_inquiries(email);
+      CREATE INDEX IF NOT EXISTS idx_cert_uid ON certificates(uid);
+      CREATE INDEX IF NOT EXISTS idx_cert_pay_uid ON certificate_payments(uid);
     `);
   }
 
@@ -213,9 +231,11 @@ class SqliteStore {
   }
 
   _tableCounts() {
-    const tables = ["founders", "modules", "lessons", "videos", "niches", "posts", "testimonials", "contact_messages", "comments", "subscribers", "investor_inquiries", "lesson_progress", "users"];
+    const tables = ["founders", "modules", "lessons", "videos", "niches", "posts", "testimonials", "contact_messages", "comments", "subscribers", "investor_inquiries", "lesson_progress", "users", "certificates", "certificate_payments"];
     const out = {};
-    for (const t of tables) out[t] = this._count(t);
+    for (const t of tables) {
+      try { out[t] = this._count(t); } catch { out[t] = 0; }
+    }
     return out;
   }
 
@@ -888,6 +908,8 @@ const ADMIN_TABLE_KEYS = {
   investor_inquiries: "id",
   lesson_progress: "id",
   users: "uid",
+  certificates: "id",
+  certificate_payments: "id",
 };
 const ADMIN_TABLES = Object.keys(ADMIN_TABLE_KEYS);
 
@@ -1018,6 +1040,47 @@ Object.assign(SqliteStore.prototype, {
       name: r.uname || `Student ${maskClient(r.cid)}`,
       completed: r.c,
     }));
+  },
+  /* ---- certificates ($5 paid, tuition FREE, incorporation) ---- */
+  async upsertCertificate(c) {
+    this.db.prepare(
+      `INSERT INTO certificates (id, uid, email, name_on_cert, completed, total, pct, tuition_model, fee_usd, paid, payment_status, payment_id, payment_method, certificate_number, incorporation_note, status, claimed_at, issued_at, payment_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+       ON CONFLICT(id) DO UPDATE SET email=excluded.email, name_on_cert=excluded.name_on_cert, completed=excluded.completed, total=excluded.total, pct=excluded.pct, paid=excluded.paid, payment_status=excluded.payment_status, payment_id=excluded.payment_id, payment_method=excluded.payment_method, status=excluded.status, issued_at=excluded.issued_at, payment_at=excluded.payment_at`
+    ).run(
+      c.id, c.uid, c.email || "", c.nameOnCert || c.name_on_cert || "", c.completed || 0, c.total || 0, c.pct || c.percentage || 0,
+      c.tuitionModel || "FREE", c.feeUsd || 5, c.paid ? 1 : 0, c.paymentStatus || "unpaid", c.paymentId || "", c.paymentMethod || "",
+      c.certificateNumber || "", c.incorporationNote || "Certificate Incorporation 2025 - No physical school built yet",
+      c.status || "eligible", c.claimedAt || nowIso(), c.issuedAt || "", c.paymentAt || ""
+    );
+    return this.getCertificate(c.id);
+  },
+  async getCertificate(id) {
+    return this.db.prepare("SELECT * FROM certificates WHERE id = ?").get(id);
+  },
+  async getCertificateByUid(uid) {
+    return this.db.prepare("SELECT * FROM certificates WHERE uid = ?").get(uid);
+  },
+  async listCertificates() {
+    return this.db.prepare("SELECT * FROM certificates ORDER BY claimed_at DESC LIMIT 200").all();
+  },
+  async markCertificatePaid(id, paymentId, method) {
+    this.db.prepare("UPDATE certificates SET paid=1, payment_status='paid', payment_id=?, payment_method=?, status='claimed', issued_at=?, payment_at=? WHERE id=?")
+      .run(paymentId, method, nowIso(), nowIso(), id);
+    return this.getCertificate(id);
+  },
+  async addCertificatePayment(p) {
+    this.db.prepare(
+      `INSERT OR REPLACE INTO certificate_payments (id, uid, email, amount_usd, currency, purpose, status, method, certificate_claim_id, created_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+    ).run(p.id, p.uid, p.email || "", p.amountUsd || 5, p.currency || "USD", p.purpose || "certificate_fee", p.status || "pending", p.method || "", p.certificateClaimId || "", p.createdAt || nowIso());
+    return this.db.prepare("SELECT * FROM certificate_payments WHERE id = ?").get(p.id);
+  },
+  async confirmCertificatePayment(id, status) {
+    this.db.prepare("UPDATE certificate_payments SET status=? WHERE id=?").run(status, id);
+  },
+  async listCertificatePayments() {
+    return this.db.prepare("SELECT * FROM certificate_payments ORDER BY created_at DESC LIMIT 200").all();
   },
 });
 
@@ -1167,6 +1230,8 @@ const CONTENT_MAP_DEFS = {
   modules: { seedKey: "modules", idOf: (x) => x.id, sort: (a, b) => (a.number ?? 0) - (b.number ?? 0) },
   testimonials: { seedKey: "testimonials", idOf: (_x, i) => String(i + 1), sort: () => 0 },
   users: { seedKey: null, idOf: (x) => x.uid, sort: (a, b) => String(b.last_seen || "").localeCompare(String(a.last_seen || "")) },
+  certificates: { seedKey: null, idOf: (x) => x.id, sort: (a, b) => String(b.claimed_at || "").localeCompare(String(a.claimed_at || "")) },
+  certificate_payments: { seedKey: null, idOf: (x) => x.id, sort: (a, b) => String(b.created_at || "").localeCompare(String(a.created_at || "")) },
 };
 
 /**
@@ -1333,6 +1398,8 @@ function mapBackedMethods(readMap, writeMap, dyn) {
         case "posts": return m.listPosts.call(this);
         case "modules": return m.listModules.call(this);
         case "testimonials": return Object.values(await read(this, "testimonials"));
+        case "certificates": return Object.values(await read(this, "certificates"));
+        case "certificate_payments": return Object.values(await read(this, "certificate_payments"));
         default: throw new Error(`Unknown table: ${table}`);
       }
     },
@@ -1357,6 +1424,20 @@ function mapBackedMethods(readMap, writeMap, dyn) {
         case "niches": return m.deleteNiche.call(this, key);
         case "posts": return m.deletePost.call(this, key);
         case "modules": return m.deleteModule.call(this, key);
+        case "certificates": {
+          const map = await read(this, "certificates");
+          const existed = String(key) in map;
+          delete map[String(key)];
+          await writeMap.call(this, "certificates", map);
+          return existed;
+        }
+        case "certificate_payments": {
+          const map = await read(this, "certificate_payments");
+          const existed = String(key) in map;
+          delete map[String(key)];
+          await writeMap.call(this, "certificate_payments", map);
+          return existed;
+        }
         case "testimonials": {
           const map = await read(this, "testimonials");
           const existed = String(key) in map;
