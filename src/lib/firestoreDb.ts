@@ -367,6 +367,126 @@ export async function markCertificatePaid(params: {
   }
 }
 
+/**
+ * Admin approves a payment. Updates payment record to "succeeded",
+ * marks certificate as paid, and records who approved it.
+ */
+export async function approvePaymentByAdmin(params: {
+  uid: string;
+  paymentId: string;
+  method: CertificateClaim["paymentMethod"];
+  adminUid?: string;
+}): Promise<CertificateClaim | null> {
+  // 1. Update payment record to succeeded
+  try {
+    await updateDoc(doc(db, "certificate_payments", params.paymentId), {
+      status: "succeeded",
+      approvedBy: params.adminUid || "admin",
+      approvedAt: serverTimestamp(),
+    } as any);
+  } catch (e) {
+    console.error("[firestore] approvePaymentByAdmin: update payment failed", e);
+    throw e;
+  }
+
+  // 2. Mark certificate as paid
+  const ref = doc(db, "certificates", params.uid);
+  try {
+    const snap = await getDoc(ref);
+    if (!snap.exists()) return null;
+    const data = snap.data() as CertificateClaim;
+    const updated: Partial<CertificateClaim> = {
+      paid: true,
+      paymentStatus: "paid",
+      paymentId: params.paymentId,
+      paymentMethod: params.method,
+      paymentAt: serverTimestamp() as any,
+      status: "claimed",
+      issuedAt: serverTimestamp() as any,
+      approvedBy: params.adminUid || "admin",
+    };
+    await updateDoc(ref, updated as any);
+    return { ...data, ...updated } as CertificateClaim;
+  } catch (e) {
+    console.error("[firestore] approvePaymentByAdmin: mark cert paid failed", e);
+    throw e;
+  }
+}
+
+/**
+ * Admin rejects a payment. Updates payment record to "failed".
+ * Certificate claim reverts to "eligible" so student can try again.
+ */
+export async function rejectPaymentByAdmin(params: {
+  uid: string;
+  paymentId: string;
+  reason?: string;
+}): Promise<void> {
+  // 1. Update payment record to failed
+  try {
+    await updateDoc(doc(db, "certificate_payments", params.paymentId), {
+      status: "failed",
+      rejectedAt: serverTimestamp(),
+      rejectionReason: params.reason || "Rejected by admin",
+    } as any);
+  } catch (e) {
+    console.error("[firestore] rejectPaymentByAdmin: update payment failed", e);
+    throw e;
+  }
+
+  // 2. Revert certificate claim to eligible (so student can retry)
+  const ref = doc(db, "certificates", params.uid);
+  try {
+    const snap = await getDoc(ref);
+    if (!snap.exists()) return;
+    await updateDoc(ref, {
+      paid: false,
+      paymentStatus: "unpaid",
+      status: "eligible",
+    } as any);
+  } catch (e) {
+    console.error("[firestore] rejectPaymentByAdmin: revert cert failed", e);
+    throw e;
+  }
+}
+
+/**
+ * Mark a certificate claim as awaiting admin approval.
+ * Called when student initiates payment.
+ */
+export async function setCertificatePendingApproval(params: {
+  uid: string;
+  paymentId: string;
+  method: CertificateClaim["paymentMethod"];
+}): Promise<void> {
+  const ref = doc(db, "certificates", params.uid);
+  try {
+    await updateDoc(ref, {
+      paymentStatus: "pending",
+      paymentId: params.paymentId,
+      paymentMethod: params.method,
+      status: "eligible",
+    } as any);
+  } catch (e) {
+    console.error("[firestore] setCertificatePendingApproval failed", e);
+    throw e;
+  }
+}
+
+/**
+ * List all pending payments (for admin review).
+ */
+export async function listPendingPaymentsFirestore(): Promise<PaymentRecord[]> {
+  try {
+    const snap = await getDocs(
+      query(col.payments, where("status", "==", "pending"), orderBy("createdAt", "desc"), limit(100))
+    );
+    return snap.docs.map((d) => ({ id: d.id, ...d.data() } as PaymentRecord));
+  } catch {
+    return [];
+  }
+}
+
 export async function createPaymentRecord(params: { uid: string; email: string; method: string; certificateClaimId?: string }): Promise<PaymentRecord> {
   const id = `pay_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
   const record: PaymentRecord = {

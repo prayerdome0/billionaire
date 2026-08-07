@@ -3,114 +3,168 @@ import {
   ArrowRight,
   Award,
   BookOpen,
-  Newspaper,
-  PlayCircle,
-  Quote,
-  Star,
+  Briefcase,
+  Building2,
+  GraduationCap,
+  Handshake,
+  Lightbulb,
+  Rocket,
+  Target,
+  TrendingUp,
   Users,
-  TerminalSquare,
 } from "lucide-react";
 import Navbar from "../components/Navbar";
-import HeroSection from "../components/HeroSection";
-import StepsSection from "../components/StepsSection";
-import PrinciplesSection from "../components/PrinciplesSection";
-import NichesSection from "../components/NichesSection";
-import ComparisonSection from "../components/ComparisonSection";
-import GallerySection from "../components/GallerySection";
-import DownloadSection from "../components/DownloadSection";
 import Footer from "../components/Footer";
-import { founders, getFounder, lessons, posts, testimonials, videos } from "../data/content";
 
-function ExploreSection() {
-  const cards = [
-    {
-      to: "/lessons",
-      icon: BookOpen,
-      title: "28 In-Depth Lessons",
-      desc: "A complete curriculum across 6 modules — mindset, money mechanics, business, investing, niches, and execution. Each lesson ends with quizzes and action steps.",
-      accent: "from-amber-500 to-yellow-600",
-      stat: `${lessons.length} lessons · 6 modules · 84 quiz questions`,
-    },
-    {
-      to: "/videos",
-      icon: PlayCircle,
-      title: "Video Masterclasses",
-      desc: "Watch the same frameworks taught by the world's best — Ray Dalio, Naval Ravikant, Simon Sinek, and more — with course commentary on every video.",
-      accent: "from-sky-500 to-blue-600",
-      stat: `${videos.length} curated masterclasses · playable in-page`,
-    },
-    {
-      to: "/founders",
-      icon: Users,
-      title: "Meet the Founders",
-      desc: "The four mentors behind the Blueprint — their stories, their playbooks, and direct contact for mentorship questions.",
-      accent: "from-rose-500 to-red-600",
-      stat: `${founders.length} founders · real bios · contact form`,
-    },
-    {
-      to: "/api-docs",
-      icon: TerminalSquare,
-      title: "Live REST API + Database",
-      desc: "Everything on this site runs through a SQLite-backed REST API. Explore the endpoints, inspect the database, and see the data flow in real time.",
-      accent: "from-emerald-500 to-teal-600",
-      stat: "20+ endpoints · SQLite database · live queries",
-    },
-    {
-      to: "/blog",
-      icon: Newspaper,
-      title: "Blog & Newsletter",
-      desc: "Weekly essays from the founders plus a newsletter — the brief delivers one actionable wealth lesson every Friday.",
-      accent: "from-orange-500 to-amber-600",
-      stat: "6 articles · weekly newsletter · DB subscribers",
-    },
-    {
-      to: "/certificate",
-      icon: Award,
-      title: "Certification & Search",
-      desc: "Finish all 28 lessons to unlock your official certificate of completion, and search the entire platform in milliseconds.",
-      accent: "from-purple-500 to-indigo-600",
-      stat: "PDF certificate · site-wide search",
-    },
-  ];
+function HeroSection() {
+  return (
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
+      <div className="absolute inset-0">
+        <div className="absolute inset-0 bg-gradient-to-b from-gray-950 via-gray-950/95 to-gray-950" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-amber-500/5 rounded-full blur-3xl" />
+      </div>
 
+      <div className="relative z-10 text-center px-4 max-w-5xl mx-auto">
+        <div className="flex flex-col items-center justify-center mb-8">
+          <div className="w-24 h-24 md:w-28 md:h-28 rounded-3xl bg-white/95 p-3.5 shadow-2xl shadow-amber-500/20 mb-6 border-2 border-amber-500/40">
+            <img
+              src="/images/seedwel-logo.svg"
+              alt="Seedwel Investment Limited Logo"
+              className="w-full h-full object-contain"
+            />
+          </div>
+          <div className="inline-flex items-center gap-2 bg-amber-500/10 border border-amber-500/30 rounded-full px-5 py-2">
+            <span className="text-amber-300 text-xs md:text-sm font-bold tracking-wider uppercase">
+              SEEDWEL INVESTMENT LIMITED • ZAMBIA
+            </span>
+          </div>
+        </div>
+
+        <h1 className="text-4xl md:text-6xl lg:text-7xl font-black text-white mb-6 leading-tight tracking-tight">
+          Building Skills. Creating Opportunities.{" "}
+          <span className="bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-500 bg-clip-text text-transparent">
+            Investing in the Future.
+          </span>
+        </h1>
+
+        <p className="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto mb-4 leading-relaxed">
+          We are building a new generation of opportunities through education, technology, professional skills, and strategic investment.
+        </p>
+
+        <p className="text-sm text-gray-400 max-w-2xl mx-auto mb-10">
+          Our journey begins with digital learning and professional services, with a long-term vision of establishing modern schools and learning centres that create meaningful opportunities for individuals and communities.
+        </p>
+
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <Link
+            to="/courses"
+            className="group bg-gradient-to-r from-amber-500 to-yellow-500 text-gray-900 font-bold px-8 py-4 rounded-xl text-lg hover:from-amber-400 hover:to-yellow-400 transition-all duration-300 shadow-lg shadow-amber-500/25 hover:shadow-amber-500/40 hover:scale-105"
+          >
+            Explore Courses
+          </Link>
+          <Link
+            to="/partnerships"
+            className="group flex items-center gap-2 bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 font-bold px-8 py-4 rounded-xl text-lg hover:bg-emerald-500/30 hover:border-emerald-500/60 transition-all duration-300"
+          >
+            Partner With Us
+          </Link>
+          <Link
+            to="/investment"
+            className="group flex items-center gap-2 bg-white/5 border border-white/10 text-white font-semibold px-8 py-4 rounded-xl text-lg hover:bg-white/10 hover:border-amber-500/30 transition-all duration-300"
+          >
+            Investment Opportunities
+          </Link>
+        </div>
+
+        <div className="mt-16 grid grid-cols-2 sm:grid-cols-4 gap-6 max-w-3xl mx-auto">
+          <div className="text-center">
+            <div className="text-2xl md:text-3xl font-bold text-amber-400">Education</div>
+            <div className="text-xs text-gray-500 mt-1">Online & Practical</div>
+          </div>
+          <div className="text-center">
+            <div className="text-2xl md:text-3xl font-bold text-amber-400">Technology</div>
+            <div className="text-xs text-gray-500 mt-1">Digital Solutions</div>
+          </div>
+          <div className="text-center">
+            <div className="text-2xl md:text-3xl font-bold text-amber-400">Skills</div>
+            <div className="text-xs text-gray-500 mt-1">Professional Training</div>
+          </div>
+          <div className="text-center">
+            <div className="text-2xl md:text-3xl font-bold text-amber-400">Investment</div>
+            <div className="text-xs text-gray-500 mt-1">Strategic Partners</div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function VisionSection() {
   return (
     <section className="py-24 bg-gray-900 relative overflow-hidden">
       <div className="max-w-6xl mx-auto px-4">
-        <div className="text-center mb-16">
-          <span className="text-amber-400 text-sm font-semibold tracking-widest uppercase">Beyond the Guide</span>
-          <h2 className="text-4xl md:text-5xl font-black text-white mt-3 mb-5">
-            A Full Learning{" "}
-            <span className="bg-gradient-to-r from-amber-300 to-yellow-500 bg-clip-text text-transparent">
-              Platform
-            </span>
-          </h2>
-          <p className="text-gray-400 max-w-2xl mx-auto text-lg">
-            The Blueprint is no longer a single page — it's a complete platform with lessons, videos, mentors, and an open API.
-          </p>
+        <div className="grid md:grid-cols-2 gap-12 items-center">
+          <div>
+            <span className="text-amber-400 text-sm font-semibold tracking-widest uppercase">Our Vision</span>
+            <h2 className="text-3xl md:text-4xl font-black text-white mt-3 mb-5">
+              A future where quality education, practical skills, technology, and employment opportunities are accessible to more people.
+            </h2>
+            <p className="text-gray-400 leading-relaxed">
+              We envision establishing modern educational institutions that combine academic learning with practical digital and professional skills.
+            </p>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            {[
+              { icon: GraduationCap, title: "Education", desc: "Accessible, practical, high-quality" },
+              { icon: Lightbulb, title: "Technology", desc: "Digital solutions & platforms" },
+              { icon: Briefcase, title: "Employment", desc: "Career opportunities" },
+              { icon: TrendingUp, title: "Investment", desc: "Sustainable growth" },
+            ].map((item, i) => (
+              <div key={i} className="bg-gray-950/60 border border-gray-800 rounded-2xl p-5 hover:border-amber-500/30 transition-all">
+                <div className="w-11 h-11 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center mb-3">
+                  <item.icon className="w-5 h-5 text-amber-400" />
+                </div>
+                <h3 className="font-bold text-white text-sm">{item.title}</h3>
+                <p className="text-gray-500 text-xs mt-1">{item.desc}</p>
+              </div>
+            ))}
+          </div>
         </div>
+      </div>
+    </section>
+  );
+}
 
-        <div className="grid md:grid-cols-2 gap-6">
-          {cards.map((card) => (
-            <Link
-              key={card.to}
-              to={card.to}
-              className="group relative bg-gray-950/60 border border-gray-800 rounded-2xl p-8 hover:border-amber-500/40 transition-all duration-500 hover:shadow-xl hover:shadow-amber-500/5 hover:-translate-y-1 overflow-hidden"
-            >
-              <div className={`absolute -top-12 -right-12 w-40 h-40 bg-gradient-to-br ${card.accent} opacity-10 rounded-full blur-2xl group-hover:opacity-20 transition-opacity`} />
-              <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${card.accent} flex items-center justify-center text-gray-950 mb-6 group-hover:scale-110 transition-transform duration-300`}>
-                <card.icon className="w-7 h-7" />
+function MissionSection() {
+  const missions = [
+    "Develop accessible and practical online courses",
+    "Equip learners with skills that can be applied in the workplace",
+    "Create opportunities for talented individuals to grow professionally",
+    "Develop digital and technology-based solutions",
+    "Build partnerships with organizations, businesses, and investors",
+    "Establish schools and learning centres in the future",
+    "Create employment opportunities as the company expands",
+    "Support young people and professionals in developing valuable skills",
+  ];
+
+  return (
+    <section className="py-24 bg-gray-950 relative overflow-hidden">
+      <div className="max-w-6xl mx-auto px-4">
+        <div className="text-center mb-16">
+          <span className="text-amber-400 text-sm font-semibold tracking-widest uppercase">Our Mission</span>
+          <h2 className="text-3xl md:text-4xl font-black text-white mt-3 mb-5">
+            What Drives Us{" "}
+            <span className="bg-gradient-to-r from-amber-300 to-yellow-500 bg-clip-text text-transparent">Forward</span>
+          </h2>
+        </div>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {missions.map((m, i) => (
+            <div key={i} className="bg-gray-900/60 border border-gray-800 rounded-2xl p-5 hover:border-amber-500/30 transition-all">
+              <div className="w-8 h-8 rounded-lg bg-amber-500/15 border border-amber-500/30 flex items-center justify-center mb-3 text-amber-400 font-black text-sm">
+                {i + 1}
               </div>
-              <h3 className="text-2xl font-bold text-white mb-3 group-hover:text-amber-300 transition-colors">
-                {card.title}
-              </h3>
-              <p className="text-gray-400 text-sm leading-relaxed mb-5">{card.desc}</p>
-              <div className="flex items-center justify-between">
-                <span className="text-xs text-gray-500 font-mono">{card.stat}</span>
-                <span className="flex items-center gap-2 text-amber-400 text-sm font-semibold opacity-0 group-hover:opacity-100 transition-opacity">
-                  Explore <ArrowRight className="w-4 h-4" />
-                </span>
-              </div>
-            </Link>
+              <p className="text-gray-300 text-sm leading-relaxed">{m}</p>
+            </div>
           ))}
         </div>
       </div>
@@ -118,61 +172,45 @@ function ExploreSection() {
   );
 }
 
-function BlogPreview() {
-  const latest = [...posts].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 3);
+function ServicesPreview() {
+  const services = [
+    { icon: BookOpen, title: "Online Courses", desc: "Practical professional & digital skills", to: "/courses" },
+    { icon: Building2, title: "School Development", desc: "Long-term learning centres", to: "/about" },
+    { icon: TrendingUp, title: "Investment", desc: "Strategic opportunities", to: "/investment" },
+    { icon: Handshake, title: "Partnerships", desc: "Collaborate with us", to: "/partnerships" },
+  ];
+
   return (
     <section className="py-24 bg-gray-900 relative overflow-hidden">
       <div className="max-w-6xl mx-auto px-4">
         <div className="text-center mb-16">
-          <span className="text-amber-400 text-sm font-semibold tracking-widest uppercase">From the Blog</span>
-          <h2 className="text-4xl md:text-5xl font-black text-white mt-3 mb-5">
-            Insights From the{" "}
-            <span className="bg-gradient-to-r from-amber-300 to-yellow-500 bg-clip-text text-transparent">
-              Founders
-            </span>
+          <span className="text-amber-400 text-sm font-semibold tracking-widest uppercase">What We Do</span>
+          <h2 className="text-3xl md:text-4xl font-black text-white mt-3 mb-5">
+            Our{" "}
+            <span className="bg-gradient-to-r from-amber-300 to-yellow-500 bg-clip-text text-transparent">Services</span>
           </h2>
-          <p className="text-gray-400 max-w-2xl mx-auto text-lg">
-            Investing frameworks, pricing plays, AI strategy, and real estate math — written by the team.
-          </p>
         </div>
-        <div className="grid md:grid-cols-3 gap-6">
-          {latest.map((post) => {
-            const author = getFounder(post.authorId);
-            return (
-              <Link
-                key={post.slug}
-                to={`/blog/${post.slug}`}
-                className="group flex flex-col bg-gray-950/60 border border-gray-800 rounded-2xl p-7 hover:border-amber-500/40 hover:-translate-y-1 transition-all duration-300"
-              >
-                <div className="flex items-center gap-2 text-xs text-gray-500 mb-4">
-                  <span className="font-mono">{post.date}</span>
-                  <span>·</span>
-                  <span>{post.readTime}</span>
-                </div>
-                <h3 className="text-lg font-bold text-white mb-3 group-hover:text-amber-300 transition-colors leading-snug flex-1">
-                  {post.title}
-                </h3>
-                <div className="flex items-center justify-between mt-4">
-                  <div className="flex items-center gap-2">
-                    {author && (
-                      <img src={author.photo} alt={author.name} className="w-7 h-7 rounded-full object-cover object-top border border-amber-500/30" />
-                    )}
-                    <span className="text-xs text-gray-500">{author?.name}</span>
-                  </div>
-                  <span className="flex items-center gap-1.5 text-amber-400 text-xs font-semibold">
-                    Read <ArrowRight className="w-3.5 h-3.5" />
-                  </span>
-                </div>
-              </Link>
-            );
-          })}
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {services.map((s, i) => (
+            <Link
+              key={i}
+              to={s.to}
+              className="group bg-gray-950/60 border border-gray-800 rounded-2xl p-6 hover:border-amber-500/40 transition-all duration-300 hover:-translate-y-1"
+            >
+              <div className="w-12 h-12 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                <s.icon className="w-6 h-6 text-amber-400" />
+              </div>
+              <h3 className="text-lg font-bold text-white mb-2 group-hover:text-amber-300 transition-colors">{s.title}</h3>
+              <p className="text-gray-400 text-sm">{s.desc}</p>
+            </Link>
+          ))}
         </div>
         <div className="text-center mt-10">
           <Link
-            to="/blog"
-            className="inline-flex items-center gap-3 bg-gray-800/60 border border-gray-700 text-white font-semibold px-8 py-4 rounded-xl hover:border-amber-500/40 hover:text-amber-400 transition-all"
+            to="/services"
+            className="inline-flex items-center gap-2 text-amber-400 font-semibold hover:gap-3 transition-all"
           >
-            <Newspaper className="w-5 h-5 text-amber-400" /> All Articles
+            View All Services <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
       </div>
@@ -180,34 +218,41 @@ function BlogPreview() {
   );
 }
 
-function TestimonialStrip() {
+function CTASection() {
   return (
-    <section className="py-24 bg-gray-950 relative">
-      <div className="max-w-6xl mx-auto px-4">
-        <div className="text-center mb-16">
-          <span className="text-amber-400 text-sm font-semibold tracking-widest uppercase">Student Results</span>
-          <h2 className="text-4xl md:text-5xl font-black text-white mt-3 mb-5">
-            What Our{" "}
-            <span className="bg-gradient-to-r from-amber-300 to-yellow-500 bg-clip-text text-transparent">
-              Students Say
-            </span>
-          </h2>
-        </div>
-        <div className="grid md:grid-cols-3 gap-6">
-          {testimonials.map((t, i) => (
-            <div key={i} className="bg-gray-900/70 border border-gray-800 rounded-2xl p-8 hover:border-amber-500/30 transition-all">
-              <div className="flex gap-1 mb-4">
-                {Array.from({ length: t.rating }).map((_, s) => (
-                  <Star key={s} className="w-4 h-4 text-amber-400 fill-amber-400" />
-                ))}
+    <section className="py-24 bg-gray-950 relative overflow-hidden">
+      <div className="absolute inset-0">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-amber-500/5 rounded-full blur-3xl" />
+      </div>
+      <div className="relative z-10 max-w-4xl mx-auto px-4 text-center">
+        <h2 className="text-3xl md:text-4xl font-black text-white mb-5">
+          Learn. Invest. Partner.{" "}
+          <span className="bg-gradient-to-r from-amber-300 to-yellow-500 bg-clip-text text-transparent">Build the Future.</span>
+        </h2>
+        <p className="text-gray-400 max-w-2xl mx-auto mb-10">
+          Whether you are a learner, investor, organization, educator, or strategic partner — we welcome opportunities to work together.
+        </p>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {[
+            { label: "For Learners", desc: "Start developing practical skills", to: "/courses", icon: GraduationCap },
+            { label: "For Investors", desc: "Help build tomorrow's infrastructure", to: "/investment", icon: TrendingUp },
+            { label: "For Partners", desc: "Develop new opportunities together", to: "/partnerships", icon: Handshake },
+            { label: "For Professionals", desc: "Join our growing network", to: "/careers", icon: Users },
+          ].map((item, i) => (
+            <Link
+              key={i}
+              to={item.to}
+              className="group bg-gray-900/60 border border-gray-800 rounded-2xl p-6 hover:border-amber-500/40 transition-all duration-300 hover:-translate-y-1 text-left"
+            >
+              <div className="w-11 h-11 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center mb-3">
+                <item.icon className="w-5 h-5 text-amber-400" />
               </div>
-              <Quote className="w-8 h-8 text-amber-500/20 mb-4" />
-              <p className="text-gray-300 text-sm leading-relaxed mb-6">"{t.text}"</p>
-              <div>
-                <div className="text-white font-semibold text-sm">{t.name}</div>
-                <div className="text-gray-500 text-xs">{t.role}</div>
-              </div>
-            </div>
+              <h3 className="font-bold text-white group-hover:text-amber-300 transition-colors">{item.label}</h3>
+              <p className="text-gray-500 text-xs mt-1">{item.desc}</p>
+              <span className="inline-flex items-center gap-1 text-amber-400 text-xs font-semibold mt-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                Learn more <ArrowRight className="w-3 h-3" />
+              </span>
+            </Link>
           ))}
         </div>
       </div>
@@ -220,15 +265,10 @@ export default function HomePage() {
     <div className="min-h-screen bg-gray-950 text-white">
       <Navbar />
       <HeroSection />
-      <ExploreSection />
-      <StepsSection />
-      <PrinciplesSection />
-      <NichesSection />
-      <ComparisonSection />
-      <GallerySection />
-      <BlogPreview />
-      <TestimonialStrip />
-      <DownloadSection />
+      <VisionSection />
+      <MissionSection />
+      <ServicesPreview />
+      <CTASection />
       <Footer />
     </div>
   );

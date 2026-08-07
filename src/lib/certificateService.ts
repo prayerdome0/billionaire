@@ -6,8 +6,14 @@
  * - Certificate is $5 to claim (paid) — verification, anti-forgery, incorporation admin fee.
  * - We have NOT built any physical school; we are a Certificate Incorporation entity registered 2025.
  * - Admin role is stored in Firebase users/{uid} with role field.
+ * - Admin must APPROVE each payment before certificate is issued.
  *
- * Payment methods: card (Stripe-like), PayPal, mobile money, manual verification by admin.
+ * Payment flow:
+ * 1. Student initiates payment → payment record created with status "pending"
+ * 2. Certificate claim status set to "pending_approval"
+ * 3. Admin reviews and approves/rejects
+ * 4. On approve → payment status "succeeded", certificate marked paid
+ * 5. On reject → payment status "failed", certificate stays eligible
  */
 
 import { CERTIFICATE_FEE_USD } from "./firebase";
@@ -16,7 +22,8 @@ import {
   createOrUpdateCertificateClaim,
   markCertificatePaid,
   createPaymentRecord,
-  confirmPaymentRecord,
+  approvePaymentByAdmin,
+  rejectPaymentByAdmin,
   certificateIncorporationNote,
   genCertificateNumber,
   type CertificateClaim,
@@ -28,14 +35,15 @@ export const INCORPORATION_MESSAGE =
   "Seedwel Investment Limited is a Certificate Incorporation entity registered in 2025. " +
   "We have NOT built any physical school structure yet. " +
   "We provide educational curriculum FREE of charge (tuition = $0). " +
-  "Official certificate issuance, verification registry, and incorporation administrative handling is a paid service at $5 per certificate.";
+  "Official certificate issuance, verification registry, and incorporation administrative handling is a paid service at $5 per certificate. " +
+  "All payments require admin approval before the certificate is issued.";
 
 export interface PaymentIntent {
   id: string;
   amount: number;
   currency: string;
   description: string;
-  status: "requires_payment" | "processing" | "succeeded" | "failed";
+  status: "requires_payment" | "pending" | "processing" | "succeeded" | "failed";
   paymentMethod: "card" | "paypal" | "mobile_money" | "manual";
   created: number;
 }
@@ -57,6 +65,11 @@ export async function getOrCreateClaim(uid: string, email: string, name: string,
   return createOrUpdateCertificateClaim({ uid, email, nameOnCertificate: name, completed, total });
 }
 
+/**
+ * Student initiates a payment. Creates a payment record with "pending" status
+ * and updates the certificate claim to "awaiting_approval".
+ * No automatic processing — admin must approve.
+ */
 export async function initiatePayment(params: {
   uid: string;
   email: string;
@@ -75,7 +88,7 @@ export async function initiatePayment(params: {
     amount: CERTIFICATE_FEE,
     currency: "USD",
     description: `Seedwel Certificate - Incorporation Fee $${CERTIFICATE_FEE} - Verification & Issuance`,
-    status: "requires_payment",
+    status: "pending",
     paymentMethod: params.method,
     created: Date.now(),
   };
@@ -84,33 +97,37 @@ export async function initiatePayment(params: {
 }
 
 /**
- * Simulate payment processing.
- * In production, replace with Stripe Checkout / PayPal SDK / Mobile Money API.
- * For now: 2-second delay then success.
+ * Admin approves a payment. Updates payment record to "succeeded" and
+ * marks the certificate claim as paid.
  */
-export async function processMockPayment(paymentId: string, method: PaymentIntent["paymentMethod"]): Promise<{ success: boolean; transactionId: string }> {
-  // simulate network
-  await new Promise((r) => setTimeout(r, 1800));
-
-  // 95% success rate mock
-  const success = Math.random() > 0.05;
-  const txId = `txn_${method}_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
-
-  await confirmPaymentRecord(paymentId, success);
-
-  return { success, transactionId: success ? txId : "" };
+export async function adminApprovePayment(params: {
+  uid: string;
+  paymentId: string;
+  method: PaymentIntent["paymentMethod"];
+  adminUid?: string;
+}): Promise<CertificateClaim | null> {
+  return approvePaymentByAdmin({
+    uid: params.uid,
+    paymentId: params.paymentId,
+    method: params.method,
+    adminUid: params.adminUid,
+  });
 }
 
-export async function finalizeCertificateAfterPayment(params: { uid: string; paymentId: string; method: PaymentIntent["paymentMethod"] }): Promise<CertificateClaim | null> {
-  const proc = await processMockPayment(params.paymentId, params.method);
-  if (!proc.success) throw new Error("Payment failed — please try again or contact support.");
-
-  const claim = await markCertificatePaid({
+/**
+ * Admin rejects a payment. Updates payment record to "failed".
+ * Certificate claim stays eligible so student can try again.
+ */
+export async function adminRejectPayment(params: {
+  uid: string;
+  paymentId: string;
+  reason?: string;
+}): Promise<void> {
+  return rejectPaymentByAdmin({
     uid: params.uid,
-    paymentId: proc.transactionId,
-    method: params.method,
+    paymentId: params.paymentId,
+    reason: params.reason,
   });
-  return claim;
 }
 
 export function formatIncorporationDisclaimer(): string {

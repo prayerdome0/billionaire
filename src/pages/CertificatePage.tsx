@@ -16,6 +16,7 @@ import {
   Building2,
   Info,
   BadgeCheck,
+  Clock,
 } from "lucide-react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
@@ -25,11 +26,11 @@ import { fetchLessons, fetchProgress } from "../lib/api";
 import {
   getCertificateStatus,
   createOrUpdateCertificateClaim,
+  setCertificatePendingApproval,
   type CertificateClaim,
 } from "../lib/firestoreDb";
 import {
   initiatePayment,
-  finalizeCertificateAfterPayment,
   CERTIFICATE_FEE,
   INCORPORATION_MESSAGE,
   type PaymentIntent,
@@ -56,7 +57,7 @@ export default function CertificatePage() {
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("card");
   const [paymentIntent, setPaymentIntent] = useState<PaymentIntent | null>(null);
   const [paying, setPaying] = useState(false);
-  const [payStatus, setPayStatus] = useState<"idle" | "requires_payment" | "processing" | "paid" | "failed">("idle");
+  const [payStatus, setPayStatus] = useState<"idle" | "pending" | "paid" | "failed">("idle");
 
   useEffect(() => {
     let mounted = true;
@@ -70,8 +71,14 @@ export default function CertificatePage() {
         // Firestore certificate status (true DB)
         if (uid) {
           const cert = await getCertificateStatus(uid);
-          if (cert) setClaim(cert);
-          if (cert?.paid) setPayStatus("paid");
+          if (cert) {
+            setClaim(cert);
+            if (cert.paid) {
+              setPayStatus("paid");
+            } else if (cert.paymentStatus === "pending") {
+              setPayStatus("pending");
+            }
+          }
         }
       } catch {}
     })();
@@ -106,11 +113,16 @@ export default function CertificatePage() {
     localStorage.setItem("bb_cert_name", v);
   };
 
+  /**
+   * Student initiates payment. This creates a payment record with "pending" status
+   * and sets the certificate to await admin approval.
+   * No automatic processing — admin must approve.
+   */
   const handlePay = async () => {
     if (!uid || !email) return;
     setError("");
     setPaying(true);
-    setPayStatus("processing");
+    setPayStatus("pending");
     try {
       const { intent, paymentRecordId } = await initiatePayment({
         uid,
@@ -120,18 +132,19 @@ export default function CertificatePage() {
       });
       setPaymentIntent(intent);
 
-      // simulate processing
-      const finalClaim = await finalizeCertificateAfterPayment({
+      // Mark certificate as awaiting admin approval
+      await setCertificatePendingApproval({
         uid,
         paymentId: paymentRecordId,
         method: paymentMethod,
       });
 
-      if (finalClaim) setClaim(finalClaim);
-      setPayStatus("paid");
+      // Refresh claim status
+      const updatedClaim = await getCertificateStatus(uid);
+      if (updatedClaim) setClaim(updatedClaim);
     } catch (e) {
       setPayStatus("failed");
-      setError(e instanceof Error ? e.message : "Payment failed. Try again.");
+      setError(e instanceof Error ? e.message : "Payment initiation failed. Try again.");
     } finally {
       setPaying(false);
     }
@@ -140,7 +153,7 @@ export default function CertificatePage() {
   const download = async () => {
     if (!eligible || !name.trim()) return;
     if (claim && !claim.paid) {
-      setError(`Certificate fee $${CERTIFICATE_FEE} USD must be paid before download. Tuition is free, certificate is paid.`);
+      setError(`Certificate fee $${CERTIFICATE_FEE} USD must be paid and approved before download. Tuition is free, certificate is paid.`);
       return;
     }
     setGenerating(true);
@@ -165,6 +178,7 @@ export default function CertificatePage() {
   };
 
   const isPaid = claim?.paid || payStatus === "paid";
+  const isPending = claim?.paymentStatus === "pending" || payStatus === "pending";
 
   return (
     <div className="min-h-screen bg-gray-950 text-white">
@@ -173,7 +187,7 @@ export default function CertificatePage() {
         eyebrow="Achievement • Certificate Incorporation"
         title="Your Certificate of"
         highlight="Completion"
-        description={`Tuition is FREE worldwide. Official certificate issuance is a paid service: $${CERTIFICATE_FEE} USD per claim. We are a certificate incorporation entity registered 2025 — we have not built any physical school yet.`}
+        description={`Tuition is FREE worldwide. Official certificate issuance is a paid service: $${CERTIFICATE_FEE} USD per claim. All payments require admin approval. We are a certificate incorporation entity registered 2025 — we have not built any physical school yet.`}
       />
 
       <section className="pb-24">
@@ -248,24 +262,24 @@ export default function CertificatePage() {
                   <div className="flex justify-center mb-3">
                     <img src="/images/seedwel-logo.svg" alt="Seedwel Investment Limited" className="h-16 w-auto object-contain" />
                   </div>
-                  <div className="text-[#d1ab52] font-bold tracking-[0.3em] text-xs md:text-sm mb-2">SEEDWEL INVESTMENT LIMITED • BILLIONAIRE BLUEPRINT</div>
+                  <div className="text-[#d1ab52] font-bold tracking-[0.3em] text-xs md:text-sm mb-2">SEEDWEL INVESTMENT LIMITED</div>
                   <h2 className="text-2xl md:text-4xl font-black text-white mb-2">Certificate of Completion</h2>
                   <div className="w-24 h-px bg-[#d1ab52] mx-auto my-5" />
                   <p className="text-gray-400 text-sm">This certificate is proudly awarded to</p>
                   <p className="text-[#d1ab52] font-bold text-2xl md:text-4xl my-3">{name.trim() || "Your Name"}</p>
                   <p className="text-gray-300 text-sm max-w-lg mx-auto leading-relaxed">
-                    for completing {completed.length} of {total} in-depth lessons ({pct}% of the curriculum) across all six modules of the Billionaire Blueprint wealth program.
+                    for completing {completed.length} of {total} in-depth lessons ({pct}% of the curriculum).
                   </p>
                   <p className="text-gray-500 text-xs mt-3">Tuition Model: FREE • Certificate Fee: ${CERTIFICATE_FEE} USD • Incorporation Entity • No physical school built yet</p>
                   <p className="text-gray-500 text-xs mt-2">{new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}</p>
                   <div className="flex justify-between items-end mt-8 text-gray-400 text-xs">
                     <div className="text-center">
-                      <div className="w-40 border-t border-[#d1ab52] pt-2">The Founders</div>
+                      <div className="w-40 border-t border-[#d1ab52] pt-2">Authorized Signatory</div>
                     </div>
                     <div className="text-center">
                       <Award className="w-8 h-8 text-[#d1ab52] mx-auto mb-1" />
                       <div className="w-40 border-t border-[#d1ab52] pt-2">
-                        Verified in Firestore • {claim?.certificateNumber || "SWL-XXXX-XXXX"}
+                        Verified • {claim?.certificateNumber || "SWL-XXXX-XXXX"}
                       </div>
                     </div>
                   </div>
@@ -281,14 +295,14 @@ export default function CertificatePage() {
                   <div className="rounded-xl bg-emerald-500/10 border border-emerald-500/30 p-4">
                     <div className="text-emerald-300 font-bold">Tuition</div>
                     <div className="text-2xl font-black text-white mt-1">$0</div>
-                    <div className="text-xs text-emerald-200/60 mt-1">FREE forever — all 28 lessons, quizzes, videos, progress tracking in Firebase.</div>
+                    <div className="text-xs text-emerald-200/60 mt-1">FREE forever — all lessons, quizzes, videos, progress tracking.</div>
                   </div>
                   <div className="rounded-xl bg-amber-500/10 border border-amber-500/30 p-4">
                     <div className="text-amber-300 font-bold flex items-center gap-1">
                       <DollarSign className="w-4 h-4" /> Certificate Claim
                     </div>
                     <div className="text-2xl font-black text-white mt-1">${CERTIFICATE_FEE}</div>
-                    <div className="text-xs text-amber-200/60 mt-1">One-time fee for verified PDF, registry entry, anti-forgery ID, incorporation admin.</div>
+                    <div className="text-xs text-amber-200/60 mt-1">One-time fee for verified PDF, registry entry, anti-forgery ID. Admin approval required.</div>
                   </div>
                   <div className="rounded-xl bg-gray-800/60 border border-gray-700 p-4">
                     <div className="text-gray-300 font-bold">Physical School</div>
@@ -300,7 +314,7 @@ export default function CertificatePage() {
 
               {/* Payment + name + download */}
               <div className="bg-gray-900/60 border border-gray-800 rounded-2xl p-8">
-                <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Name on certificate (Firebase verified)</label>
+                <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Name on certificate</label>
                 <input
                   value={name}
                   onChange={(e) => handleName(e.target.value)}
@@ -308,8 +322,62 @@ export default function CertificatePage() {
                   className="w-full bg-gray-950/70 border border-gray-800 rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-amber-500/50 transition-colors mb-6"
                 />
 
-                {!isPaid ? (
+                {isPaid ? (
                   <>
+                    {/* PAID — Certificate Unlocked */}
+                    <div className="mb-6 rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-4 flex items-start gap-3">
+                      <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
+                      <div>
+                        <div className="text-emerald-300 font-bold text-sm">Paid & Approved — Certificate Unlocked</div>
+                        <div className="text-emerald-200/60 text-xs mt-1">
+                          Payment ID: <code className="font-mono text-emerald-300">{claim?.paymentId || paymentIntent?.id}</code> • Certificate:{" "}
+                          <Link to={`/verify/${claim?.certificateNumber || claim?.id}`} className="font-mono text-amber-300 underline hover:text-amber-400">
+                            {claim?.certificateNumber}
+                          </Link>{" "}
+                          • Method: {claim?.paymentMethod || paymentMethod}
+                        </div>
+                        <div className="mt-2">
+                          <Link to={`/verify/${claim?.certificateNumber || claim?.id}`} className="inline-flex items-center gap-1.5 text-xs text-emerald-400 font-bold hover:underline">
+                            <ShieldCheck className="w-3.5 h-3.5" /> View Public Anti-Forgery Registry
+                          </Link>
+                        </div>
+                      </div>
+                    </div>
+
+                    {error && <p className="text-rose-400 text-sm mb-4">{error}</p>}
+                    <button
+                      onClick={download}
+                      disabled={generating || !name.trim()}
+                      className="w-full inline-flex items-center justify-center gap-3 bg-gradient-to-r from-amber-500 to-yellow-500 text-gray-900 font-bold px-8 py-4 rounded-xl hover:from-amber-400 hover:to-yellow-400 transition-all disabled:opacity-40 shadow-lg shadow-amber-500/20"
+                    >
+                      {generating ? <Loader2 className="w-5 h-5 animate-spin" /> : <Download className="w-5 h-5" />}
+                      {generating ? "Generating PDF..." : "Download Certificate (PDF)"}
+                    </button>
+                  </>
+                ) : isPending ? (
+                  <>
+                    {/* PENDING — Awaiting Admin Approval */}
+                    <div className="mb-6 rounded-xl border border-amber-500/30 bg-amber-500/10 p-4 flex items-start gap-3">
+                      <Clock className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
+                      <div>
+                        <div className="text-amber-300 font-bold text-sm">Payment Submitted — Awaiting Admin Approval</div>
+                        <div className="text-amber-200/60 text-xs mt-1">
+                          Your payment of ${CERTIFICATE_FEE} USD via {claim?.paymentMethod || paymentMethod} has been submitted and is awaiting admin approval.
+                          Once approved, your certificate will be unlocked for download.
+                        </div>
+                        <div className="text-amber-200/40 text-[11px] mt-2">
+                          Payment ID: <code className="font-mono text-amber-300/70">{claim?.paymentId || paymentIntent?.id}</code>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="rounded-xl bg-gray-950/60 border border-gray-800 p-4 text-center">
+                      <p className="text-gray-400 text-sm">Your certificate will be available for download once an administrator approves your payment.</p>
+                      <p className="text-gray-500 text-xs mt-2">You will be notified when your payment has been reviewed.</p>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    {/* IDLE — Ready to pay */}
                     <div className="mb-6">
                       <div className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Choose payment method — ${CERTIFICATE_FEE} USD</div>
                       <div className="grid grid-cols-3 gap-3">
@@ -345,50 +413,16 @@ export default function CertificatePage() {
                     >
                       {paying ? (
                         <>
-                          <Loader2 className="w-5 h-5 animate-spin" /> Processing ${CERTIFICATE_FEE} Payment…
+                          <Loader2 className="w-5 h-5 animate-spin" /> Submitting Payment...
                         </>
                       ) : (
                         <>
-                          <ShieldCheck className="w-5 h-5" /> Pay ${CERTIFICATE_FEE} USD & Claim Certificate
+                          <ShieldCheck className="w-5 h-5" /> Submit ${CERTIFICATE_FEE} USD Payment for Approval
                         </>
                       )}
                     </button>
                     <p className="text-[11px] text-gray-500 mt-3 text-center">
-                      Secure payment simulated (replace with Stripe/PayPal in production). Tuition stays FREE — certificate fee covers verification & incorporation registry stored in Firestore true database.
-                    </p>
-                  </>
-                ) : (
-                  <>
-                    <div className="mb-6 rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-4 flex items-start gap-3">
-                      <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
-                      <div>
-                        <div className="text-emerald-300 font-bold text-sm">Paid — Certificate Unlocked</div>
-                        <div className="text-emerald-200/60 text-xs mt-1">
-                          Payment ID: <code className="font-mono text-emerald-300">{claim?.paymentId || paymentIntent?.id}</code> • Certificate:{" "}
-                          <Link to={`/verify/${claim?.certificateNumber || claim?.id}`} className="font-mono text-amber-300 underline hover:text-amber-400">
-                            {claim?.certificateNumber}
-                          </Link>{" "}
-                          • Method: {claim?.paymentMethod || paymentMethod} • Firestore verified.
-                        </div>
-                        <div className="mt-2">
-                          <Link to={`/verify/${claim?.certificateNumber || claim?.id}`} className="inline-flex items-center gap-1.5 text-xs text-emerald-400 font-bold hover:underline">
-                            <ShieldCheck className="w-3.5 h-3.5" /> View Public Anti-Forgery Registry
-                          </Link>
-                        </div>
-                      </div>
-                    </div>
-
-                    {error && <p className="text-rose-400 text-sm mb-4">{error}</p>}
-                    <button
-                      onClick={download}
-                      disabled={generating || !name.trim()}
-                      className="w-full inline-flex items-center justify-center gap-3 bg-gradient-to-r from-amber-500 to-yellow-500 text-gray-900 font-bold px-8 py-4 rounded-xl hover:from-amber-400 hover:to-yellow-400 transition-all disabled:opacity-40 shadow-lg shadow-amber-500/20"
-                    >
-                      {generating ? <Loader2 className="w-5 h-5 animate-spin" /> : <Download className="w-5 h-5" />}
-                      {generating ? "Generating PDF..." : "Download Certificate (PDF) — Firebase Verified"}
-                    </button>
-                    <p className="text-[11px] text-gray-500 mt-3 text-center">
-                      Firestore collection <code className="text-amber-500/70">certificates/{claim?.uid}</code> • incorporation note included in PDF metadata.
+                      Payment will be reviewed by an administrator before your certificate is issued. Tuition stays FREE — certificate fee covers verification & incorporation registry.
                     </p>
                   </>
                 )}
