@@ -65,12 +65,16 @@ import {
   setUserRoleFirestore,
   seedFirestoreFromBundledContent,
   listCertificatesFirestore,
+  listPendingPaymentsFirestore,
+  approvePaymentByAdmin,
+  rejectPaymentByAdmin,
   type FirestoreUser,
   type CertificateClaim,
+  type PaymentRecord,
 } from "../lib/firestoreDb";
 import { CERTIFICATE_FEE } from "../lib/certificateService";
 
-type Tab = "overview" | "users" | "content" | "certificates" | "inbox" | "database" | "advisor";
+type Tab = "overview" | "users" | "content" | "certificates" | "payments" | "inbox" | "database" | "advisor";
 
 const RESOURCE_META: Record<ContentResource, { label: string; idField: string; titleOf: (r: any) => string; template: Record<string, unknown> }> = {
   lessons: {
@@ -139,6 +143,7 @@ export default function AdminPage() {
   const [fsUsers, setFsUsers] = useState<FirestoreUser[]>([]);
   const [fsAdmins, setFsAdmins] = useState<FirestoreUser[]>([]);
   const [certClaims, setCertClaims] = useState<CertificateClaim[]>([]);
+  const [pendingPayments, setPendingPayments] = useState<PaymentRecord[]>([]);
   const [dbInfo, setDbInfo] = useState<AdminDatabaseInfo | null>(null);
   const [openTable, setOpenTable] = useState<string | null>(null);
   const [tableRows, setTableRows] = useState<Record<string, unknown>[]>([]);
@@ -152,6 +157,7 @@ export default function AdminPage() {
   const [savingRecord, setSavingRecord] = useState(false);
   const [reseedBusy, setReseedBusy] = useState(false);
   const [firestoreSeedBusy, setFirestoreSeedBusy] = useState(false);
+  const [approvingPaymentId, setApprovingPaymentId] = useState<string | null>(null);
   const [toast, setToast] = useState("");
 
   const showToast = (msg: string) => {
@@ -218,6 +224,13 @@ export default function AdminPage() {
     try {
       const certs = await listCertificatesFirestore();
       setCertClaims(certs);
+    } catch {}
+  }, []);
+
+  const loadPendingPayments = useCallback(async () => {
+    try {
+      const payments = await listPendingPaymentsFirestore();
+      setPendingPayments(payments);
     } catch {}
   }, []);
 
@@ -400,6 +413,47 @@ export default function AdminPage() {
     }
   };
 
+  /* ---------------- payment approval actions ---------------- */
+  const handleApprovePayment = async (payment: PaymentRecord) => {
+    if (!window.confirm(`Approve $${CERTIFICATE_FEE} USD payment for ${payment.email}?\n\nThis will unlock their certificate for download.`)) return;
+    setApprovingPaymentId(payment.id);
+    try {
+      await approvePaymentByAdmin({
+        uid: payment.uid,
+        paymentId: payment.id,
+        method: (payment.method as any) || "manual",
+        adminUid: user?.uid,
+      });
+      showToast(`Payment approved — $${CERTIFICATE_FEE} USD from ${payment.email}`);
+      loadPendingPayments();
+      loadCertificates();
+    } catch (err) {
+      showToast(err instanceof Error ? err.message : "Approval failed");
+    } finally {
+      setApprovingPaymentId(null);
+    }
+  };
+
+  const handleRejectPayment = async (payment: PaymentRecord) => {
+    const reason = window.prompt("Reason for rejection (optional):", "Payment not verified");
+    if (reason === null) return; // cancelled
+    setApprovingPaymentId(payment.id);
+    try {
+      await rejectPaymentByAdmin({
+        uid: payment.uid,
+        paymentId: payment.id,
+        reason: reason || "Rejected by admin",
+      });
+      showToast(`Payment rejected for ${payment.email}`);
+      loadPendingPayments();
+      loadCertificates();
+    } catch (err) {
+      showToast(err instanceof Error ? err.message : "Rejection failed");
+    } finally {
+      setApprovingPaymentId(null);
+    }
+  };
+
   /* ============================ LOGIN SCREEN ============================ */
   if (!isAdmin) {
     return (
@@ -499,6 +553,7 @@ export default function AdminPage() {
     { id: "overview", label: "Overview", icon: Building2 },
     { id: "users", label: "Users (Firestore role)", icon: Users, badge: fsUsers.length || users.length || 0 },
     { id: "certificates", label: `Certificates $${CERTIFICATE_FEE}`, icon: Award, badge: certClaims.length },
+    { id: "payments", label: "Approve Payments", icon: CreditCard, badge: pendingPayments.length || 0 },
     { id: "content", label: "Content Manager", icon: FileEdit },
     { id: "inbox", label: "Inbox", icon: Inbox, badge: (overview?.investorInquiries.length || 0) + (overview?.messages.length || 0) },
     { id: "database", label: "True DB Console", icon: Database },
@@ -538,6 +593,7 @@ export default function AdminPage() {
                   loadDb();
                   loadUsers();
                   loadCertificates();
+                  loadPendingPayments();
                 }}
                 disabled={loadingData}
                 className="flex items-center gap-2 rounded-xl bg-gray-800 hover:bg-gray-700 px-4 py-2 text-xs font-semibold text-gray-300 transition-colors disabled:opacity-50"
@@ -644,8 +700,8 @@ export default function AdminPage() {
                     ["Registered Users", fsUsers.length || users.length || overview?.users?.length || 0, Users],
                     ["Admins (role=admin)", fsAdmins.length, ShieldCheck],
                     ["Certificate Claims", certClaims.length, Award],
+                    ["Pending Payments", pendingPayments.length, Clock],
                     ["Paid Certificates", certClaims.filter((c) => c.paid).length, CreditCard],
-                    ["Free Tuition Model", `100% FREE`, GraduationCap],
                   ] as [string, any, React.ElementType][]
                 ).map(([label, val, Icon], idx) => (
                   <div key={idx} className="bg-gray-900/60 border border-gray-800 rounded-2xl p-5">
@@ -849,6 +905,78 @@ export default function AdminPage() {
               ))}
               {certClaims.length === 0 && <p className="text-gray-500 text-sm text-center py-8 border border-dashed border-gray-800 rounded-2xl">No certificate claims in Firestore yet — students unlock after 28 lessons.</p>}
             </div>
+          </div>
+        )}
+
+        {activeTab === "payments" && (
+          <div className="rounded-3xl bg-gray-900/60 border border-gray-800 p-8">
+            <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+              <div>
+                <h2 className="text-2xl font-black text-white flex items-center gap-3">
+                  <CreditCard className="w-6 h-6 text-amber-400" /> Pending Payments — Admin Approval Required
+                </h2>
+                <p className="text-gray-400 text-sm mt-1 max-w-2xl">
+                  Students who submit certificate fee payments (${CERTIFICATE_FEE} USD) appear here for your review. Approve to unlock their certificate for download.
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="rounded-xl bg-amber-500/10 border border-amber-500/30 px-4 py-2 text-xs">
+                  <div className="text-amber-300 font-bold">Pending</div>
+                  <div className="text-white font-black">{pendingPayments.length}</div>
+                </div>
+                <button onClick={loadPendingPayments} className="flex items-center gap-2 rounded-xl bg-gray-800 hover:bg-gray-700 px-4 py-2 text-xs font-semibold text-gray-300">
+                  <RefreshCw className="w-3.5 h-3.5" /> Refresh
+                </button>
+              </div>
+            </div>
+
+            {pendingPayments.length === 0 ? (
+              <div className="text-center py-14 border border-dashed border-gray-800 rounded-2xl">
+                <CheckCircle2 className="w-10 h-10 text-emerald-400 mx-auto mb-3" />
+                <p className="text-gray-400 font-semibold">No pending payments</p>
+                <p className="text-gray-500 text-xs mt-1">All certificate payments have been reviewed.</p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {pendingPayments.map((p) => (
+                  <div key={p.id} className="rounded-xl bg-gray-950/80 border border-gray-800 px-4 py-4 flex flex-wrap items-center gap-4">
+                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-yellow-500 flex items-center justify-center text-gray-950 font-black text-sm">
+                      {(p.email || "?").charAt(0).toUpperCase()}
+                    </div>
+                    <div className="flex-1 min-w-[200px]">
+                      <div className="text-sm font-bold text-white truncate">{p.email}</div>
+                      <div className="text-[11px] text-gray-400 font-mono">
+                        {p.id} • {p.method} • ${p.amountUsd} USD
+                      </div>
+                      <div className="text-[10px] text-gray-600 font-mono">
+                        uid: {p.uid.slice(0, 18)}… • {p.createdAt?.seconds ? new Date(p.createdAt.seconds * 1000).toLocaleString() : "—"}
+                      </div>
+                    </div>
+                    <span className="rounded-full px-3 py-1 text-[11px] font-black bg-amber-500/20 border border-amber-500/40 text-amber-300">
+                      ${p.amountUsd} PENDING
+                    </span>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => handleApprovePayment(p)}
+                        disabled={approvingPaymentId === p.id}
+                        className="flex items-center gap-1.5 rounded-xl px-4 py-2 text-xs font-bold bg-emerald-500/15 border border-emerald-500/40 text-emerald-300 hover:bg-emerald-500/25 transition-all disabled:opacity-50"
+                      >
+                        {approvingPaymentId === p.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <CheckCircle2 className="w-3.5 h-3.5" />}
+                        Approve
+                      </button>
+                      <button
+                        onClick={() => handleRejectPayment(p)}
+                        disabled={approvingPaymentId === p.id}
+                        className="flex items-center gap-1.5 rounded-xl px-4 py-2 text-xs font-bold bg-rose-500/15 border border-rose-500/40 text-rose-300 hover:bg-rose-500/25 transition-all disabled:opacity-50"
+                      >
+                        {approvingPaymentId === p.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Trash2 className="w-3.5 h-3.5" />}
+                        Reject
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
 

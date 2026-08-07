@@ -1,19 +1,10 @@
 import { useState, useEffect } from "react";
 import { NavLink, Link, useLocation, useNavigate } from "react-router-dom";
 import {
-  Crown,
-  Download,
   Menu,
   X,
-  BookOpen,
-  PlayCircle,
-  Users,
-  TerminalSquare,
-  Newspaper,
-  Search,
   Award,
   ShieldCheck,
-  TrendingUp,
   LayoutDashboard,
   LogIn,
   LogOut,
@@ -24,29 +15,48 @@ import {
   Building2,
   UserCircle,
   ChevronRight,
+  Briefcase,
+  Handshake,
+  Phone,
+  BookOpen,
+  Laptop,
+  Users,
+  TrendingUp,
 } from "lucide-react";
-import { generateBillionairePdf } from "../utils/generatePdf";
 import { useAuth } from "../lib/auth";
 import { cn } from "../utils/cn";
 
+const mainNav = [
+  { to: "/", label: "Home", end: true },
+  { to: "/about", label: "About Us" },
+  { to: "/courses", label: "Courses" },
+  { to: "/services", label: "Services" },
+  { to: "/certificates", label: "Certificates" },
+  { to: "/careers", label: "Careers" },
+  { to: "/investment", label: "Investment" },
+  { to: "/partnerships", label: "Partnerships" },
+  { to: "/contact", label: "Contact" },
+];
+
 const learnItems = [
-  { to: "/lessons", label: "Lessons", desc: "28-lesson wealth curriculum", icon: BookOpen },
-  { to: "/videos", label: "Videos", desc: "7 video masterclasses", icon: PlayCircle },
-  { to: "/certificate", label: "Certificate", desc: "Earn your completion PDF", icon: Award },
-  { to: "/search", label: "Search", desc: "Find anything on the site", icon: Search },
+  { to: "/courses", label: "Courses", desc: "Professional & digital skills", icon: BookOpen },
+  { to: "/lessons", label: "Learning Platform", desc: "Online curriculum", icon: GraduationCap },
+  { to: "/certificates", label: "Certificates", desc: "Verification & credentials", icon: Award },
+  { to: "/careers", label: "Careers", desc: "Opportunities", icon: Briefcase },
 ];
 
 const companyItems = [
-  { to: "/", label: "Home", desc: "Niches, principles & guide", icon: Home },
-  { to: "/founders", label: "Founders", desc: "Leadership & mentorship", icon: Users },
-  { to: "/blog", label: "Blog", desc: "Articles & newsletter", icon: Newspaper },
-  { to: "/invest", label: "Invest With Us", desc: "Schools, AI & real estate", icon: TrendingUp },
+  { to: "/about", label: "About Us", desc: "Vision & mission", icon: Building2 },
+  { to: "/services", label: "Services", desc: "What we offer", icon: Laptop },
+  { to: "/investment", label: "Investment", desc: "Opportunities", icon: TrendingUp },
+  { to: "/partnerships", label: "Partnerships", desc: "Work with us", icon: Handshake },
+  { to: "/founders", label: "Our People", desc: "Leadership", icon: Users },
+  { to: "/contact", label: "Contact", desc: "Get in touch", icon: Phone },
 ];
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [downloading, setDownloading] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const { user, profile, isAdmin, sessionKind, logout } = useAuth();
@@ -70,22 +80,11 @@ export default function Navbar() {
     };
   }, [menuOpen]);
 
-  const handleDownload = async () => {
-    setDownloading(true);
-    try {
-      await generateBillionairePdf();
-    } catch (e) {
-      console.error(e);
-    }
-    setDownloading(false);
-  };
-
   const accountItems = [
     ...(signedIn
       ? [{ to: "/account", label: "My Dashboard", desc: "Progress & achievements", icon: LayoutDashboard }]
-      : [{ to: "/auth", label: "Sign In / Register", desc: "Create your student account", icon: UserPlus }]),
+      : [{ to: "/auth", label: "Sign In / Register", desc: "Create your account", icon: UserPlus }]),
     { to: "/admin", label: "Admin Portal", desc: "Management console", icon: ShieldCheck },
-    { to: "/api-docs", label: "API Explorer", desc: "Database & endpoints", icon: TerminalSquare },
   ];
 
   const MenuSection = ({
@@ -140,7 +139,7 @@ export default function Navbar() {
         }`}
       >
         <div className="max-w-6xl mx-auto px-4 flex items-center justify-between">
-          {/* Brand — company logo with NO background box (transparent) */}
+          {/* Brand */}
           <Link to="/" className="flex items-center gap-3 group">
             <img
               src="/images/seedwel-logo.svg"
@@ -149,28 +148,21 @@ export default function Navbar() {
             />
             <div className="flex flex-col">
               <span className="text-white font-black text-base sm:text-lg hidden sm:block leading-none tracking-tight">
-                Billionaire Blueprint
+                Seedwel Investment
               </span>
               <span className="text-amber-400 text-[11px] sm:text-xs font-bold tracking-widest uppercase hidden sm:block mt-1">
-                Seedwel Investment Ltd
+                Education & Investment
               </span>
             </div>
           </Link>
 
-          {/* Desktop quick links */}
-          <div className="hidden lg:flex items-center gap-5">
-            {[
-              { to: "/", label: "Home" },
-              { to: "/lessons", label: "Lessons" },
-              { to: "/videos", label: "Videos" },
-              { to: "/founders", label: "Founders" },
-              { to: "/blog", label: "Blog" },
-              { to: "/invest", label: "Invest" },
-            ].map((item) => (
+          {/* Desktop navigation */}
+          <div className="hidden lg:flex items-center gap-4">
+            {mainNav.map((item) => (
               <NavLink
                 key={item.to}
                 to={item.to}
-                end={item.to === "/"}
+                end={item.end}
                 className={({ isActive }) =>
                   cn(
                     "text-sm transition-colors",
@@ -184,15 +176,6 @@ export default function Navbar() {
           </div>
 
           <div className="flex items-center gap-2.5">
-            <button
-              onClick={handleDownload}
-              disabled={downloading}
-              className="hidden md:flex items-center gap-2 bg-gradient-to-r from-amber-500 to-yellow-500 text-gray-900 font-bold px-4 py-2.5 rounded-lg text-xs hover:from-amber-400 hover:to-yellow-400 transition-all disabled:opacity-50"
-            >
-              {downloading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Download className="w-3.5 h-3.5" />}
-              {downloading ? "Generating..." : "Download PDF"}
-            </button>
-
             {/* Auth state */}
             {signedIn ? (
               <Link
@@ -213,7 +196,7 @@ export default function Navbar() {
               </Link>
             )}
 
-            {/* THE menu icon — opens the full menu (all breakpoints) */}
+            {/* Menu button */}
             <button
               onClick={() => setMenuOpen(!menuOpen)}
               className="flex items-center gap-2 rounded-lg border border-gray-800 hover:border-amber-500/40 text-gray-300 hover:text-amber-400 px-3 py-2.5 transition-all"
@@ -226,7 +209,7 @@ export default function Navbar() {
         </div>
       </nav>
 
-      {/* ================= FULL MENU OVERLAY (everything in one place) ================= */}
+      {/* Full menu overlay */}
       {menuOpen && (
         <div className="fixed inset-0 z-40 bg-gray-950/98 backdrop-blur-xl overflow-y-auto" onClick={() => setMenuOpen(false)}>
           <div className="max-w-5xl mx-auto px-4 pt-24 pb-12" onClick={(e) => e.stopPropagation()}>
@@ -238,17 +221,6 @@ export default function Navbar() {
 
             {/* Actions row */}
             <div className="mt-10 border-t border-gray-800/80 pt-6 flex flex-wrap items-center gap-3">
-              <button
-                onClick={() => {
-                  handleDownload();
-                }}
-                disabled={downloading}
-                className="flex items-center gap-2 bg-gradient-to-r from-amber-500 to-yellow-500 text-gray-900 font-bold px-5 py-3 rounded-xl text-sm hover:from-amber-400 hover:to-yellow-400 transition-all disabled:opacity-50"
-              >
-                {downloading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
-                {downloading ? "Generating..." : "Download Wealth Guide PDF"}
-              </button>
-
               {signedIn ? (
                 <>
                   <div className="flex items-center gap-2.5 rounded-xl bg-gray-900 border border-gray-800 px-4 py-2.5">
@@ -284,8 +256,8 @@ export default function Navbar() {
               )}
 
               <div className="ml-auto flex items-center gap-2 text-[11px] text-gray-600">
-                <Crown className="w-3.5 h-3.5 text-amber-500/60" />
-                Seedwel Investment Limited — Registered 2025
+                <Home className="w-3.5 h-3.5 text-amber-500/60" />
+                Seedwel Investment Limited — Zambia
               </div>
             </div>
           </div>
