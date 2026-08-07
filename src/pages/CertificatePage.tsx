@@ -27,6 +27,7 @@ import {
   getCertificateStatus,
   createOrUpdateCertificateClaim,
   setCertificatePendingApproval,
+  updateCertificateCloudinary,
   type CertificateClaim,
 } from "../lib/firestoreDb";
 import {
@@ -36,6 +37,10 @@ import {
   type PaymentIntent,
 } from "../lib/certificateService";
 import { generateCertificate } from "../utils/generateCertificate";
+import {
+  uploadCertificateFile,
+  CLOUDINARY_ASSET_FOLDER,
+} from "../lib/cloudinary";
 
 type PaymentMethod = "card" | "paypal" | "mobile_money";
 
@@ -51,6 +56,9 @@ export default function CertificatePage() {
   );
   const [generating, setGenerating] = useState(false);
   const [error, setError] = useState("");
+  const [cloudinaryState, setCloudinaryState] = useState<
+    { status: "idle" | "uploading" | "done" | "failed"; url?: string; message?: string }
+  >({ status: "idle" });
 
   // certificate & payment state
   const [claim, setClaim] = useState<CertificateClaim | null>(null);
@@ -159,8 +167,34 @@ export default function CertificatePage() {
     setGenerating(true);
     setError("");
     try {
-      await generateCertificate(name, completed.length, total, pct);
-      // update issuedAt if needed
+      // 1. Generate the PDF (also triggers the browser download)
+      const cert = await generateCertificate(name, completed.length, total, pct);
+
+      // 2. Host a copy on Cloudinary (unsigned "seedwel" preset) — best effort
+      setCloudinaryState({ status: "uploading" });
+      try {
+        const up = await uploadCertificateFile(cert.blob, cert.fileName);
+        if (up.secureUrl && uid) {
+          await updateCertificateCloudinary({
+            uid,
+            cloudinaryUrl: up.secureUrl,
+            cloudinaryPublicId: up.publicId,
+          });
+          // refresh claim so the verify page/admin see the hosted PDF
+          const updatedClaim = await getCertificateStatus(uid);
+          if (updatedClaim) setClaim(updatedClaim);
+          setCloudinaryState({ status: "done", url: up.secureUrl });
+        } else {
+          setCloudinaryState({ status: "failed", message: "Cloudinary returned no URL." });
+        }
+      } catch (e) {
+        setCloudinaryState({
+          status: "failed",
+          message: e instanceof Error ? e.message : "Cloudinary upload failed.",
+        });
+      }
+
+      // 3. update issuedAt if needed
       if (uid) {
         await createOrUpdateCertificateClaim({
           uid,
@@ -345,6 +379,64 @@ export default function CertificatePage() {
                     </div>
 
                     {error && <p className="text-rose-400 text-sm mb-4">{error}</p>}
+
+                    {/* Cloudinary-hosted certificate copy */}
+                    <div className="mb-6">
+                      {claim?.cloudinaryUrl ? (
+                        <div className="rounded-xl border border-sky-500/30 bg-sky-500/10 p-4 flex items-start gap-3">
+                          <Award className="w-5 h-5 text-sky-400 shrink-0 mt-0.5" />
+                          <div className="min-w-0">
+                            <div className="text-sky-300 font-bold text-sm">Certificate Hosted on Cloudinary</div>
+                            <p className="text-sky-200/60 text-xs mt-1 break-all">
+                              {claim.cloudinaryUrl}
+                            </p>
+                            <p className="text-[11px] text-sky-200/40 mt-1">
+                              Asset folder: <code className="text-sky-300/80">{CLOUDINARY_ASSET_FOLDER}</code> • Public ID:{" "}
+                              <code className="text-sky-300/80">{claim.cloudinaryPublicId || "—"}</code>
+                            </p>
+                            <div className="flex flex-wrap gap-3 mt-3">
+                              <a
+                                href={claim.cloudinaryUrl}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="inline-flex items-center gap-1.5 text-xs text-sky-300 font-bold hover:underline"
+                              >
+                                <ShieldCheck className="w-3.5 h-3.5" /> View Hosted PDF
+                              </a>
+                              <button
+                                onClick={() => {
+                                  navigator.clipboard?.writeText(claim.cloudinaryUrl || "").then(() => {
+                                    setCloudinaryState({ status: "done", url: claim.cloudinaryUrl, message: "Link copied!" });
+                                  });
+                                }}
+                                className="inline-flex items-center gap-1.5 text-xs text-gray-300 font-bold hover:text-amber-300 transition-colors"
+                              >
+                                <Award className="w-3.5 h-3.5" /> Copy Share Link
+                              </button>
+                            </div>
+                            {cloudinaryState.status === "done" && cloudinaryState.message && (
+                              <p className="text-[11px] text-emerald-300 mt-2">{cloudinaryState.message}</p>
+                            )}
+                          </div>
+                        </div>
+                      ) : cloudinaryState.status === "uploading" ? (
+                        <div className="rounded-xl border border-sky-500/30 bg-sky-500/5 p-4 flex items-center gap-3">
+                          <Loader2 className="w-4 h-4 text-sky-400 animate-spin" />
+                          <span className="text-xs text-sky-300 font-semibold">
+                            Uploading hosted copy to Cloudinary ({CLOUDINARY_ASSET_FOLDER})…
+                          </span>
+                        </div>
+                      ) : cloudinaryState.status === "failed" ? (
+                        <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-3 text-xs text-amber-300">
+                          Could not host the PDF on Cloudinary (download still worked): {cloudinaryState.message}
+                        </div>
+                      ) : (
+                        <p className="text-[11px] text-gray-500">
+                          When you generate your PDF it will also be hosted on Cloudinary so you can share a permanent link with employers.
+                        </p>
+                      )}
+                    </div>
+
                     <button
                       onClick={download}
                       disabled={generating || !name.trim()}

@@ -22,7 +22,7 @@ import {
   type User,
 } from "firebase/auth";
 import { auth, initAnalytics, db } from "./firebase";
-import { doc, getDoc, serverTimestamp, setDoc } from "firebase/firestore";
+import { doc, serverTimestamp, setDoc } from "firebase/firestore";
 import {
   setAuthTokenProvider,
   syncAuthMe,

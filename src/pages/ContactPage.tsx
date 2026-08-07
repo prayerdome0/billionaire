@@ -8,7 +8,6 @@ import {
   Phone,
   Send,
   ShieldCheck,
-  User,
   MessageCircle,
 } from "lucide-react";
 import Navbar from "../components/Navbar";

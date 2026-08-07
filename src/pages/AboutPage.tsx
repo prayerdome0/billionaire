@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import {
   ArrowRight,
   Award,
-  Building2,
+  Briefcase,
   CheckCircle,
   GraduationCap,
   Handshake,

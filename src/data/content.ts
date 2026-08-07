@@ -47,6 +47,20 @@ export interface Testimonial {
   rating: number;
 }
 
+export interface SuccessStory {
+  id: string;
+  name: string;
+  country: string;
+  title: string;
+  photo: string;
+  quote: string;
+  encouragement: string;
+  category: string;
+  netWorth: string;
+  yearsActive: string;
+  tags: string[];
+}
+
 export interface Module {
   id: string;
   number: number;
@@ -133,6 +147,7 @@ export const stepsToWealth: Step[] = raw.stepsToWealth;
 export const wealthPrinciples = raw.wealthPrinciples;
 export const founders: Founder[] = raw.founders;
 export const testimonials: Testimonial[] = raw.testimonials;
+export const successStories: SuccessStory[] = (raw as any).successStories || [];
 export const modules: Module[] = raw.modules;
 export const lessons: Lesson[] = raw.lessons;
 export const videos: Video[] = raw.videos;

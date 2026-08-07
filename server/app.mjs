@@ -46,6 +46,7 @@ app.use(express.json({ limit: "2mb" }));
 app.use(optionalUser);
 
 const json = (res, code, body) => res.status(code).json(body);
+const errMsg = (e) => (e instanceof Error ? e.message : String(e ?? "unknown error"));
 const store = () => getStore();
 
 const clip = (v, n) => String(v ?? "").slice(0, n);
@@ -203,7 +204,7 @@ app.get("/api/certificates/me", requireUser, async (req, res) => {
     if (!cert) return json(res, 200, { paid: false, exists: false, feeUsd: CERT_FEE, tuitionModel: "FREE", incorporationNote: INCORPORATION_NOTE });
     json(res, 200, cert);
   } catch (e) {
-    json(res, 200, { paid: false, exists: false, feeUsd: CERT_FEE, tuitionModel: "FREE", error: (e as Error).message });
+    json(res, 200, { paid: false, exists: false, feeUsd: CERT_FEE, tuitionModel: "FREE", error: errMsg(e) });
   }
 });
 
@@ -212,7 +213,7 @@ app.post("/api/certificates/claim", requireUser, async (req, res) => {
   if (!nameOnCertificate) return json(res, 400, { error: "nameOnCertificate required" });
   const s = await store();
   const pct = total ? Math.round((completed / total) * 100) : 0;
-  const certNum = `SWL-${new Date().toISOString().slice(0, 10).replace(/-/g, "")}-${Math.abs(nameOnCertificate.split("").reduce((a: number, c: string) => (Math.imul(31, a) + c.charCodeAt(0)) | 0, 0)) % 100000}-${Math.floor(Math.random() * 9000) + 1000}`;
+  const certNum = `SWL-${new Date().toISOString().slice(0, 10).replace(/-/g, "")}-${Math.abs(nameOnCertificate.split("").reduce((a, c) => (Math.imul(31, a) + c.charCodeAt(0)) | 0, 0)) % 100000}-${Math.floor(Math.random() * 9000) + 1000}`;
   const docData = {
     id: req.user.uid,
     uid: req.user.uid,
@@ -239,7 +240,7 @@ app.post("/api/certificates/claim", requireUser, async (req, res) => {
     const created = await (s.upsertCertificate?.(docData) || docData);
     json(res, 201, created);
   } catch (e) {
-    json(res, 500, { error: (e as Error).message });
+    json(res, 500, { error: errMsg(e) });
   }
 });
 
@@ -285,7 +286,7 @@ app.post("/api/certificates/pay", requireUser, async (req, res) => {
       message: `Certificate paid $${CERT_FEE} USD — tuition remains FREE. Incorporation verified.`,
     });
   } catch (e) {
-    json(res, 500, { error: (e as Error).message });
+    json(res, 500, { error: errMsg(e) });
   }
 });
 
@@ -380,7 +381,7 @@ app.get("/api/admin/overview", requireAdmin, async (_req, res) => {
       incorporationNote: INCORPORATION_NOTE,
       trueDatabase: "Firebase Firestore — users/{uid} role field is source of truth for admin detection in student dashboard",
     },
-    stats: { ...stats, certificateClaims: (certificates as any[]).length, certificatePayments: (payments as any[]).length },
+    stats: { ...stats, certificateClaims: (certificates || []).length, certificatePayments: (payments || []).length },
     database: dbInfo,
     messages,
     subscribers,
@@ -492,7 +493,7 @@ app.get("/api/admin/database/:table", requireAdmin, async (req, res) => {
   try {
     json(res, 200, { table: req.params.table, rows: await (await store()).dumpTable(req.params.table) });
   } catch (e) {
-    json(res, 404, { error: (e as Error).message });
+    json(res, 404, { error: errMsg(e) });
   }
 });
 app.delete("/api/admin/database/:table/:key", requireAdmin, async (req, res) => {
@@ -500,7 +501,7 @@ app.delete("/api/admin/database/:table/:key", requireAdmin, async (req, res) => 
     const ok = await (await store()).deleteRecord(req.params.table, decodeURIComponent(req.params.key));
     json(res, ok ? 200 : 404, ok ? { ok: true } : { error: "Record not found" });
   } catch (e) {
-    json(res, 400, { error: (e as Error).message });
+    json(res, 400, { error: errMsg(e) });
   }
 });
 app.post("/api/admin/reseed", requireAdmin, async (_req, res) => {
@@ -519,13 +520,13 @@ const CONTENT_RESOURCES = {
 };
 
 app.get("/api/admin/content/:resource", requireAdmin, async (req, res) => {
-  const cfg = (CONTENT_RESOURCES as any)[req.params.resource];
+  const cfg = CONTENT_RESOURCES[req.params.resource];
   if (!cfg) return json(res, 404, { error: "Unknown resource" });
   json(res, 200, await (await store())[cfg.list]());
 });
 
 app.post("/api/admin/content/:resource", requireAdmin, async (req, res) => {
-  const cfg = (CONTENT_RESOURCES as any)[req.params.resource];
+  const cfg = CONTENT_RESOURCES[req.params.resource];
   if (!cfg) return json(res, 404, { error: "Unknown resource" });
   const body = req.body || {};
   if (!body[cfg.idField]) return json(res, 400, { error: `Body must include "${cfg.idField}"` });
@@ -533,16 +534,16 @@ app.post("/api/admin/content/:resource", requireAdmin, async (req, res) => {
 });
 
 app.put("/api/admin/content/:resource/:id", requireAdmin, async (req, res) => {
-  const cfg = (CONTENT_RESOURCES as any)[req.params.resource];
+  const cfg = CONTENT_RESOURCES[req.params.resource];
   if (!cfg) return json(res, 404, { error: "Unknown resource" });
   const s = await store();
-  const existing = (await (s as any)[cfg.get]?.(req.params.id)) || {};
+  const existing = (await s[cfg.get]?.(req.params.id)) || {};
   const merged = { ...existing, ...(req.body || {}), [cfg.idField]: req.params.id };
-  json(res, 200, await (s as any)[cfg.upsert](merged));
+  json(res, 200, await s[cfg.upsert](merged));
 });
 
 app.delete("/api/admin/content/:resource/:id", requireAdmin, async (req, res) => {
-  const cfg = (CONTENT_RESOURCES as any)[req.params.resource];
+  const cfg = CONTENT_RESOURCES[req.params.resource];
   if (!cfg) return json(res, 404, { error: "Unknown resource" });
   await (await store())[cfg.del](req.params.id);
   json(res, 200, { ok: true });

@@ -12,12 +12,22 @@ import { jsPDF } from "jspdf";
  * - Admin role: users/{uid} role field
  */
 
+export interface GeneratedCertificate {
+  blob: Blob;
+  fileName: string;
+  serial: string;
+}
+
+/**
+ * Generates the PDF and returns the blob + serial so callers can also push it
+ * to Cloudinary for a hosted copy, then trigger the browser download.
+ */
 export async function generateCertificate(
   studentName: string,
   completedCount: number,
   totalCount: number,
   pct: number
-): Promise<void> {
+): Promise<GeneratedCertificate> {
   const doc = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" });
   const W = 297;
   const H = 210;
@@ -113,6 +123,10 @@ export async function generateCertificate(
 
   const file = `Seedwel-Certificate-${safeName.replace(/[^a-zA-Z0-9]+/g, "-")}-${serial}.pdf`;
   doc.save(file);
+
+  // Return blob + serial so the UI can upload a hosted copy to Cloudinary.
+  const blob = doc.output("blob");
+  return { blob, fileName: file, serial };
 }
 
 function hashCode(s: string): number {

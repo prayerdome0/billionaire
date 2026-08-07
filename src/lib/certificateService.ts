@@ -20,7 +20,6 @@ import { CERTIFICATE_FEE_USD } from "./firebase";
 import {
   getCertificateStatus,
   createOrUpdateCertificateClaim,
-  markCertificatePaid,
   createPaymentRecord,
   approvePaymentByAdmin,
   rejectPaymentByAdmin,

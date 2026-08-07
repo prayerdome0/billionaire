@@ -11,7 +11,7 @@
     },
     {
       "label": "Video Masterclasses",
-      "value": "7"
+      "value": "18"
     },
     {
       "label": "High-Income Niches",
@@ -28,6 +28,10 @@
     {
       "label": "Investment Pillars",
       "value": "3"
+    },
+    {
+      "label": "Inspiration Icons",
+      "value": "13"
     }
   ],
   "heroImage": "https://images.pexels.com/photos/36945570/pexels-photo-36945570.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=627&w=1200",
@@ -236,6 +240,24 @@
       "name": "Tom Becker",
       "role": "Product Engineer, Berlin",
       "text": "The AI niche module helped me reposition my career and build a side SaaS that's now doing $8K MRR. The video masterclasses are gold.",
+      "rating": 5
+    },
+    {
+      "name": "Naledi Mbeki",
+      "role": "Student Entrepreneur, Johannesburg",
+      "text": "The motivation wall alone is worth it — seeing people like Strive Masiyiwa and Aliko Dangote push through rejection reminded me my hustle is normal. Landed my first export client in month four.",
+      "rating": 5
+    },
+    {
+      "name": "Chanda Mulenga",
+      "role": "E-commerce Owner, Lusaka, Zambia",
+      "text": "I started selling online with zero capital after the high-income niches lesson. The founders actually answered my questions — now doing $1,200/month from my phone. Tuition is really free, no hidden fees.",
+      "rating": 5
+    },
+    {
+      "name": "Amara Nwosu",
+      "role": "Freelance Developer, Abuja",
+      "text": "The videos and success stories section keeps me going. I followed the AI niche roadmap and doubled my freelance rate in three months. Best free education I have ever received.",
       "rating": 5
     }
   ],
@@ -2620,6 +2642,171 @@
         "behavior",
         "summary"
       ]
+    },
+    {
+      "id": "vid-steve-jobs-stanford",
+      "title": "Steve Jobs' 2005 Stanford Commencement Address",
+      "channel": "Stanford",
+      "description": "The most-watched commencement speech in history: connect the dots, love what you do, and remember that death is life's greatest change agent. A mindset masterclass.",
+      "youtubeId": "UF8uR6Z6KLc",
+      "moduleId": "m1",
+      "duration": "15 min",
+      "level": "Beginner",
+      "tags": [
+        "mindset",
+        "purpose",
+        "persistence"
+      ]
+    },
+    {
+      "id": "vid-grit-duckworth",
+      "title": "Grit: The Power of Passion and Perseverance",
+      "channel": "TED",
+      "description": "Angela Lee Duckworth explains the one trait that predicts success better than IQ or talent: grit. Why the 'growth zone' beats the 'comfort zone' every time.",
+      "youtubeId": "H14bBuluwB8",
+      "moduleId": "m1",
+      "duration": "6 min",
+      "level": "Beginner",
+      "tags": [
+        "grit",
+        "mindset",
+        "discipline"
+      ]
+    },
+    {
+      "id": "vid-fall-forward-denzel",
+      "title": "Fall Forward — Denzel Washington's Commencement Speech",
+      "channel": "University of Pennsylvania",
+      "description": "Denzel Washington on why you must be willing to fail bigger: 'If you don't fail, you're not even trying.' The speech that redefines failure as fuel.",
+      "youtubeId": "XnXKA7s39fc",
+      "moduleId": "m1",
+      "duration": "23 min",
+      "level": "Beginner",
+      "tags": [
+        "failure",
+        "risk",
+        "resilience"
+      ]
+    },
+    {
+      "id": "vid-oprah-harvard",
+      "title": "Oprah Winfrey's Harvard Commencement Speech",
+      "channel": "Harvard University",
+      "description": "Oprah on failure, purpose and the internal GPS that guides every big decision. One of the most powerful talks ever given to graduating students.",
+      "youtubeId": "soWqiVSVNFY",
+      "moduleId": "m1",
+      "duration": "30 min",
+      "level": "Beginner",
+      "tags": [
+        "purpose",
+        "failure",
+        "empathy"
+      ]
+    },
+    {
+      "id": "vid-motivation-dan-pink",
+      "title": "The Puzzle of Motivation",
+      "channel": "TED",
+      "description": "Dan Pink shows that the old 'carrot and stick' model fails for creative work — autonomy, mastery and purpose are the real drivers of high performance.",
+      "youtubeId": "rrkrvAUbU9Y",
+      "moduleId": "m1",
+      "duration": "18 min",
+      "level": "Intermediate",
+      "tags": [
+        "motivation",
+        "autonomy",
+        "purpose"
+      ]
+    },
+    {
+      "id": "vid-buffett-1999-lecture",
+      "title": "Timeless Life Advice from Warren Buffett (1999 Lecture)",
+      "channel": "Wealth Awesome",
+      "description": "A rare full 1999 lecture: how to build wealth early, the biggest financial mistake to avoid, why character beats talent, and the one skill to master.",
+      "youtubeId": "6DMHQgqPfHQ",
+      "moduleId": "m4",
+      "duration": "42 min",
+      "level": "Intermediate",
+      "tags": [
+        "investing",
+        "integrity",
+        "wealth"
+      ]
+    },
+    {
+      "id": "vid-buffett-life-advice",
+      "title": "Warren Buffett's Life Advice — Berkshire 2023",
+      "channel": "YAPSS",
+      "description": "Buffett and Charlie Munger on the mistakes to avoid in investing and life: temperament, patience, and the power of compound interest over decades.",
+      "youtubeId": "cRSAOnEENn8",
+      "moduleId": "m4",
+      "duration": "13 min",
+      "level": "Beginner",
+      "tags": [
+        "investing",
+        "habits",
+        "compounding"
+      ]
+    },
+    {
+      "id": "vid-leaders-inspire-sinek",
+      "title": "How Great Leaders Inspire Action",
+      "channel": "TED",
+      "description": "Simon Sinek's famous Golden Circle: people don't buy WHAT you do, they buy WHY you do it. The blueprint for purpose-driven business.",
+      "youtubeId": "qp0HIF3SfI4",
+      "moduleId": "m3",
+      "duration": "18 min",
+      "level": "Beginner",
+      "tags": [
+        "leadership",
+        "purpose",
+        "why"
+      ]
+    },
+    {
+      "id": "vid-creativity-ken-robinson",
+      "title": "Do Schools Kill Creativity?",
+      "channel": "TED",
+      "description": "Sir Ken Robinson's legendary talk on creativity, education and finding your element — the most-viewed TED talk of all time.",
+      "youtubeId": "iG9CE55wbtY",
+      "moduleId": "m6",
+      "duration": "19 min",
+      "level": "Intermediate",
+      "tags": [
+        "creativity",
+        "education",
+        "legacy"
+      ]
+    },
+    {
+      "id": "vid-masiyiwa-uganda",
+      "title": "Strive Masiyiwa's Afripreneur Town Hall (Uganda)",
+      "channel": "Maro of Africa",
+      "description": "The Econet chairman answers young African entrepreneurs live: capital, failure, faith and building billion-dollar businesses on the continent.",
+      "youtubeId": "zLZMlE9Czwc",
+      "moduleId": "m5",
+      "duration": "14 min",
+      "level": "Beginner",
+      "tags": [
+        "africa",
+        "entrepreneurship",
+        "mentorship"
+      ]
+    },
+    {
+      "id": "vid-elumelu-entrepreneurs",
+      "title": "Tony Elumelu: A Message to Young African Entrepreneurs",
+      "channel": "The Tony Elumelu Foundation",
+      "description": "Africa's champion of entrepreneurship on why the private sector must lead, and why the next generation of African founders will define the century.",
+      "youtubeId": "g0hvHLcTcIc",
+      "moduleId": "m5",
+      "duration": "8 min",
+      "level": "Beginner",
+      "tags": [
+        "africa",
+        "entrepreneurship",
+        "funding"
+      ]
     }
   ],
   "niches": [
@@ -3229,6 +3416,229 @@
         "Option to participate in co-development equity"
       ],
       "contactEmail": "seedwell@seedwel.com"
+    }
+  ],
+  "successStories": [
+    {
+      "id": "aliko-dangote",
+      "name": "Aliko Dangote",
+      "country": "Nigeria",
+      "title": "Founder & Chairman, Dangote Group — Africa's Richest Person",
+      "photo": "/images/success/aliko-dangote.jpg",
+      "quote": "Nothing comes easy; you have to work for it. I want to create the biggest company in Africa and create as many jobs as possible.",
+      "encouragement": "Dangote started in 1978 with a small trading business and a loan from his uncle. His secret is simple: start where you are, reinvest every profit, and never let short-term failure end the long-term mission. If a boy from Kano can build the largest refinery in Africa, your dreams are valid too — start today, no matter how small.",
+      "category": "Industry & Manufacturing",
+      "netWorth": "$10B+ — Africa's Richest",
+      "yearsActive": "Since 1978",
+      "tags": [
+        "Africa",
+        "Manufacturing",
+        "Start Small"
+      ]
+    },
+    {
+      "id": "strive-masiyiwa",
+      "name": "Strive Masiyiwa",
+      "country": "Zimbabwe",
+      "title": "Founder & Executive Chairman, Econet Group & Cassava Technologies",
+      "photo": "/images/success/strive-masiyiwa.jpg",
+      "quote": "You don't need money to start a business. You need an idea and the will to work.",
+      "encouragement": "Masiyiwa fought for years for a telecom license in Zimbabwe and was turned down again and again. Instead of quitting, he used the time to plan, learn, and prepare. Today Econet connects millions of people across Africa, and he mentors thousands of young entrepreneurs through his foundation. His message: rejection is often a redirect.",
+      "category": "Telecom & Technology",
+      "netWorth": "$1B+",
+      "yearsActive": "Since 1998",
+      "tags": [
+        "Africa",
+        "Telecom",
+        "Resilience"
+      ]
+    },
+    {
+      "id": "mo-abudu",
+      "name": "Mo Abudu",
+      "country": "Nigeria",
+      "title": "Founder & CEO, EbonyLife Media — Africa's First Global Media Mogul",
+      "photo": "/images/success/mo-abudu.jpg",
+      "quote": "Don't wait for permission to tell your own story. If you can dream it, you can do it.",
+      "encouragement": "After a corporate career at ExxonMobil, Mo Abudu launched a TV talk show from nothing and built EbonyLife — now one of the most influential media companies in Africa, with landmark content deals with Netflix and Sony. She proves that the second act of your career can be your greatest. It's never too late to start.",
+      "category": "Media & Entertainment",
+      "netWorth": "$100M+",
+      "yearsActive": "Since 2006",
+      "tags": [
+        "Africa",
+        "Media",
+        "Reinvention"
+      ]
+    },
+    {
+      "id": "tony-elumelu",
+      "name": "Tony Elumelu",
+      "country": "Nigeria",
+      "title": "Founder, Heirs Holdings & The Tony Elumelu Foundation",
+      "photo": "/images/success/tony-elumelu.jpg",
+      "quote": "The private sector must take the lead in transforming Africa — and that transformation starts with entrepreneurs.",
+      "encouragement": "Elumelu turned a struggling bank into one of Africa's largest financial institutions, then committed over $100 million to seed-capital and mentorship for more than 20,000 young African entrepreneurs through his foundation. He calls it Africapitalism: business must do well AND do good. His advice to young people: luck favors the prepared — so prepare relentlessly.",
+      "category": "Banking & Investment",
+      "netWorth": "$1B+",
+      "yearsActive": "Since 1997",
+      "tags": [
+        "Africa",
+        "Banking",
+        "Giving Back"
+      ]
+    },
+    {
+      "id": "oprah-winfrey",
+      "name": "Oprah Winfrey",
+      "country": "United States",
+      "title": "Media Mogul & Philanthropist — First Black Woman Billionaire",
+      "photo": "/images/success/oprah-winfrey.jpg",
+      "quote": "Think like a queen. A queen is not afraid to fail. Failure is another steppingstone to greatness.",
+      "encouragement": "Born into poverty in rural Mississippi and once told she wasn't 'television material', Oprah turned rejection into the most powerful media brand in history — and used her platform to educate and uplift millions. Her message: your current circumstances are not your final destination.",
+      "category": "Media & Entertainment",
+      "netWorth": "$2.5B+",
+      "yearsActive": "Since 1976",
+      "tags": [
+        "Media",
+        "Resilience",
+        "Purpose"
+      ]
+    },
+    {
+      "id": "warren-buffett",
+      "name": "Warren Buffett",
+      "country": "United States",
+      "title": "Chairman & CEO, Berkshire Hathaway — The Oracle of Omaha",
+      "photo": "/images/success/warren-buffett.jpg",
+      "quote": "The best investment you can make is in yourself.",
+      "encouragement": "Buffett bought his first stock at 11 and had read every investing book in his local library by age 20. He still reads five or six hours a day. He says no one can take away what you learn — skills and knowledge are the only investments that compound forever.",
+      "category": "Investing",
+      "netWorth": "$150B+",
+      "yearsActive": "Since 1942",
+      "tags": [
+        "Investing",
+        "Reading",
+        "Compounding"
+      ]
+    },
+    {
+      "id": "bill-gates",
+      "name": "Bill Gates",
+      "country": "United States",
+      "title": "Co-Founder, Microsoft — Technologist & Philanthropist",
+      "photo": "/images/success/bill-gates.jpg",
+      "quote": "Success is a lousy teacher. It seduces smart people into thinking they can't lose.",
+      "encouragement": "Gates dropped out of Harvard to start Microsoft, built the world's largest software company, then dedicated his second act to eradicating disease and improving education worldwide. He says his success began with reading and curiosity — millions of pages before a single line of code.",
+      "category": "Technology & Software",
+      "netWorth": "$100B+",
+      "yearsActive": "Since 1975",
+      "tags": [
+        "Technology",
+        "Philanthropy",
+        "Curiosity"
+      ]
+    },
+    {
+      "id": "jack-ma",
+      "name": "Jack Ma",
+      "country": "China",
+      "title": "Co-Founder, Alibaba Group",
+      "photo": "/images/success/jack-ma.jpg",
+      "quote": "Never give up. Today is hard, tomorrow will be worse, but the day after tomorrow will be sunshine.",
+      "encouragement": "Jack Ma was rejected from dozens of jobs, failed university three times, and was reportedly the only candidate rejected from KFC. When he started Alibaba from his apartment with 17 friends, nobody believed in it. Today Alibaba serves hundreds of millions. His proof: rejection is data, not destiny.",
+      "category": "E-commerce & Technology",
+      "netWorth": "$25B+",
+      "yearsActive": "Since 1999",
+      "tags": [
+        "E-commerce",
+        "Persistence",
+        "Rejection"
+      ]
+    },
+    {
+      "id": "sara-blakely",
+      "name": "Sara Blakely",
+      "country": "United States",
+      "title": "Founder, Spanx — Youngest Self-Made Female Billionaire",
+      "photo": "/images/success/sara-blakely.jpg",
+      "quote": "It's OK to fail. Embrace it. Don't be afraid of it. Failure is part of success, not the opposite of it.",
+      "encouragement": "Blakely started with $5,000 in savings, sold fax machines by day, and wrote her own patent on a napkin because she couldn't afford a lawyer. She failed her way to a billion-dollar company and says the fear of embarrassment — not failure itself — is the real enemy of progress.",
+      "category": "Consumer & Retail",
+      "netWorth": "$1B+",
+      "yearsActive": "Since 2000",
+      "tags": [
+        "Retail",
+        "Failure",
+        "Grit"
+      ]
+    },
+    {
+      "id": "rihanna",
+      "name": "Rihanna",
+      "country": "Barbados",
+      "title": "Music Icon & Founder, Fenty Beauty — First Black Woman with Two $1B Brands",
+      "photo": "/images/success/rihanna.jpg",
+      "quote": "Sometimes you win, sometimes you learn. The key to life is to be open to the possibilities.",
+      "encouragement": "Rihanna left Barbados as a teenager with a dream and a demo tape, became a global music icon, then built Fenty Beauty — the first beauty line to launch with 40 shades of foundation, rewriting the industry. She is the first Black woman to own two billion-dollar brands. Her lesson: serve the audience you believe in, and the wealth follows.",
+      "category": "Beauty & Music",
+      "netWorth": "$1.4B+",
+      "yearsActive": "Since 2005",
+      "tags": [
+        "Beauty",
+        "Inclusion",
+        "Reinvention"
+      ]
+    },
+    {
+      "id": "wangari-maathai",
+      "name": "Wangari Maathai",
+      "country": "Kenya",
+      "title": "Nobel Peace Laureate & Founder, Green Belt Movement",
+      "photo": "/images/success/wangari-maathai.jpg",
+      "quote": "It's the little things citizens do. That's what will make the difference. My little thing is planting trees.",
+      "encouragement": "Professor Maathai was the first woman in East Africa to earn a doctorate, and in 2004 became the first African woman to win the Nobel Peace Prize. Where others saw only problems, she saw seeds: her Green Belt Movement planted over 50 million trees. Her lesson: one person, one small action, repeated daily, can change a nation.",
+      "category": "Environment & Leadership",
+      "netWorth": "Nobel Peace Prize 2004",
+      "yearsActive": "1977–2011",
+      "tags": [
+        "Africa",
+        "Environment",
+        "Purpose"
+      ]
+    },
+    {
+      "id": "elon-musk",
+      "name": "Elon Musk",
+      "country": "South Africa / USA",
+      "title": "Founder, Tesla & SpaceX",
+      "photo": "/images/success/elon-musk.jpg",
+      "quote": "When something is important enough, you do it even if the odds are not in your favor.",
+      "encouragement": "Born in South Africa, Musk taught himself rocket science from books, moved to Canada and America with almost nothing, and watched his first three rockets explode before one succeeded. He reinvested everything into the next attempt. His lesson for builders: the number of attempts is the real metric — keep launching.",
+      "category": "Technology & Space",
+      "netWorth": "$200B+",
+      "yearsActive": "Since 1995",
+      "tags": [
+        "Innovation",
+        "Risk",
+        "Perseverance"
+      ]
+    },
+    {
+      "id": "william-kamkwamba",
+      "name": "William Kamkwamba",
+      "country": "Malawi",
+      "title": "Inventor & Author, 'The Boy Who Harnessed the Wind'",
+      "photo": "/images/success/william-kamkwamba.jpg",
+      "quote": "I tried, and I made it. If you want to make something, you can do it — don't give up.",
+      "encouragement": "At 14, during a famine in Malawi, Kamkwamba was forced to drop out of school. He taught himself physics from library books, built a windmill from scrap metal and bicycle parts, and brought electricity and clean water to his village. His windmill became a symbol of what young Africans can do with curiosity and courage.",
+      "category": "Engineering & Innovation",
+      "netWorth": "Global Inspiration",
+      "yearsActive": "Since 2002",
+      "tags": [
+        "Africa",
+        "STEM",
+        "Youth"
+      ]
     }
   ]
 }
