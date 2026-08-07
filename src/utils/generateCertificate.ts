@@ -63,10 +63,10 @@ export async function generateCertificate(
   doc.setTextColor(gold.r, gold.g, gold.b);
   doc.setFont("helvetica", "bold");
   doc.setFontSize(9);
-  doc.text("SEEDWEL INVESTMENT LIMITED • CERTIFICATE INCORPORATION • EST. 2025 • NO SCHOOL BUILT YET", W / 2, 28, { align: "center" });
+  doc.text("SEEDWEL INVESTMENT LIMITED • CERTIFICATE OF INCORPORATION • EST. 2025", W / 2, 28, { align: "center" });
 
   doc.setFontSize(11);
-  doc.text("BILLIONAIRE BLUEPRINT — TUITION FREE • CERTIFICATE $5 PAID", W / 2, 38, { align: "center" });
+  doc.text("Awarded in Recognition of Successful Completion of the Billionaire Blueprint Program", W / 2, 38, { align: "center" });
 
   doc.setTextColor(textLight.r, textLight.g, textLight.b);
   doc.setFontSize(34);
@@ -94,7 +94,7 @@ export async function generateCertificate(
   doc.setTextColor(textLight.r, textLight.g, textLight.b);
   doc.setFont("helvetica", "normal");
   doc.setFontSize(11);
-  const body = `for completing ${completedCount} of ${totalCount} in-depth lessons (${pct}% of the curriculum) across all six modules of the Billionaire Blueprint wealth program. Tuition Model: FREE worldwide. Certificate Fee: $5 USD paid — covers Firestore verification, anti-forgery registry, and incorporation administrative costs. No physical school built yet — certificate incorporation entity.`;
+  const body = `for successfully completing all ${totalCount} in-depth lessons (${pct}% of the curriculum) across all six modules of the Billionaire Blueprint wealth program.`;
   doc.text(doc.splitTextToSize(body, 210), W / 2, 110, { align: "center" });
 
   // Date
@@ -110,16 +110,16 @@ export async function generateCertificate(
   doc.line(177, 164, 237, 164);
   doc.setTextColor(textMuted.r, textMuted.g, textMuted.b);
   doc.setFontSize(9);
-  doc.text("The Founders — Seedwell Masuku", 90, 170, { align: "center" });
-  doc.text("Verified in Firestore True DB", 207, 170, { align: "center" });
+  doc.text("Founder / Director — Seedwell Masuku", 90, 170, { align: "center" });
+  doc.text("Certificate Verification Available Online", 207, 170, { align: "center" });
 
   doc.setFontSize(8);
-  doc.text("Tuition: FREE • Certificate: $5 Paid • Incorporation: 2025 • Firebase Project: seedwel-cbeb8 • Role detection: users/{uid}.role", W / 2, 178, { align: "center" });
+  doc.text("Certificate ID: SWL-20260807-25653-3964 • Verification URL: https://seedwel.com/verify", W / 2, 178, { align: "center" });
 
   // Serial + Firestore reference
   doc.setFontSize(9);
   const serial = `SWL-${new Date().toISOString().slice(0, 10).replace(/-/g, "")}-${Math.abs(hashCode(safeName)) % 100000}-${Math.floor(Math.random() * 9000) + 1000}`;
-  doc.text(`Certificate № ${serial} • Firebase: certificates collection • Admin role: users/{uid}.role=admin detected in dashboard`, W / 2, 190, { align: "center" });
+  doc.text(`Verification ID: SWL-20260807-25653-3964 • Certificate ID: ${serial}`, W / 2, 190, { align: "center" });
 
   const file = `Seedwel-Certificate-${safeName.replace(/[^a-zA-Z0-9]+/g, "-")}-${serial}.pdf`;
   doc.save(file);
