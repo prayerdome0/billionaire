@@ -643,6 +643,23 @@ export async function deleteAdminContent(resource: ContentResource, id: string):
   await request(`/admin/content/${resource}/${encodeURIComponent(id)}`, { method: "DELETE" }, { auth: true });
 }
 
+/* ------------------------------ FREE AI API — no key, no limit ------------------------------ */
+
+export interface FreeAIMentorResponse {
+  free: boolean; noKey: boolean; persona: string; personaStyle: string; question: string; reply: string; suggestions: string[]; api: string; time: string;
+}
+export async function fetchAIMentor(question: string, persona = "zacheus"): Promise<FreeAIMentorResponse> {
+  try { return await request<FreeAIMentorResponse>(`/ai/mentor?question=${encodeURIComponent(question)}&persona=${persona}`); }
+  catch { const { generateAIResponse } = await import("../data/aiKnowledge"); const r = generateAIResponse(question, persona); return { free: true, noKey: true, persona, personaStyle: persona, question, reply: r.reply, suggestions: r.suggestions, api: "local fallback", time: new Date().toISOString() }; }
+}
+export async function postAIChat(message: string, persona = "zacheus", history: any[] = []): Promise<{ reply: string; suggestions: string[] }> {
+  try { const res = await request<{ reply: string; suggestions: string[] }>("/ai/chat", { method: "POST", body: JSON.stringify({ message, persona, history }) }); return res; }
+  catch { const { generateAIResponse } = await import("../data/aiKnowledge"); const r = generateAIResponse(message, persona); return { reply: r.reply, suggestions: r.suggestions }; }
+}
+export async function fetchAITip(): Promise<{ tip: string }> { try { return await request<{ tip: string }>("/ai/tip"); } catch { return { tip: "School buildings are forever assets. Land + tuition + jobs = 50-year moat." }; } }
+export async function fetchAIIdeas(industry: string): Promise<{ ideas: string[] }> { try { return await request(`/ai/ideas?industry=${encodeURIComponent(industry)}`); } catch { return { ideas: ["Mobile lab $200 per school", "AI tutor $5/month", "Uniform marketplace 15% take"] }; } }
+export async function fetchChallenge365(from = 1, to = 50) { try { return await request(`/challenge/365?from=${from}&to=${to}`); } catch { const { challenges365 } = await import("../data/challenge365"); return { challenges: challenges365.slice(from-1, to), total: 365, from, to }; } }
+
 /** Full list of endpoints, used by the API docs page. `access` marks the tier. */
 export const API_ENDPOINTS: {
   method: "GET" | "POST" | "DELETE" | "PATCH" | "PUT";
@@ -703,5 +720,14 @@ export const API_ENDPOINTS: {
   { method: "GET", path: "/api/contact", description: "List stored contact messages (PII — admin only).", example: '[{"id":1,"name":"Ada","email":"ada@x.io",...}]', access: "admin" },
   { method: "GET", path: "/api/newsletter", description: "List newsletter subscribers (PII — admin only).", example: '[{"id":1,"email":"ada@example.com",...}]', access: "admin" },
   { method: "GET", path: "/api/investors", description: "List all investor inquiries (deal flow — admin only).", example: '[{"id":1,"name":"SADC Growth Fund",...}]', access: "admin" },
-  { method: "GET", path: "/api/database", description: "Inspect the database: engine, table counts, recent rows (admin only).", example: '{"tables":{"lessons":28,"users":4},...}', access: "admin" },
+    { method: "GET", path: "/api/database", description: "Inspect the database: engine, table counts, recent rows (admin only).", example: '{"tables":{"lessons":28,"users":4},...}', access: "admin" },
+  { method: "GET", path: "/api/ai/tip", description: "Free AI investment tip — no key, random tip from Zambia real estate + AI + Buffett lens.", example: '{"tip":"School buildings are forever assets..."}', access: "public" },
+  { method: "GET", path: "/api/ai/ideas?industry=school|ai|agriculture", description: "Free AI business ideas for industry — 4 ideas with MRR math, Zambian ready.", example: '{"ideas":["Mobile lab $200 per school",...]}', access: "public" },
+  { method: "GET", path: "/api/ai/mentor?question=...&persona=zacheus|dangote|buffett|oprah|strive", description: "Free AI mentor — 5 personas (Dangote, Buffett, Oprah, Strive, Zacheus). No key.", example: '{"persona":"buffett","reply":"20-slot punch card..."}', access: "public" },
+  { method: "POST", path: "/api/ai/chat", description: "Free AI chat — no key, local intelligence. Body {message, persona, history}.", example: 'POST body {"message":"I have no capital"}', access: "public" },
+  { method: "POST", path: "/api/ai/wealth-plan", description: "Free AI wealth plan — income, goal, risk, months → 70/20/10 roadmap.", example: 'POST body {"income":800,"goal":10000}', access: "public" },
+  { method: "GET", path: "/api/ai/daily-challenge?day=1..365", description: "Free AI daily challenge for any day 1-365, with category, points, time.", example: '{"day":1,"title":"Day 1: Mindset...","points":10}', access: "public" },
+  { method: "GET", path: "/api/challenge/365?from=1&to=50", description: "Full 365 challenge list paginated — from/to query. Movie edition.", example: '{"total":365,"challenges":[{"day":1,...}]}', access: "public" },
+  { method: "GET", path: "/api/investment-photos", description: "Investment visual gallery — real photos categories with Ken Burns meta.", example: '{"photos":[{"id":"school-1",...}]}', access: "public" },
 ];
+

@@ -774,6 +774,193 @@ app.get("/api/newsletter", requireAdmin, async (_req, res) => json(res, 200, awa
 app.get("/api/investors", requireAdmin, async (_req, res) => json(res, 200, await (await store()).listInvestorInquiries()));
 app.get("/api/database", requireAdmin, async (_req, res) => json(res, 200, await (await store()).databaseInfo()));
 
+/* ===================================================================== */
+/* ===================== FREE AI API — No Key, No Limit ============= */
+/* ===================================================================== */
+
+const investmentTipsFree = [
+  "School buildings are forever assets. Land doesn't depreciate, tuition compounds. Zambia enrollment growing 6% yearly — demand > supply.",
+  "AI business ROI: $5k into dev training → one developer builds SaaS that earns $2k MRR = 480% annual. Seedwel incubator math.",
+  "House hacking in Lusaka: live in 1 unit of 3-plex, rent 2 others at K3,500 each. Mortgage K5,200 → you live free + K1,800 positive.",
+  "Never invest cash you need next 12 months. Emergency fund = 6 months. Then invest. Tilt insurance first.",
+  "Diversify: 40% school real estate, 30% AI SaaS, 20% index, 10% moonshots.",
+  "Cost of delay: $500/month at 16% school yield = $1.3M in 20 years.",
+  "Solar school = two businesses: education + energy. Diesel K80k/year → solar cuts 70%.",
+  "Buffett test: Would you own school campus if market closed 10 years? Students need school regardless — that's moat."
+];
+
+const businessIdeasMap = {
+  school: [
+    "Mobile lab visiting rural schools — $200/school/term, 40 schools = $8k MRR",
+    "AI homework tutor Zambian curriculum — $5/month per student, 2000 students = $10k MRR",
+    "Uniform marketplace — 15% take rate",
+    "School transport tracker — $2/child/month"
+  ],
+  ai: [
+    "WhatsApp AI answers parent queries — $99/month per school",
+    "Crop disease detector from photo — $5/diagnosis for 10k farmers",
+    "Mining safety checklist AI — $5k/month to Zambian mines",
+    "Grade prediction AI — $300/month per school"
+  ],
+  agriculture: [
+    "Cold chain tomato logistics — 30% margin",
+    "Solar irrigation-as-a-service — $30/month vs $150 diesel",
+    "Avocado aggregator exporting to SA",
+    "Village chicken feed subscription via mobile money"
+  ],
+  general: [
+    "Load shedding bakery: bake night cheap ZESCO, sell morning fresh",
+    "Mobile money float service — 2% margin",
+    "CV writer K150 per CV, 20/week = K12k/month",
+    "AI voiceover for radio ads — K500 per ad"
+  ]
+};
+
+function freeAIReply(qRaw) {
+  const q = String(qRaw || "").toLowerCase();
+  if (q.includes("no capital") || q.includes("no money") || q.includes("broke")) {
+    return `Zero-Capital Start TODAY: 1) Skill flip 24h — Canva, CV writing, WhatsApp setup K200 on FB groups. 2) Interview 10 school owners — #1 headache is parents late pay → build WhatsApp reminder K300/month per school. 3) Seedwel FREE tuition 28 lessons, $5 cert only after. First $100 service, $1k productized, $10k system. What skill you sell by 6pm tomorrow?`;
+  }
+  if (q.includes("school") || q.includes("zambia") || q.includes("invest")) {
+    return `${investmentTipsFree[Math.floor(Math.random()*investmentTipsFree.length)]} Open deals: STEM Phase1 $10k min 14-18% yield + land equity, AI Fund $5k min 25% IRR, Real Estate $25k min 16% yield triple-net. Asymmetric move: if $500-$5k, build tool for one school problem, bring traction to Seedwel, we fund operators.`;
+  }
+  if (q.includes("ai") || q.includes("tech") || q.includes("software")) {
+    const ideas = businessIdeasMap.ai;
+    const pick = ideas[Math.floor(Math.random()*ideas.length)];
+    return `AI is permissionless leverage. No permission needed. 3 plays no code: 1) Vertical wrapper — hated manual task automation, sell at 20% human cost. Eg: ${pick}. 2) Education arbitrage — past papers → AI tutor K200/month. 3) Manager play — learn prompting 15 days, train 5 youths, you become manager. Free tools: ChatGPT, Claude, HuggingFace, Colab. What manual task you delete forever?`;
+  }
+  if (q.includes("365") || q.includes("challenge") || q.includes("journey")) {
+    return `365 Journey Movie: Act1 Starter Day1-30 identity, cash truth, first $100. Act2 Builder Day31-90 validation 10 sales. Act3 Warrior Day91-180 scale automate hire. Act4 Billionaire Day181-365 3 engines legacy. Each day 15-90 mins, points, streak, video of successful person, AI coach free. Today is Day ${Math.floor(Math.random()*365)+1}. MIT before 10am.`;
+  }
+  return `Free AI Mentor — Zambian context: 1) Cash flow direction asset vs liability? 2) Load shedding, mobile money, small farmers = problems not in Silicon Valley = less competition. 3) Validate 30 days landing page + 10 concierge deliveries. Seedwel tuition FREE, videos free, success free. $5 cert only. Moves before midnight: 10-year vision paragraph, 5 loud complaints list, DM 1 person $20 fix.`;
+}
+
+app.get("/api/ai/tip", async (_req, res) => {
+  json(res, 200, { tip: investmentTipsFree[Math.floor(Math.random()*investmentTipsFree.length)], category: "Investment", source: "Seedwel Free AI", noKey: true, free: true, time: new Date().toISOString() });
+});
+
+app.get("/api/ai/ideas", async (req, res) => {
+  const industry = clip(req.query.industry || "general", 50).toLowerCase();
+  const list = businessIdeasMap[industry] || businessIdeasMap.general;
+  json(res, 200, { industry, ideas: list, count: list.length, pricing: "Ideas free, validation in 30 days with landing page + concierge", freeAI: true });
+});
+
+app.get("/api/ai/mentor", async (req, res) => {
+  const q = clip(req.query.question || req.query.q || "", 500);
+  const persona = clip(req.query.persona || "zacheus", 30);
+  if (!q) return json(res, 400, { error: "question query param required, e.g. /api/ai/mentor?question=how to start with $0" });
+  const personas = {
+    dangote: "Aliko Dangote lens: manufacturing, reinvest 100% 15 years, build what Africa imports.",
+    buffett: "Warren Buffett lens: 20-slot punch card, moats, never lose money, compounding.",
+    oprah: "Oprah lens: empathy, own distribution, trust = compounding asset.",
+    strive: "Strive lens: resilience, 5-year no as law school, infrastructure stacks.",
+    zacheus: "Zacheus Simbaya lens: Zambia schools, AI dev ecosystem, milestone escrow."
+  };
+  const reply = freeAIReply(q);
+  json(res, 200, {
+    free: true, noKey: true, persona, personaStyle: personas[persona] || personas.zacheus,
+    question: q, reply: `${personas[persona] || personas.zacheus}\n\n${reply}`,
+    suggestions: ["Give me 30-day plan to first $1000", "What should I invest with $500 in Zambia?", "Roast my excuse: I have no capital", "Write LinkedIn post about school investing"],
+    api: "Free AI — Seedwel local intelligence, no external API key",
+    time: new Date().toISOString()
+  });
+});
+
+app.post("/api/ai/chat", async (req, res) => {
+  const { message, history = [], persona = "zacheus" } = req.body || {};
+  if (!message) return json(res, 400, { error: "message required" });
+  const reply = freeAIReply(message);
+  json(res, 200, {
+    free: true, noKey: true, persona,
+    you: message,
+    reply,
+    historyLength: Array.isArray(history) ? history.length : 0,
+    suggestions: ["Give me business idea with $0", "Test my investment idea", "Assign 365 challenge today"],
+    time: new Date().toISOString()
+  });
+});
+
+app.post("/api/ai/wealth-plan", async (req, res) => {
+  const { income = 800, goal = 10000, risk = "medium", months = 12 } = req.body || {};
+  const inc = Number(income) || 800;
+  const g = Number(goal) || 10000;
+  const m = Number(months) || 12;
+  const monthlySave = Math.round((g / m) * 0.6);
+  const bizTarget = Math.round(g * 0.4);
+  json(res, 200, {
+    free: true, noKey: true,
+    input: { income: inc, goal: g, risk, months: m },
+    plan: {
+      split: "70/20/10 — 70% day job, 20% side business, 10% investing automated",
+      monthly: {
+        saveForInvest: monthlySave,
+        sideBusinessTarget: `Sell ${Math.ceil(bizTarget/100)} offers at $100 or ${Math.ceil(bizTarget/300)} at $300`,
+        invest: `${Math.round(inc*0.1)}/month into index + school fund`
+      },
+      phases: [
+        `Months 1-3: Emergency 6 months, fix budget, pick massive problem, interview 50 people`,
+        `Months 4-6: Launch MVP, first 10 customers, reinvest 100%`,
+        `Months 7-9: Productize, raise 20%, hire/automate bottleneck`,
+        `Months 10-12: Second income engine, review portfolio, plan next asymmetric bet`
+      ],
+      dailyMIT: "90 mins deep work before 10am on income engine",
+      metrics: "Track cash flow monthly, not vanity",
+      tuition: "FREE — 28 lessons free, cert $5 only",
+      tip: investmentTipsFree[Math.floor(Math.random()*investmentTipsFree.length)]
+    },
+    time: new Date().toISOString()
+  });
+});
+
+app.get("/api/ai/daily-challenge", async (req, res) => {
+  const day = Math.max(1, Math.min(365, Number(req.query.day) || 1));
+  // simple deterministic challenge pick
+  const cats = ["Mindset","Money","Business","Investment","AI","Skills","Network","Health"];
+  const diffs = ["Starter","Builder","Warrior","Billionaire"];
+  const cat = cats[(day-1)%cats.length];
+  const diff = day<=30?"Starter":day<=90?"Builder":day<=180?"Warrior":"Billionaire";
+  json(res, 200, {
+    free: true, noKey: true, day, category: cat, difficulty: diff,
+    title: `Day ${day}: ${cat} — ${diff} Level`,
+    description: `Real movie-like daily mission for ${cat}. 15-90 mins, points, reflection, related successful person video. Day ${day} of 365 Journey to Success.`,
+    actions: ["Pick MIT and finish before 10am", "Do 1 real action that could earn or learn", "Write reflection, log in local progress"],
+    points: diff==="Starter"?10:diff==="Builder"?25:diff==="Warrior"?50:100,
+    timeMinutes: diff==="Starter"?15:diff==="Builder"?30:diff==="Warrior"?60:90,
+    quote: investmentTipsFree[day % investmentTipsFree.length],
+    api: "/api/challenge/365 full list"
+  });
+});
+
+app.get("/api/challenge/365", async (req, res) => {
+  const from = Math.max(1, Math.min(365, Number(req.query.from) || 1));
+  const to = Math.max(from, Math.min(365, Number(req.query.to) || 50));
+  const challenges = [];
+  const cats = ["Mindset","Money","Business","Investment","AI","Skills","Network","Health"];
+  for (let d=from; d<=to; d++) {
+    const cat = cats[(d-1)%cats.length];
+    const diff = d<=30?"Starter":d<=90?"Builder":d<=180?"Warrior":"Billionaire";
+    challenges.push({
+      day: d, title: `Day ${d}: ${cat} Challenge — ${diff}`, category: cat, difficulty: diff,
+      description: `Day ${d} mission — ${cat} focused, ${diff} level, ${diff==="Starter"?15:diff==="Builder"?30:60} mins, movie animation ready.`,
+      actions: ["MIT before 10am", "Real action", "Reflection log"],
+      points: diff==="Starter"?10:diff==="Builder"?25:diff==="Warrior"?50:100,
+      timeMinutes: diff==="Starter"?15:diff==="Builder"?30:diff==="Warrior"?60:90,
+      reward: `Day ${d} Badge`,
+      week: Math.floor((d-1)/7)+1
+    });
+  }
+  json(res, 200, { free: true, noKey: true, total: 365, from, to, count: challenges.length, challenges, fullListEndpoint: "/api/challenge/365?from=1&to=365", aiEndpoint: "/api/ai/daily-challenge?day=1" });
+});
+
+app.get("/api/investment-photos", async (_req, res) => {
+  const photos = [
+    { id:"school-1", title:"Modern STEM Classroom", category:"School Building", location:"Lusaka", image:"https://images.pexels.com/photos/5212345/pexels-photo-5212345.jpeg?auto=compress&cs=tinysrgb&w=1200", description:"STEM classrooms solar+AI fiber", stats:[{label:"Students",value:"800+"}] },
+    { id:"ai-1", title:"AI Developer Hub", category:"AI Business", location:"Pan-African Hub", image:"https://images.pexels.com/photos/3861958/pexels-photo-3861958.jpeg?auto=compress&cs=tinysrgb&w=1200", description:"50+ devs, 12 products", stats:[{label:"Devs",value:"50+"}] },
+    { id:"solar-1", title:"Solar Microgrid", category:"Solar Energy", location:"Rural Zambia", image:"https://images.pexels.com/photos/356036/pexels-photo-356036.jpeg?auto=compress&cs=tinysrgb&w=1200", description:"150kW solar", stats:[{label:"Capacity",value:"150kW"}] }
+  ];
+  json(res, 200, { free:true, count: photos.length, photos, note:"Full 12 photos in frontend data/investmentVisuals.ts with Pexels CDN, Ken Burns animation" });
+});
+
 /* ------------------------------ static SPA ------------------------------ */
 if (existsSync(DIST)) {
   app.use(express.static(DIST));
