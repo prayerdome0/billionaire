@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, Award, Flame, Globe2, Quote, Sparkles, TrendingUp } from "lucide-react";
+import { ArrowRight, Award, Flame, Globe2, Play, PlayCircle, Quote, Sparkles, TrendingUp } from "lucide-react";
 import Reveal from "./Reveal";
+import BrandedVideoPlayer from "./BrandedVideoPlayer";
 import { successStories, type SuccessStory } from "../data/content";
+import { storyToVideo } from "../lib/storyVideo";
 import { cn } from "../utils/cn";
 
 /** Infinite scrolling quote ticker — pure CSS marquee (see index.css). */
@@ -26,8 +28,9 @@ export function QuoteMarquee({ slow = false }: { slow?: boolean }) {
   );
 }
 
-function StoryCard({ story, index }: { story: SuccessStory; index: number }) {
+function StoryCard({ story, index, onWatch }: { story: SuccessStory; index: number; onWatch: (s: SuccessStory) => void }) {
   const [flipped, setFlipped] = useState(false);
+  const video = storyToVideo(story);
   return (
     <Reveal direction="up" delay={(index % 3) * 90}>
       <article
@@ -50,6 +53,23 @@ function StoryCard({ story, index }: { story: SuccessStory; index: number }) {
           <span className="absolute top-3 right-3 rounded-full bg-black/60 border border-emerald-500/30 px-3 py-1 text-[10px] font-bold text-emerald-300">
             {story.netWorth}
           </span>
+
+          {/* Video of this successful person — plays right after their photo */}
+          {video && (
+            <button
+              onClick={() => onWatch(story)}
+              className="absolute inset-0 z-10 flex items-center justify-center bg-black/0 hover:bg-black/30 transition-colors duration-300"
+              aria-label={`Watch video of ${story.name}`}
+            >
+              <span className="flex items-center gap-2 rounded-full bg-amber-500/95 text-gray-900 font-black text-xs px-4 py-2.5 shadow-xl shadow-black/50 opacity-0 scale-90 group-hover:opacity-100 group-hover:scale-100 transition-all duration-300">
+                <Play className="w-4 h-4 fill-current" /> Watch {story.name.split(" ")[0]}'s Story
+              </span>
+              <span className="absolute bottom-20 right-3 flex items-center gap-1.5 rounded-full bg-black/70 border border-amber-500/40 px-3 py-1.5 text-[10px] font-bold text-amber-300">
+                <PlayCircle className="w-3.5 h-3.5" /> {story.video?.duration} video
+              </span>
+            </button>
+          )}
+
           <div className="absolute bottom-3 left-4 right-4">
             <h3 className="text-xl font-black text-white">{story.name}</h3>
             <p className="text-amber-400 text-xs font-medium leading-snug mt-0.5">{story.title}</p>
@@ -109,6 +129,8 @@ export default function SuccessStoriesSection({
   showCta = true,
 }: SuccessStoriesSectionProps) {
   const stories = limit ? successStories.slice(0, limit) : successStories;
+  const [watching, setWatching] = useState<SuccessStory | null>(null);
+  const watchingVideo = watching ? storyToVideo(watching) : null;
 
   return (
     <section className={showMarquee ? "py-24 bg-gray-950 relative overflow-hidden" : "relative overflow-hidden"}>
@@ -136,10 +158,10 @@ export default function SuccessStoriesSection({
           </Reveal>
         )}
 
-        {/* Photo grid */}
+        {/* Photo grid — every photo has a video of that successful person behind it */}
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {stories.map((story, i) => (
-            <StoryCard key={story.id} story={story} index={i} />
+            <StoryCard key={story.id} story={story} index={i} onWatch={setWatching} />
           ))}
         </div>
 
@@ -165,6 +187,9 @@ export default function SuccessStoriesSection({
           </Reveal>
         )}
       </div>
+
+      {/* Branded player — "Welcome to Seedwel Investment Limited, here is …" → video → "Thank you for watching" */}
+      {watchingVideo && <BrandedVideoPlayer video={watchingVideo} onClose={() => setWatching(null)} />}
     </section>
   );
 }

@@ -50,6 +50,10 @@ service cloud.firestore {
       allow read: if true;
       allow write: if isManagement();
     }
+    match /successStories/{docId} {
+      allow read: if true; // tuition FREE — successful people + their videos
+      allow write: if isManagement();
+    }
     match /investment_opportunities/{docId} {
       allow read: if true;
       allow write: if isManagement();

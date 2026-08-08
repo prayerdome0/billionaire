@@ -7,15 +7,18 @@ import {
   lessons as fallbackLessons,
   modules as fallbackModules,
   niches as fallbackNiches,
+  successStories as fallbackStories,
   videos as fallbackVideos,
   type Founder,
   type Lesson,
   type Module,
   type Niche,
+  type SiteConfig,
+  type SuccessStory,
   type Video,
 } from "../data/content";
 
-export type { Founder, Lesson, Module, Niche, Video };
+export type { Founder, Lesson, Module, Niche, SiteConfig, SuccessStory, Video };
 
 export interface ApiStats {
   founders: number;
@@ -266,6 +269,179 @@ export async function fetchVideos(): Promise<Video[]> {
   }
 }
 
+/* ------------------------------ success stories (successful people + their videos) ------------------------------ */
+
+export async function fetchSuccessStories(): Promise<SuccessStory[]> {
+  try {
+    return await request<SuccessStory[]>("/success-stories");
+  } catch {
+    return fallbackStories;
+  }
+}
+
+export async function fetchSuccessStory(id: string): Promise<SuccessStory> {
+  try {
+    return await request<SuccessStory>(`/success-stories/${encodeURIComponent(id)}`);
+  } catch {
+    const story = fallbackStories.find((s) => s.id === id);
+    if (!story) throw new Error("Success story not found");
+    return story;
+  }
+}
+
+export interface VideoWithStats extends Video {
+  views?: number;
+  kind?: string;
+  person?: string;
+  introAudio?: string | null;
+  outroAudio?: string | null;
+}
+
+export async function fetchVideo(id: string): Promise<VideoWithStats> {
+  return request<VideoWithStats>(`/videos/${encodeURIComponent(id)}`);
+}
+
+export async function fetchRelatedVideos(id: string): Promise<VideoWithStats[]> {
+  try {
+    return await request<VideoWithStats[]>(`/videos/${encodeURIComponent(id)}/related`);
+  } catch {
+    return [];
+  }
+}
+
+export interface VideoStatsResponse {
+  totalViews: number;
+  topVideos: { id: string; title: string; youtubeId: string; person?: string; views: number }[];
+  all: { id: string; title: string; youtubeId: string; person?: string; views: number }[];
+}
+
+export async function fetchVideoStats(): Promise<VideoStatsResponse> {
+  return request<VideoStatsResponse>("/videos/stats");
+}
+
+export async function postVideoView(videoId: string): Promise<{ ok: boolean; id: string; views: number }> {
+  try {
+    return await request<{ ok: boolean; id: string; views: number }>(`/videos/${encodeURIComponent(videoId)}/view`, { method: "POST" });
+  } catch {
+    return { ok: true, id: videoId, views: 0 };
+  }
+}
+
+export interface QuoteOfDay {
+  date: string;
+  quote: string;
+  author: string;
+  country: string;
+  title: string;
+  photo: string;
+  encouragement: string;
+  video: { id: string; youtubeId: string; title: string; channel: string; duration: string } | null;
+  random: { quote: string; author: string; video: { id: string; youtubeId: string; title: string } | null };
+}
+
+export async function fetchQuoteOfTheDay(): Promise<QuoteOfDay | null> {
+  try {
+    return await request<QuoteOfDay>("/quote");
+  } catch {
+    const story = fallbackStories[new Date().getDate() % fallbackStories.length];
+    if (!story) return null;
+    return {
+      date: new Date().toISOString().slice(0, 10),
+      quote: story.quote,
+      author: story.name,
+      country: story.country,
+      title: story.title,
+      photo: story.photo,
+      encouragement: story.encouragement,
+      video: story.video ? { id: `story-${story.id}`, ...story.video } : null,
+      random: { quote: story.quote, author: story.name, video: null },
+    };
+  }
+}
+
+export interface SiteConfigResponse extends SiteConfig {
+  siteStats?: { label: string; value: string }[];
+  heroImage?: string;
+  videoCount?: number;
+  successStoryCount?: number;
+  lessonCount?: number;
+  moduleCount?: number;
+  founderCount?: number;
+  tuitionModel?: string;
+  certificateFeeUsd?: number;
+  incorporationNote?: string;
+}
+
+export async function fetchSiteConfig(): Promise<SiteConfigResponse | null> {
+  try {
+    return await request<SiteConfigResponse>("/site");
+  } catch {
+    return null;
+  }
+}
+
+/* ------------------------------ feedback + watch history + features ------------------------------ */
+
+export interface Feedback {
+  id: string;
+  name: string;
+  email: string;
+  page: string;
+  rating: number;
+  comment: string;
+  created_at: string;
+}
+
+export async function postFeedback(input: { name?: string; email?: string; page?: string; rating?: number; comment?: string }): Promise<{ success: boolean; feedback: Feedback; message: string }> {
+  return request<{ success: boolean; feedback: Feedback; message: string }>("/feedback", { method: "POST", body: JSON.stringify(input) });
+}
+
+export async function fetchFeedback(): Promise<Feedback[]> {
+  return request<Feedback[]>("/feedback", undefined, { auth: true });
+}
+
+export interface WatchHistoryEntry {
+  videoId: string;
+  videoTitle: string;
+  watchedAt: string;
+}
+
+export async function fetchWatchHistory(): Promise<WatchHistoryEntry[]> {
+  try {
+    const res = await request<{ history: WatchHistoryEntry[] }>("/watch-history", undefined, { auth: true });
+    return res.history;
+  } catch {
+    return [];
+  }
+}
+
+export async function postWatchHistory(videoId: string, videoTitle: string): Promise<void> {
+  try {
+    await request("/watch-history", { method: "POST", body: JSON.stringify({ videoId, videoTitle }) }, { auth: true });
+  } catch {
+    /* guests fall back to localStorage */
+  }
+}
+
+export interface FeaturesResponse {
+  service: string;
+  version: string;
+  trueDatabase: string;
+  tuitionModel: string;
+  certificateFeeUsd: number;
+  content: Record<string, number>;
+  engagement: { videoViews: Record<string, number>; totalViews: number; feedbackCount: number; watchHistoryEntries: number };
+  endpoints: { method: string; path: string }[];
+}
+
+export async function fetchFeatures(): Promise<FeaturesResponse | null> {
+  try {
+    return await request<FeaturesResponse>("/features");
+  } catch {
+    return null;
+  }
+}
+
 export async function fetchNiches(): Promise<Niche[]> {
   try {
     const { collection, getDocs } = await import("firebase/firestore");
@@ -483,6 +659,19 @@ export const API_ENDPOINTS: {
   { method: "GET", path: "/api/lessons", description: "List all lessons (full content included).", example: '[{"id":"l01-psychology-of-wealth","title":"The Psychology of Wealth",...}]', access: "public" },
   { method: "GET", path: "/api/lessons/:id", description: "Fetch one lesson with content, takeaways, and quiz.", example: '{"id":"l07-compounding","title":"The Eighth Wonder",...}', access: "public" },
   { method: "GET", path: "/api/videos", description: "List video masterclasses with YouTube IDs.", example: '[{"id":"vid-economic-machine","youtubeId":"PHe0bXAIuk0",...}]', access: "public" },
+  { method: "GET", path: "/api/success-stories", description: "All 13 successful people with photos, quotes, and their real YouTube videos (branded intro/outro).", example: '[{"id":"aliko-dangote","name":"Aliko Dangote","video":{"youtubeId":"AYaEw-kxGdY",...}}]', access: "public" },
+  { method: "GET", path: "/api/success-stories/:id", description: "One successful person with their video + view count.", example: '{"id":"oprah-winfrey","video":{"youtubeId":"soWqiVSVNFY",...},"views":12}', access: "public" },
+  { method: "GET", path: "/api/videos/stats", description: "Total video views + most-watched videos (masterclasses & success stories).", example: '{"totalViews":42,"topVideos":[{"id":"vid-...","views":10}]}', access: "public" },
+  { method: "GET", path: "/api/videos/:id", description: "One video by id (masterclass or story-<person>).", example: '{"id":"story-aliko-dangote","youtubeId":"AYaEw-kxGdY",...}', access: "public" },
+  { method: "GET", path: "/api/videos/:id/related", description: "Suggested next videos for any video id.", example: '[{"id":"vid-grit-duckworth",...},...]', access: "public" },
+  { method: "POST", path: "/api/videos/:id/view", description: "Count a video view (fires when playback starts).", example: 'POST /api/videos/vid-economic-machine/view → {"views":3}', access: "public" },
+  { method: "GET", path: "/api/quote", description: "Quote of the day from a successful person + random pick + their video.", example: '{"date":"2026-08-08","quote":"...","author":"Aliko Dangote","video":{...}}', access: "public" },
+  { method: "GET", path: "/api/site", description: "Site config incl. the branded video intro/outro templates.", example: '{"name":"Seedwel Investment Limited","videoIntroTemplate":"Welcome to Seedwel Investment Limited, here is",...}', access: "public" },
+  { method: "POST", path: "/api/feedback", description: "Submit site feedback / video rating (1-5 stars + comment).", example: 'POST body {"page":"/videos","rating":5,"comment":"Loved it!"}', access: "public" },
+  { method: "GET", path: "/api/features", description: "Self-documenting index of every API endpoint + live engagement stats.", example: '{"service":"...","endpoints":[{"method":"GET","path":"/api/health"},...]}', access: "public" },
+  { method: "GET", path: "/api/feedback", description: "List all feedback entries (admin only).", example: '[{"id":"...","rating":5,"comment":"Loved it!","page":"/videos"}]', access: "admin" },
+  { method: "GET", path: "/api/watch-history", description: "Your recent watch history (signed-in students).", example: 'Authorization: Bearer <idToken> → {"history":[{"videoId":"vid-...","watchedAt":"..."}]}', access: "student" },
+  { method: "POST", path: "/api/watch-history", description: "Record a video you watched.", example: 'POST body {"videoId":"story-oprah-winfrey","videoTitle":"..."}', access: "student" },
   { method: "GET", path: "/api/niches", description: "List the high-paying niches and billionaire case studies.", example: '[{"id":"tech-ai","title":"AI & Technology",...}]', access: "public" },
   { method: "GET", path: "/api/niches/:id", description: "Fetch a single niche by id.", example: '{"id":"real-estate","title":"Real Estate",...}', access: "public" },
   { method: "GET", path: "/api/posts", description: "List blog posts from the database.", example: '[{"slug":"five-numbers-every-investor-must-know",...}]', access: "public" },

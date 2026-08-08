@@ -14,7 +14,7 @@
   - Constants: `CERTIFICATE_FEE_USD=5`, `TUITION_MODEL="FREE"`.
 
 - **New File**: `src/lib/firestoreDb.ts` — canonical DB layer:
-  - Collections: `lessons`, `modules`, `videos`, `niches`, `founders`, `posts`, `users` (with role field), `user_progress`, `certificates`, `certificate_payments`.
+  - Collections: `lessons`, `modules`, `videos`, `niches`, `founders`, `posts`, `successStories` (successful people + their videos), `users` (with role field), `user_progress`, `certificates`, `certificate_payments`.
   - Functions:
     - `fetchLessonsFromFirestore`, `fetchModulesFromFirestore`, etc. — Firestore first, fallback bundled JSON.
     - `ensureUserDoc`, `getUserRole`, `setUserRoleFirestore`, `listAllUsersFirestore`, `subscribeToAdmins`, `subscribeToUsers` — admin role signed as role field.

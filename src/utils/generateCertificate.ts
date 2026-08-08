@@ -94,7 +94,7 @@ export async function generateCertificate(
   doc.setTextColor(textLight.r, textLight.g, textLight.b);
   doc.setFont("helvetica", "normal");
   doc.setFontSize(11);
-  const body = `for successfully completing all ${totalCount} in-depth lessons (${pct}% of the curriculum) across all six modules of the Billionaire Blueprint wealth program.`;
+  const body = `for successfully completing ${completedCount} of ${totalCount} in-depth lessons (${pct}% of the curriculum) across all six modules of the Billionaire Blueprint wealth program.`;
   doc.text(doc.splitTextToSize(body, 210), W / 2, 110, { align: "center" });
 
   // Date

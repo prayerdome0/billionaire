@@ -79,6 +79,34 @@ Unsigned mode means the student's browser can upload the certificate PDF directl
 - Video library grew from 7 → **18 masterclasses** (all YouTube IDs verified live) — Steve Jobs Stanford, Simon Sinek, Dan Pink, Angela Duckworth, Sir Ken Robinson, Warren Buffett ×2, Oprah Harvard, Denzel Washington, Strive Masiyiwa, Tony Elumelu + the original 7
 - Animations added: scroll-reveal (`<Reveal>` component + IntersectionObserver), infinite marquee ticker, floating/glow/gradient-shift effects, hover lifts — all disabled under `prefers-reduced-motion`
 
+## 🎬 Videos of Successful People — a video after EVERY photo (branded intro & outro)
+
+- **Every one of the 13 successful people now has a real, verified YouTube video** (Dangote Semafor interview, William Kamkwamba's TED talk, Mo Abudu Forbes interview, Sara Blakely Forbes 2025, Rihanna's Harvard speech, Wangari Maathai's Nobel Lecture, Elon Musk's advice to young people, CBS Bill Gates interview, Jack Ma's life advice + the existing Masiyiwa/Elumelu/Oprah/Buffett masterclasses). Stored in `successStories[].video` in `content.json`.
+- **Every photo card** (home + `/inspiration`) shows a "Watch …'s Story" play button that opens the video right there.
+- **Every video — success story or masterclass — plays inside the Seedwel branded player** (`src/components/BrandedVideoPlayer.tsx`):
+  1. **Intro card**: "Welcome to **Seedwel Investment Limited**, here is {person}…" — animated brand card + spoken voiceover. Premium voice clips live in `public/audio/intro-<id>.mp3` (`outro.mp3` for the ending); any video without a clip falls back to the browser's built-in speech synthesis, so **every video always starts with the welcome and ends with the thank you**.
+  2. **The video itself** (YouTube IFrame API — detects the real end of the video).
+  3. **Outro card**: "Thank you for watching" + spoken thank-you + Watch Again / Up Next / Close.
+- New `/inspiration` **"Watch Their Stories" video library** (13 video cards), **Video of the Day** banner on the home page (quote of the day + that person's video), and the `/videos` page gained a **"Successful People" tab**, view counts, "Continue watching" history, and a star-rating feedback widget.
+- New APIs powering all of it (see `/api/features` for the live self-documenting index):
+
+| Method | Endpoint | What it does |
+|--------|----------|--------------|
+| GET | `/api/success-stories` | All 13 successful people with photos, quotes + their videos & view counts |
+| GET | `/api/success-stories/:id` | One successful person + video metadata |
+| GET | `/api/videos/:id` | One video (masterclass or `story-<id>`) with views |
+| GET | `/api/videos/stats` | Total views + most-watched ranking |
+| GET | `/api/videos/:id/related` | "Up Next" suggestions for any video |
+| POST | `/api/videos/:id/view` | Count a video view |
+| GET | `/api/quote` | Quote of the day from a successful person + their video |
+| GET | `/api/site` | Site config incl. the branded intro/outro templates |
+| POST | `/api/feedback` | Star-rating / comment feedback (public) |
+| GET | `/api/feedback` | List feedback (admin) |
+| GET/POST | `/api/watch-history` | Signed-in students' watch history |
+| GET | `/api/features` | Live endpoint index + engagement stats |
+
+- Engagement data (views, feedback, watch history) is stored by `server/engagement.mjs` (in-memory + `data/engagement.json`, gitignored).
+
 ## Quick start (local) — TRUE DB
 
 ```bash

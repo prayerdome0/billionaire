@@ -13,6 +13,7 @@ import {
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import Reveal from "../components/Reveal";
+import DailyVideoBanner from "../components/DailyVideoBanner";
 import SuccessStoriesSection from "../components/SuccessStoriesSection";
 import VideoPreviewSection from "../components/VideoPreviewSection";
 
@@ -279,6 +280,14 @@ export default function HomePage() {
       <MissionSection />
       <ServicesPreview />
       <VideoPreviewSection />
+
+      {/* Video of the day — quote of a successful person + their video, with Seedwel intro/outro */}
+      <section className="py-10 bg-gray-950 relative overflow-hidden">
+        <div className="max-w-6xl mx-auto px-4">
+          <DailyVideoBanner />
+        </div>
+      </section>
+
       <SuccessStoriesSection limit={6} />
       <CTASection />
       <Footer />
