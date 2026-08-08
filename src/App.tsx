@@ -22,6 +22,7 @@ import AdminPage from "./pages/AdminPage";
 import AuthPage from "./pages/AuthPage";
 import AccountPage from "./pages/AccountPage";
 import InvestPage from "./pages/InvestPage";
+import Journey365Page from "./pages/Journey365Page";
 import SearchPage from "./pages/SearchPage";
 import ApiDocsPage from "./pages/ApiDocsPage";
 import NotFoundPage from "./pages/NotFoundPage";
@@ -55,6 +56,10 @@ export default function App() {
         <Route path="/founders" element={<FoundersPage />} />
         <Route path="/inspiration" element={<SuccessStoriesPage />} />
         <Route path="/invest" element={<InvestPage />} />
+        <Route path="/journey" element={<Journey365Page />} />
+        <Route path="/journey/:day" element={<Journey365Page />} />
+        <Route path="/365" element={<Journey365Page />} />
+        <Route path="/challenge" element={<Journey365Page />} />
         <Route path="/blog" element={<BlogPage />} />
         <Route path="/blog/:slug" element={<BlogPostPage />} />
         <Route path="/search" element={<SearchPage />} />
