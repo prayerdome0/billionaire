@@ -1,13 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { BookOpen, PlayCircle, Search, TerminalSquare, Users, Newspaper, X } from "lucide-react";
+import { BookOpen, PlayCircle, Search, Sparkles, TerminalSquare, Users, Newspaper, X } from "lucide-react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import PageHeader from "../components/PageHeader";
-import { founders, lessons, niches, posts, videos } from "../data/content";
+import { founders, lessons, niches, posts, successStories, videos } from "../data/content";
 
 interface Hit {
-  type: "lesson" | "video" | "niche" | "founder" | "post";
+  type: "lesson" | "video" | "niche" | "founder" | "post" | "success";
   title: string;
   subtitle: string;
   href: string;
@@ -21,6 +21,7 @@ const icons = {
   niche: TerminalSquare,
   founder: Users,
   post: Newspaper,
+  success: Sparkles,
 } as const;
 
 export default function SearchPage() {
@@ -58,6 +59,9 @@ export default function SearchPage() {
     for (const p of posts)
       if (hit(p.title, p.excerpt, ...p.tags))
         out.push({ type: "post", title: p.title, subtitle: p.excerpt, href: `/blog/${p.slug}`, icon: icons.post, meta: `Blog · ${p.readTime}` });
+    for (const s of successStories)
+      if (hit(s.name, s.title, s.quote, s.country, s.video?.title || "", ...(s.tags || [])))
+        out.push({ type: "success", title: s.name, subtitle: `${s.title} — “${s.quote}”`, href: "/inspiration", icon: icons.success, meta: `Success Story · ${s.country} · video included` });
 
     return out.slice(0, 30);
   }, [q]);
@@ -104,7 +108,7 @@ export default function SearchPage() {
               <span className="text-white">{q.trim()}</span>"
               {Object.entries(counts).filter(([, n]) => n > 0).map(([type, n]) => (
                 <span key={type} className="ml-3 text-xs bg-gray-800/80 px-2 py-1 rounded-full">
-                  {n} {type}s
+                  {n} {type === "success" ? "success stories" : `${type}s`}
                 </span>
               ))}
             </p>

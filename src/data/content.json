@@ -2,7 +2,10 @@
   "site": {
     "name": "Seedwel Investment Limited",
     "tagline": "The proven playbook for building extraordinary wealth & investing in school infrastructure and AI",
-    "description": "Seedwel Investment Limited — officially registered last year under Founder Mr. Seedwell Khayalethu Masuku & Zambia Country Director Zacheus Simbaya — is open for investors in school building, AI business & developers, alongside a 28-lesson wealth curriculum."
+    "description": "Seedwel Investment Limited — officially registered last year under Founder Mr. Seedwell Khayalethu Masuku & Zambia Country Director Zacheus Simbaya — is open for investors in school building, AI business & developers, alongside a 28-lesson wealth curriculum.",
+    "videoIntroTemplate": "Welcome to Seedwel Investment Limited, here is",
+    "videoOutro": "Thank you for watching. Please like, share and subscribe to Seedwel Investment Limited for more inspiring videos.",
+    "videoIntroDurationSec": 5
   },
   "siteStats": [
     {
@@ -3434,7 +3437,16 @@
         "Africa",
         "Manufacturing",
         "Start Small"
-      ]
+      ],
+      "video": {
+        "youtubeId": "AYaEw-kxGdY",
+        "title": "Africans Must Build Africa — Aliko Dangote's Bold Message To Other Africans",
+        "channel": "Africa Web TV",
+        "duration": "16 min",
+        "kind": "success-story",
+        "introAudio": "/audio/intro-aliko-dangote.mp3",
+        "outroAudio": null
+      }
     },
     {
       "id": "strive-masiyiwa",
@@ -3451,7 +3463,16 @@
         "Africa",
         "Telecom",
         "Resilience"
-      ]
+      ],
+      "video": {
+        "youtubeId": "zLZMlE9Czwc",
+        "title": "Strive Masiyiwa's Afripreneur Town Hall (Uganda)",
+        "channel": "Maro of Africa",
+        "duration": "14 min",
+        "kind": "success-story",
+        "introAudio": "/audio/intro-strive-masiyiwa.mp3",
+        "outroAudio": null
+      }
     },
     {
       "id": "mo-abudu",
@@ -3468,7 +3489,16 @@
         "Africa",
         "Media",
         "Reinvention"
-      ]
+      ],
+      "video": {
+        "youtubeId": "hWeAcYitUYg",
+        "title": "EbonyLife Media CEO Mo Abudu On Taking African Stories Global",
+        "channel": "Forbes",
+        "duration": "16 min",
+        "kind": "success-story",
+        "introAudio": "/audio/intro-mo-abudu.mp3",
+        "outroAudio": null
+      }
     },
     {
       "id": "tony-elumelu",
@@ -3485,7 +3515,16 @@
         "Africa",
         "Banking",
         "Giving Back"
-      ]
+      ],
+      "video": {
+        "youtubeId": "g0hvHLcTcIc",
+        "title": "Tony Elumelu: A Message to Young African Entrepreneurs",
+        "channel": "The Tony Elumelu Foundation",
+        "duration": "8 min",
+        "kind": "success-story",
+        "introAudio": "/audio/intro-tony-elumelu.mp3",
+        "outroAudio": null
+      }
     },
     {
       "id": "oprah-winfrey",
@@ -3502,7 +3541,16 @@
         "Media",
         "Resilience",
         "Purpose"
-      ]
+      ],
+      "video": {
+        "youtubeId": "soWqiVSVNFY",
+        "title": "Oprah Winfrey's Harvard Commencement Speech",
+        "channel": "Harvard University",
+        "duration": "30 min",
+        "kind": "success-story",
+        "introAudio": "/audio/intro-oprah-winfrey.mp3",
+        "outroAudio": null
+      }
     },
     {
       "id": "warren-buffett",
@@ -3519,7 +3567,16 @@
         "Investing",
         "Reading",
         "Compounding"
-      ]
+      ],
+      "video": {
+        "youtubeId": "cRSAOnEENn8",
+        "title": "Warren Buffett's Life Advice — Berkshire 2023",
+        "channel": "YAPSS",
+        "duration": "13 min",
+        "kind": "success-story",
+        "introAudio": "/audio/intro-warren-buffett.mp3",
+        "outroAudio": null
+      }
     },
     {
       "id": "bill-gates",
@@ -3536,7 +3593,16 @@
         "Technology",
         "Philanthropy",
         "Curiosity"
-      ]
+      ],
+      "video": {
+        "youtubeId": "h8Nm39I8l3E",
+        "title": "Extended Interview: Bill Gates on His Business Acumen",
+        "channel": "CBS Sunday Morning",
+        "duration": "22 min",
+        "kind": "success-story",
+        "introAudio": "/audio/intro-bill-gates.mp3",
+        "outroAudio": null
+      }
     },
     {
       "id": "jack-ma",
@@ -3553,7 +3619,16 @@
         "E-commerce",
         "Persistence",
         "Rejection"
-      ]
+      ],
+      "video": {
+        "youtubeId": "wQZ_xK7YZXA",
+        "title": "Jack Ma's Life Advice That Will Change Your Life",
+        "channel": "Hayat Motivation",
+        "duration": "7 min",
+        "kind": "success-story",
+        "introAudio": "/audio/intro-jack-ma.mp3",
+        "outroAudio": null
+      }
     },
     {
       "id": "sara-blakely",
@@ -3570,7 +3645,16 @@
         "Retail",
         "Failure",
         "Grit"
-      ]
+      ],
+      "video": {
+        "youtubeId": "b8ka0qVGipA",
+        "title": "Sara Blakely Reveals Why Betting On Yourself Is The Ultimate Investment",
+        "channel": "Forbes",
+        "duration": "21 min",
+        "kind": "success-story",
+        "introAudio": "/audio/intro-sara-blakely.mp3",
+        "outroAudio": null
+      }
     },
     {
       "id": "rihanna",
@@ -3587,7 +3671,16 @@
         "Beauty",
         "Inclusion",
         "Reinvention"
-      ]
+      ],
+      "video": {
+        "youtubeId": "LUrfSjtmUak",
+        "title": "\"So I Made It To Harvard\" — Rihanna Receives Harvard's Humanitarian Award",
+        "channel": "Rolling Stone",
+        "duration": "3 min",
+        "kind": "success-story",
+        "introAudio": "/audio/intro-rihanna.mp3",
+        "outroAudio": null
+      }
     },
     {
       "id": "wangari-maathai",
@@ -3604,7 +3697,16 @@
         "Africa",
         "Environment",
         "Purpose"
-      ]
+      ],
+      "video": {
+        "youtubeId": "dZap_QlwlKw",
+        "title": "Nobel Lecture by Professor Wangari Maathai",
+        "channel": "The Green Belt Movement",
+        "duration": "9 min",
+        "kind": "success-story",
+        "introAudio": null,
+        "outroAudio": null
+      }
     },
     {
       "id": "elon-musk",
@@ -3621,7 +3723,16 @@
         "Innovation",
         "Risk",
         "Perseverance"
-      ]
+      ],
+      "video": {
+        "youtubeId": "M-ZH3psUbfU",
+        "title": "Elon Musk: Advice for Young People",
+        "channel": "Lex Fridman Podcast Clips",
+        "duration": "8 min",
+        "kind": "success-story",
+        "introAudio": null,
+        "outroAudio": null
+      }
     },
     {
       "id": "william-kamkwamba",
@@ -3638,7 +3749,16 @@
         "Africa",
         "STEM",
         "Youth"
-      ]
+      ],
+      "video": {
+        "youtubeId": "G8yKFVPOD6o",
+        "title": "William Kamkwamba: How I Built a Windmill",
+        "channel": "TED",
+        "duration": "6 min",
+        "kind": "success-story",
+        "introAudio": null,
+        "outroAudio": null
+      }
     }
   ]
 }

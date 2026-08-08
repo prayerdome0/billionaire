@@ -47,6 +47,18 @@ export interface Testimonial {
   rating: number;
 }
 
+export interface SuccessStoryVideo {
+  youtubeId: string;
+  title: string;
+  channel: string;
+  duration: string;
+  kind?: string;
+  /** Optional premium voiceover clip for the branded intro (public/audio/...). */
+  introAudio?: string;
+  /** Optional premium voiceover clip for the "thank you for watching" outro. */
+  outroAudio?: string;
+}
+
 export interface SuccessStory {
   id: string;
   name: string;
@@ -59,6 +71,19 @@ export interface SuccessStory {
   netWorth: string;
   yearsActive: string;
   tags: string[];
+  /** Real, verified video of this successful person — plays with the Seedwel branded intro/outro. */
+  video?: SuccessStoryVideo;
+}
+
+export interface SiteConfig {
+  name: string;
+  tagline: string;
+  description: string;
+  /** Branded intro every video starts with: "Welcome to Seedwel Investment Limited, here is …" */
+  videoIntroTemplate?: string;
+  /** Branded outro every video ends with: "Thank you for watching …" */
+  videoOutro?: string;
+  videoIntroDurationSec?: number;
 }
 
 export interface Module {
@@ -140,7 +165,7 @@ export interface InvestmentOpportunity {
   contactEmail: string;
 }
 
-export const site: { name: string; tagline: string; description: string } = raw.site;
+export const site: SiteConfig = raw.site;
 export const siteStats: SiteStat[] = raw.siteStats;
 export const heroImage = raw.heroImage;
 export const stepsToWealth: Step[] = raw.stepsToWealth;

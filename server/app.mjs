@@ -24,8 +24,10 @@
 import { existsSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { createRequire } from "node:module";
 import express from "express";
 import { getStore } from "./storage.mjs";
+import { engagement } from "./engagement.mjs";
 import {
   optionalUser,
   requireUser,
@@ -40,6 +42,10 @@ import {
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, "..");
 const DIST = join(ROOT, "dist");
+
+const require = createRequire(import.meta.url);
+/** Single source of truth for bundled content (same file the storage layer seeds from). */
+const seed = require("../src/data/content.json");
 
 const app = express();
 app.use(express.json({ limit: "2mb" }));
@@ -76,6 +82,9 @@ app.get("/api/stats", async (_req, res) => {
   const stats = await (await store()).stats();
   json(res, 200, {
     ...stats,
+    successStories: (seed.successStories || []).length,
+    totalVideoViews: engagement.totalViews(),
+    feedbackCount: engagement.stats().feedbackCount,
     tuitionModel: "FREE",
     certificateFeeUsd: CERT_FEE,
     incorporation: "Certificate Incorporation — no school built yet",
@@ -102,6 +111,205 @@ app.get("/api/lessons/:id", async (req, res) => {
 
 app.get("/api/videos", async (_req, res) => json(res, 200, await (await store()).listVideos()));
 
+/* ------------------------------ success stories (successful people + their videos) ------------------------------ */
+
+app.get("/api/success-stories", async (_req, res) => {
+  const stories = seed.successStories || [];
+  json(
+    res,
+    200,
+    stories.map((s) => ({ ...s, views: engagement.getVideoViews(`story-${s.id}`) }))
+  );
+});
+
+app.get("/api/success-stories/:id", async (req, res) => {
+  const story = (seed.successStories || []).find((s) => s.id === req.params.id);
+  if (!story) return json(res, 404, { error: "Success story not found" });
+  json(res, 200, { ...story, views: engagement.getVideoViews(`story-${story.id}`) });
+});
+
+/* ------------------------------ video library — singles, stats, views, related ------------------------------ */
+
+app.get("/api/videos/stats", async (_req, res) => {
+  const s = await store();
+  const videos = await s.listVideos();
+  const stories = seed.successStories || [];
+  const withViews = [
+    ...videos.map((v) => ({ id: v.id, title: v.title, youtubeId: v.youtubeId, views: engagement.getVideoViews(v.id) })),
+    ...stories.map((st) => ({ id: `story-${st.id}`, title: st.video?.title || st.name, youtubeId: st.video?.youtubeId || "", person: st.name, views: engagement.getVideoViews(`story-${st.id}`) })),
+  ].sort((a, b) => b.views - a.views);
+  json(res, 200, { totalViews: engagement.totalViews(), topVideos: withViews.slice(0, 10), all: withViews });
+});
+
+app.post("/api/videos/:id/view", async (req, res) => {
+  const id = clip(req.params.id, 200);
+  const views = engagement.addVideoView(id);
+  json(res, 200, { ok: true, id, views, message: "Thank you for watching! View counted." });
+});
+
+app.get("/api/videos/:id", async (req, res) => {
+  const s = await store();
+  const id = req.params.id;
+  if (id.startsWith("story-")) {
+    const story = (seed.successStories || []).find((x) => x.id === id.slice(6));
+    if (!story || !story.video) return json(res, 404, { error: "Story video not found" });
+    return json(res, 200, {
+      id,
+      person: story.name,
+      title: story.video.title,
+      channel: story.video.channel,
+      description: `${story.name} — ${story.title}. ${story.encouragement}`,
+      youtubeId: story.video.youtubeId,
+      moduleId: "success-stories",
+      duration: story.video.duration,
+      level: "Inspiration",
+      tags: story.tags,
+      kind: "success-story",
+      views: engagement.getVideoViews(id),
+      introAudio: story.video.introAudio || null,
+      outroAudio: story.video.outroAudio || null,
+    });
+  }
+  const video = (await s.listVideos()).find((v) => v.id === id);
+  if (!video) return json(res, 404, { error: "Video not found" });
+  json(res, 200, { ...video, views: engagement.getVideoViews(id) });
+});
+
+app.get("/api/videos/:id/related", async (req, res) => {
+  const s = await store();
+  const id = req.params.id;
+  const isStory = id.startsWith("story-");
+  const current = isStory ? (seed.successStories || []).find((x) => x.id === id.slice(6)) : (await s.listVideos()).find((v) => v.id === id);
+  if (!current) return json(res, 404, { error: "Video not found" });
+  if (isStory) {
+    const rest = (seed.successStories || []).filter((x) => x.id !== id.slice(6) && x.video);
+    json(
+      res,
+      200,
+      rest.slice(0, 6).map((x) => ({ id: `story-${x.id}`, person: x.name, title: x.video.title, youtubeId: x.video.youtubeId, moduleId: "success-stories", duration: x.video.duration, level: "Inspiration", tags: x.tags, kind: "success-story" }))
+    );
+    return;
+  }
+  const rest = (await s.listVideos()).filter((v) => v.id !== id && (v.moduleId === current.moduleId || v.tags?.some((t) => current.tags?.includes(t))));
+  json(res, 200, (rest.length ? rest : (await s.listVideos()).filter((v) => v.id !== id)).slice(0, 6));
+});
+
+/* ------------------------------ quote of the day + site config ------------------------------ */
+
+app.get("/api/quote", async (req, res) => {
+  const stories = seed.successStories || [];
+  if (!stories.length) return json(res, 404, { error: "No quotes available yet" });
+  const day = String(new Date().toISOString().slice(0, 10));
+  const pick = stories[day.split("-").reduce((a, c) => (Math.imul(31, a) + Number(c)) | 0, 7) % stories.length];
+  const random = stories[Math.floor(Math.random() * stories.length)];
+  json(res, 200, {
+    date: day,
+    quote: pick.quote,
+    author: pick.name,
+    country: pick.country,
+    title: pick.title,
+    photo: pick.photo,
+    encouragement: pick.encouragement,
+    video: pick.video ? { id: `story-${pick.id}`, ...pick.video } : null,
+    random: { quote: random.quote, author: random.name, video: random.video ? { id: `story-${random.id}`, ...random.video } : null },
+  });
+});
+
+app.get("/api/site", (_req, res) =>
+  json(res, 200, {
+    ...seed.site,
+    siteStats: seed.siteStats,
+    heroImage: seed.heroImage,
+    videoCount: (seed.videos || []).length,
+    successStoryCount: (seed.successStories || []).length,
+    lessonCount: (seed.lessons || []).length,
+    moduleCount: (seed.modules || []).length,
+    founderCount: (seed.founders || []).length,
+    tuitionModel: "FREE",
+    certificateFeeUsd: CERT_FEE,
+    incorporationNote: INCORPORATION_NOTE,
+  })
+);
+
+/* ------------------------------ feedback (public write, admin read) ------------------------------ */
+
+app.post("/api/feedback", async (req, res) => {
+  const { name, email, page, rating, comment, message } = req.body || {};
+  const text = comment || message || "";
+  if (!text && !rating) return json(res, 400, { error: "rating or comment is required" });
+  if (email && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return json(res, 400, { error: "email is not valid" });
+  const created = engagement.addFeedback({ name, email, page, rating, comment: text });
+  json(res, 201, { success: true, feedback: created, message: "Thank you for your feedback!" });
+});
+
+app.get("/api/feedback", requireAdmin, async (_req, res) => json(res, 200, engagement.listFeedback()));
+
+/* ------------------------------ watch history (signed-in students) ------------------------------ */
+
+app.get("/api/watch-history", requireUser, async (req, res) =>
+  json(res, 200, { uid: req.user.uid, history: engagement.getWatchHistory(req.user.uid) })
+);
+
+app.post("/api/watch-history", requireUser, async (req, res) => {
+  const { videoId, videoTitle } = req.body || {};
+  if (!videoId) return json(res, 400, { error: "videoId is required" });
+  const history = engagement.addWatch(req.user.uid, videoId, videoTitle);
+  json(res, 201, { ok: true, history });
+});
+
+/* ------------------------------ API feature index (self-documenting) ------------------------------ */
+
+app.get("/api/features", async (_req, res) => {
+  const s = await store();
+  const stats = await s.stats();
+  const e = engagement.stats();
+  json(res, 200, {
+    service: "Seedwel Investment Limited — Billionaire Blueprint REST API",
+    version: "2.0.0",
+    trueDatabase: "Firebase Firestore",
+    tuitionModel: "FREE",
+    certificateFeeUsd: CERT_FEE,
+    content: { lessons: stats.lessons, videos: stats.videos, successStories: (seed.successStories || []).length, modules: stats.modules, niches: stats.niches, founders: stats.founders, posts: stats.posts },
+    engagement: e,
+    endpoints: [
+      { method: "GET", path: "/api/health" },
+      { method: "GET", path: "/api/stats" },
+      { method: "GET", path: "/api/site" },
+      { method: "GET", path: "/api/success-stories" },
+      { method: "GET", path: "/api/success-stories/:id" },
+      { method: "GET", path: "/api/videos" },
+      { method: "GET", path: "/api/videos/stats" },
+      { method: "GET", path: "/api/videos/:id" },
+      { method: "GET", path: "/api/videos/:id/related" },
+      { method: "POST", path: "/api/videos/:id/view" },
+      { method: "GET", path: "/api/quote" },
+      { method: "POST", path: "/api/feedback" },
+      { method: "GET", path: "/api/feedback" },
+      { method: "GET", path: "/api/watch-history" },
+      { method: "POST", path: "/api/watch-history" },
+      { method: "GET", path: "/api/founders" },
+      { method: "GET", path: "/api/modules" },
+      { method: "GET", path: "/api/lessons" },
+      { method: "GET", path: "/api/lessons/:id" },
+      { method: "GET", path: "/api/niches" },
+      { method: "GET", path: "/api/posts" },
+      { method: "GET", path: "/api/search?q=" },
+      { method: "POST", path: "/api/contact" },
+      { method: "POST", path: "/api/newsletter" },
+      { method: "POST", path: "/api/investors" },
+      { method: "GET", path: "/api/leaderboard" },
+      { method: "GET", path: "/api/comments?lessonId=" },
+      { method: "POST", path: "/api/comments" },
+      { method: "GET", path: "/api/progress" },
+      { method: "POST", path: "/api/progress" },
+      { method: "GET", path: "/api/certificates/me" },
+      { method: "POST", path: "/api/certificates/claim" },
+      { method: "POST", path: "/api/certificates/pay" },
+      { method: "GET", path: "/api/features" },
+    ],
+  });
+});
+
 app.get("/api/niches", async (_req, res) => json(res, 200, await (await store()).listNiches()));
 app.get("/api/niches/:id", async (req, res) => {
   const n = await (await store()).getNiche(req.params.id);
@@ -119,7 +327,13 @@ app.get("/api/posts/:slug", async (req, res) => {
 app.get("/api/search", async (req, res) => {
   const q = clip(req.query.q, 100);
   if (!q) return json(res, 400, { error: "q query param is required" });
-  json(res, 200, await (await store()).search(q));
+  const results = await (await store()).search(q);
+  const needle = q.toLowerCase();
+  const hit = (s) => String(s || "").toLowerCase().includes(needle);
+  results.successStories = (seed.successStories || [])
+    .filter((s) => hit(s.name) || hit(s.title) || hit(s.quote) || hit(s.country) || s.tags?.some(hit) || hit(s.video?.title))
+    .map((s) => ({ id: s.id, name: s.name, title: s.title, photo: s.photo, quote: s.quote, video: s.video ? { id: `story-${s.id}`, ...s.video } : null }));
+  json(res, 200, results);
 });
 
 /* ------------------------------ auth: who am I (any signed-in user) ------------------------------ */
@@ -368,6 +582,7 @@ app.get("/api/admin/overview", requireAdmin, async (_req, res) => {
     (s.listCertificatePayments?.() || []).catch(() => []),
   ]);
   json(res, 200, {
+    engagement: engagement.stats(),
     company: {
       name: "Seedwel Investment Limited",
       registeredYear: 2025,

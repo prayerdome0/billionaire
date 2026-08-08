@@ -858,6 +858,11 @@ export async function seedFirestoreFromBundledContent(): Promise<{ seeded: numbe
     batch.set(doc(db, "posts", p.slug), { ...p, seededAt: nowTs() });
     count++;
   }
+  // success stories (successful people + their videos)
+  for (const s of (raw as any).successStories || []) {
+    batch.set(doc(db, "successStories", s.id), { ...s, seededAt: nowTs() });
+    count++;
+  }
 
   try {
     await batch.commit();
